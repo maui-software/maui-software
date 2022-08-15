@@ -17,6 +17,14 @@ setup(name='maui',
           'audioread',
           'numpy',
           'pandas',
-          'matplotlib'
+          'matplotlib',
+          'plotly',
+          'fpdf',
+          'kaleido',
+          'importlib'
       ],
-      zip_safe=False)
+      zip_safe=False,
+      include_package_data=True,
+      package_data={'': ['data/*.png']}
+
+    )
