@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 import plotly.graph_objects as go
 import plotly.express as px
@@ -306,7 +305,7 @@ def export_file_names_summary_pdf(df, file_name, analysis_title=None, width=210,
 
 	# Add table
 	w = 200
-	pdf.image("summary1.png", w=w, x=(WIDTH-w)/2)
+	pdf.image("images_summary_pdf_temp/summary1.png", w=w, x=(WIDTH-w)/2)
 	pdf.ln(5)
 
 	intro_text = "This report contains a brief exploratory data analysis comprehending the data obtained by audio file names. The objective is to present an overview of the acoustic landscapes and environments of the recordings, as well as their duration. Further analysis such as false color spectrograms and acoustic indices summarization can be performed with Maui Sotware analysis and visualization tools."
@@ -320,11 +319,11 @@ def export_file_names_summary_pdf(df, file_name, analysis_title=None, width=210,
 	pdf.ln(20)
 	write_subtitle(pdf, "1. Landscape Analysis")
 	pdf.ln(20)
-	pdf.image("landscape1.png", w=w, x=(WIDTH-w)/2)
+	pdf.image("images_summary_pdf_temp/landscape1.png", w=w, x=(WIDTH-w)/2)
 	pdf.ln(5)
-	pdf.image("landscape2.png", w=w, x=(WIDTH-w)/2)
+	pdf.image("images_summary_pdf_temp/landscape2.png", w=w, x=(WIDTH-w)/2)
 	pdf.ln(5)
-	pdf.image("landscape3.png", w=w, x=(WIDTH-w)/2)
+	pdf.image("images_summary_pdf_temp/landscape3.png", w=w, x=(WIDTH-w)/2)
 	pdf.ln(10)
 
 
@@ -334,11 +333,11 @@ def export_file_names_summary_pdf(df, file_name, analysis_title=None, width=210,
 	pdf.ln(20)
 	write_subtitle(pdf, "2. Environment Analysis")
 	pdf.ln(20)
-	pdf.image("environment1.png", w=w, x=(WIDTH-w)/2)
+	pdf.image("images_summary_pdf_temp/environment1.png", w=w, x=(WIDTH-w)/2)
 	pdf.ln(5)
-	pdf.image("environment2.png", w=w, x=(WIDTH-w)/2)
+	pdf.image("images_summary_pdf_temp/environment2.png", w=w, x=(WIDTH-w)/2)
 	pdf.ln(5)
-	pdf.image("environment3.png", w=w, x=(WIDTH-w)/2)
+	pdf.image("images_summary_pdf_temp/environment3.png", w=w, x=(WIDTH-w)/2)
 	pdf.ln(10)
 
 	pdf.add_page()
@@ -347,7 +346,7 @@ def export_file_names_summary_pdf(df, file_name, analysis_title=None, width=210,
 	pdf.ln(20)
 	write_subtitle(pdf, "3. Duration Analysis")
 	pdf.ln(20)
-	pdf.image("duration1.png", w=w, x=(WIDTH-w)/2)
+	pdf.image("images_summary_pdf_temp/duration1.png", w=w, x=(WIDTH-w)/2)
 
 
 	pdf.output(file_name, 'F')
