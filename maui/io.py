@@ -1,5 +1,3 @@
-import librosa
-import librosa.display
 import audioread
 
 import numpy as np
