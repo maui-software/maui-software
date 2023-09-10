@@ -400,7 +400,34 @@ def parallelize_dataframe(df, func, args, num_cores):
 
 
 def calculate_acoustic_indices(df_init, indices_list: list, store_df=False, base_dir=None, file_name=None, file_type=None, parallel=True):
-    
+    """
+    Calculate a set of acoustic indices for an audio dataset and store the results in a DataFrame.
+
+    Parameters:
+    - indices_list (list): A list of acoustic indices to calculate.
+    - df_init (pd.DataFrame): The input DataFrame containing information about audio files.
+    - parallel (bool, optional): If True, calculate indices in parallel using multiprocessing. Default is False.
+    - store_df (bool, optional): If True, store the resulting DataFrame to a file. Default is False.
+    - file_type (str, optional): The file type to use when storing the DataFrame (e.g., 'csv', 'hdf5'). Default is None.
+    - base_dir (str, optional): The base directory where the stored DataFrame file should be located. Default is None.
+    - file_name (str, optional): The name of the stored DataFrame file. Default is None.
+
+    Returns:
+    - df_processed (pd.DataFrame): A DataFrame containing calculated acoustic indices.
+
+    Raises:
+    - Exception: If the provided indices_list contains indices that are not in the available_indices list.
+    - Exception: If the input DataFrame df_init does not contain the necessary 'file_path' column.
+
+    Example usage:
+    ```
+    indices_list = ['median_amplitude_envelope', 'temporal_entropy']
+    df = pd.DataFrame({'file_path': ['audio1.wav', 'audio2.wav']})
+    result_df = calculate_acoustic_indices(indices_list, df, parallel=True, store_df=True, file_type='csv', base_dir='output', file_name='acoustic_indices.csv')
+    ```
+    """
+
+
     # check if the selected indices are available
     available_indices = ['median_amplitude_envelope', 'temporal_entropy', 'acoustic_richness', 'temporal_activity', 'temporal_events', 'acoustic_complexity_index', 
                          'frequency_entropy', 'number_of_peaks', 'spectral_entropy', 'spectral_activity', 'spectral_events', 'spectral_cover', 'soundscape_index',

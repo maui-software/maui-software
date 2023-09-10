@@ -1,5 +1,4 @@
 import math
-import numpy as np
 import pandas as pd
 import copy
 import warnings
@@ -430,7 +429,7 @@ def indices_violin_plot(df, indices:list, group_by:str=None, fig_size:dict=None,
     # 0. Initial configuration
     # 0.1. Verify if group_by column is available
     if group_by is not None:
-        assert group_by in df.columns, f"'{group_by}' is not in {df.column}"
+        assert group_by in df.columns, f"'{group_by}' is not in {df.columns}"
         
 
     # 0.2. Verify if the select indices have been already calculated
