@@ -1,4 +1,4 @@
-import numpy as np
+
 import pandas as pd
 
 
@@ -15,7 +15,43 @@ import shutil
 import os
 import pkg_resources  
 
-def card_summary(df, show_plot=True):
+def card_summary(df, show_plot:bool=True):
+	"""
+    Generate a summary of card-like statistics for a given DataFrame and optionally display it as a plot.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame to generate statistics from.
+    - show_plot (bool, optional): If True, display the summary statistics as a plot. Default is True.
+
+    Returns:
+    - card_dict (dict): A dictionary containing the summary statistics:
+        - 'n_samples': Number of unique samples (unique 'file_path' values).
+        - 'n_landscapes': Number of unique landscapes.
+        - 'n_environments': Number of unique environments.
+        - 'distinct_days': Number of distinct days in the DataFrame.
+        - 'total_time_duration': Total duration of 'duration' column in minutes.
+        - 'mean_time_duration': Mean duration of 'duration' column in minutes.
+    - fig (plotly.graph_objs._figure.Figure): The Plotly figure displaying the summary statistics as a plot. None if show_plot is False.
+
+    Example usage:
+    ```
+    import pandas as pd
+    from plotly import graph_objs as go
+    from plotly.subplots import make_subplots
+
+    # Create a DataFrame
+    df = pd.DataFrame({
+        'file_path': ['sample1.wav', 'sample2.wav'],
+        'landscape': ['urban', 'rural'],
+        'environment': ['forest', 'desert'],
+        'dt': ['2023-09-01', '2023-09-02'],
+        'duration': [120, 180]
+    })
+
+    card_dict, fig = card_summary(df, show_plot=True)
+    ```
+    """
+
 	df_count = df.nunique(axis=0)
 	duration_mean = df['duration'].mean() / 60
 	duration_total = df['duration'].sum() / 60
@@ -91,7 +127,34 @@ def card_summary(df, show_plot=True):
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 
-def landscape_environment_heatmap(df, show_plot=True):
+def landscape_environment_heatmap(df, show_plot:bool=True):
+	"""
+    Generate a heatmap comparing the distribution of landscapes and environments in a DataFrame.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing 'landscape' and 'environment' columns.
+    - show_plot (bool, optional): If True, display the heatmap plot. Default is True.
+
+    Returns:
+    - df_group (pd.DataFrame): A DataFrame with the counts of combinations of 'landscape' and 'environment'.
+    - fig (plotly.graph_objs._figure.Figure): The Plotly figure displaying the heatmap. None if show_plot is False.
+
+    Example usage:
+    ```
+    import pandas as pd
+    import plotly.express as px
+
+    # Create a DataFrame
+    df = pd.DataFrame({
+        'file_path': ['sample1.wav', 'sample2.wav', 'sample3.wav'],
+        'landscape': ['urban', 'rural', 'urban'],
+        'environment': ['forest', 'desert', 'forest']
+    })
+
+    df_group, fig = landscape_environment_heatmap(df, show_plot=True)
+    ```
+    """
+
 	df_group = df.groupby(['landscape', 'environment'], as_index=False)['file_path'].count()
 	df_group = df_group.rename(columns={"file_path": "count"})
 	
@@ -108,7 +171,32 @@ def landscape_environment_heatmap(df, show_plot=True):
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 
-def plot_landscape_histogram(df, show_plot=True):
+def plot_landscape_histogram(df, show_plot:bool=True):
+	"""
+    Generate a histogram showing the distribution of samples by landscape and color-coded by environment.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing 'landscape' and 'environment' columns.
+    - show_plot (bool, optional): If True, display the histogram plot. Default is True.
+
+    Returns:
+    - fig (plotly.graph_objs._figure.Figure): The Plotly figure displaying the histogram. None if show_plot is False.
+
+    Example usage:
+    ```
+    import pandas as pd
+    import plotly.express as px
+
+    # Create a DataFrame
+    df = pd.DataFrame({
+        'file_path': ['sample1.wav', 'sample2.wav', 'sample3.wav'],
+        'landscape': ['urban', 'rural', 'urban'],
+        'environment': ['forest', 'desert', 'forest']
+    })
+
+    fig = plot_landscape_histogram(df, show_plot=True)
+    ```
+    """
 
 	fig = px.histogram(df, x="landscape", color="environment", opacity=0.7, title='Ammount of samples by Landscape')
 	fig.update_layout(bargap=0.1, title_x=0.5)
@@ -122,6 +210,32 @@ def plot_landscape_histogram(df, show_plot=True):
 
 def plot_landscape_duration(df, show_plot=True):
 
+	"""
+    Generate a box plot showing the distribution of audio durations by landscape.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing 'landscape' and 'duration' columns.
+    - show_plot (bool, optional): If True, display the box plot. Default is True.
+
+    Returns:
+    - fig (plotly.graph_objs._figure.Figure): The Plotly figure displaying the box plot. None if show_plot is False.
+
+    Example usage:
+    ```
+    import pandas as pd
+    import plotly.express as px
+
+    # Create a DataFrame
+    df = pd.DataFrame({
+        'file_path': ['sample1.wav', 'sample2.wav', 'sample3.wav'],
+        'landscape': ['urban', 'rural', 'urban'],
+        'duration': [120, 180, 150]
+    })
+
+    fig = plot_landscape_duration(df, show_plot=True)
+    ```
+    """
+
 	fig = px.box(df, x="landscape", y="duration", title='Duration distribution by Landscape')
 	fig.update_layout(title_x=0.5)
 
@@ -133,6 +247,32 @@ def plot_landscape_duration(df, show_plot=True):
 #-----------------------------------------------------------------------------------------------------------------------------------
 
 def plot_landscape_daily_distribution(df, show_plot=True):
+
+	"""
+    Generate a histogram showing the distribution of samples by day, color-coded by landscape.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing 'dt' (date) and 'landscape' columns.
+    - show_plot (bool, optional): If True, display the histogram plot. Default is True.
+
+    Returns:
+    - fig (plotly.graph_objs._figure.Figure): The Plotly figure displaying the histogram. None if show_plot is False.
+
+    Example usage:
+    ```
+    import pandas as pd
+    import plotly.express as px
+
+    # Create a DataFrame
+    df = pd.DataFrame({
+        'file_path': ['sample1.wav', 'sample2.wav', 'sample3.wav'],
+        'landscape': ['urban', 'rural', 'urban'],
+        'dt': ['2023-09-01', '2023-09-02', '2023-09-01']
+    })
+
+    fig = plot_landscape_daily_distribution(df, show_plot=True)
+    ```
+    """
 
 	fig = px.histogram(df, x="dt", color="landscape", opacity=0.7, title='Ammount of samples by Day and Landscape')
 	fig.update_layout(bargap=0.1, title_x=0.5)
@@ -146,6 +286,32 @@ def plot_landscape_daily_distribution(df, show_plot=True):
 
 def plot_environment_histogram(df, show_plot=True):
 
+	"""
+    Generate a histogram showing the distribution of samples by environment, color-coded by landscape.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing 'environment' and 'landscape' columns.
+    - show_plot (bool, optional): If True, display the histogram plot. Default is True.
+
+    Returns:
+    - fig (plotly.graph_objs._figure.Figure): The Plotly figure displaying the histogram. None if show_plot is False.
+
+    Example usage:
+    ```
+    import pandas as pd
+    import plotly.express as px
+
+    # Create a DataFrame
+    df = pd.DataFrame({
+        'file_path': ['sample1.wav', 'sample2.wav', 'sample3.wav'],
+        'landscape': ['urban', 'rural', 'urban'],
+        'environment': ['forest', 'desert', 'forest']
+    })
+
+    fig = plot_environment_histogram(df, show_plot=True)
+    ```
+    """
+
 	fig = px.histogram(df, x="environment", color="landscape", opacity=0.7, title='Ammount of samples by Environment')
 	fig.update_layout(bargap=0.1, title_x=0.5)
 
@@ -157,6 +323,31 @@ def plot_environment_histogram(df, show_plot=True):
 #-----------------------------------------------------------------------------------------------------------------------------------
 
 def plot_environment_duration(df, show_plot=True):
+	"""
+    Generate a box plot showing the distribution of audio durations by environment.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing 'environment' and 'duration' columns.
+    - show_plot (bool, optional): If True, display the box plot. Default is True.
+
+    Returns:
+    - fig (plotly.graph_objs._figure.Figure): The Plotly figure displaying the box plot. None if show_plot is False.
+
+    Example usage:
+    ```
+    import pandas as pd
+    import plotly.express as px
+
+    # Create a DataFrame
+    df = pd.DataFrame({
+        'file_path': ['sample1.wav', 'sample2.wav', 'sample3.wav'],
+        'environment': ['forest', 'desert', 'forest'],
+        'duration': [120, 180, 150]
+    })
+
+    fig = plot_environment_duration(df, show_plot=True)
+    ```
+    """
 
 	fig = px.box(df, x="environment", y="duration", title='Duration distribution by Environment')
 	fig.update_layout(title_x=0.5)
@@ -170,6 +361,32 @@ def plot_environment_duration(df, show_plot=True):
 
 def plot_environment_daily_distribution(df, show_plot=True):
 
+	"""
+    Generate a histogram showing the distribution of samples by day, color-coded by environment.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing 'dt' (date) and 'environment' columns.
+    - show_plot (bool, optional): If True, display the histogram plot. Default is True.
+
+    Returns:
+    - fig (plotly.graph_objs._figure.Figure): The Plotly figure displaying the histogram. None if show_plot is False.
+
+    Example usage:
+    ```
+    import pandas as pd
+    import plotly.express as px
+
+    # Create a DataFrame
+    df = pd.DataFrame({
+        'file_path': ['sample1.wav', 'sample2.wav', 'sample3.wav'],
+        'environment': ['forest', 'desert', 'forest'],
+        'dt': ['2023-09-01', '2023-09-02', '2023-09-01']
+    })
+
+    fig = plot_environment_daily_distribution(df, show_plot=True)
+    ```
+    """
+
 	fig = px.histogram(df, x="dt", color="environment", opacity=0.7, title='Ammount of samples by Day and Environment')
 	fig.update_layout(bargap=0.1, title_x=0.5)
 
@@ -181,6 +398,31 @@ def plot_environment_daily_distribution(df, show_plot=True):
 #-----------------------------------------------------------------------------------------------------------------------------------
 
 def plot_duration_distribution(df, show_plot=True):
+	"""
+    Generate a distribution plot (histogram and kernel density estimation) for audio duration.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing a 'duration' column.
+    - show_plot (bool, optional): If True, display the distribution plot. Default is True.
+
+    Returns:
+    - fig (plotly.graph_objs._figure.Figure): The Plotly figure displaying the distribution plot. None if show_plot is False.
+
+    Example usage:
+    ```
+    import pandas as pd
+    import plotly.figure_factory as ff
+
+    # Create a DataFrame
+    df = pd.DataFrame({
+        'file_path': ['sample1.wav', 'sample2.wav', 'sample3.wav'],
+        'duration': [120, 180, 150]
+    })
+
+    fig = plot_duration_distribution(df, show_plot=True)
+    ```
+    """
+
 	group_labels = ['duration'] # name of the dataset
 
 	fig = ff.create_distplot([df['duration'].values], group_labels)
@@ -246,6 +488,35 @@ def write_subtitle(pdf, words):
 	pdf.write(5, words)
 
 def export_file_names_summary_pdf(df, file_name, analysis_title=None, width=210, hight=297):
+	"""
+    Generate a PDF summary report containing exploratory data analysis for audio file names.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing audio file data.
+    - file_name (str): The name of the PDF file to be generated.
+    - analysis_title (str, optional): Title for the analysis section of the report. Default is None.
+    - width (float, optional): Width of the PDF document in millimeters. Default is 210mm (A4 width).
+    - height (float, optional): Height of the PDF document in millimeters. Default is 297mm (A4 height).
+
+    Returns:
+    - None
+
+    Example usage:
+    ```
+    import pandas as pd
+    from fpdf import FPDF
+    from report_utils import create_letterhead, create_title, write_to_pdf, write_subtitle
+
+    # Create a DataFrame
+    df = pd.DataFrame({
+        'file_path': ['sample1.wav', 'sample2.wav', 'sample3.wav'],
+        'duration': [120, 180, 150]
+    })
+
+    export_file_names_summary_pdf(df, 'audio_summary.pdf', analysis_title='Audio Data Summary')
+    ```
+
+    """
 	
 	if not os.path.exists("images_summary_pdf_temp"):
 		os.mkdir("images_summary_pdf_temp")
