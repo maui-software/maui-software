@@ -11,7 +11,7 @@ import sys
 
 import maad
 
-import maui_io
+import maui.io
 
 
 
@@ -351,7 +351,7 @@ def get_acoustic_indices(df, args: dict):
         df['AR'] = AR_list
     
     # print(df.info())
-    print(sys.getsizeof(df)/1024)
+    # print(sys.getsizeof(df)/1024)
     
     
     return df
@@ -424,6 +424,6 @@ def calculate_acoustic_indices(df_init, indices_list: list, store_df=False, base
 
 
     if (store_df):
-        maui_io.store_df(df_processed, file_type, base_dir, file_name)
+        maui.io.store_df(df_processed, file_type, base_dir, file_name)
     
     return df_processed

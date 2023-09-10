@@ -528,7 +528,7 @@ def indices_violin_plot(df, indices:list, group_by:str=None, fig_size:dict=None,
 # --------------------------------------------------------------------------------------------------------------------------------
     
 def spectrogram_plot(file_path:str, mode:str=None, window:str='hann', nperseg:int=1024, noverlap:int=None, verbose:bool=False, fig_size:dict=None, show_plot:bool=True):
-       """
+    """
     Create and display a spectrogram plot for an audio file using the scikit-maad package.
 
     Parameters:
