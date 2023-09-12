@@ -9,3 +9,4 @@ kaleido
 sphinx
 sphinx-rtd-theme
 sphinx_autodoc_typehints
+numpydoc
