@@ -1,5 +1,4 @@
-name: "Sphinx: Render docs"
-
+name: "Documentation"
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
@@ -8,24 +7,18 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
-
 jobs:
-  build:
+  docs:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-    - uses: actions/checkout@v3
-    - name: Build HTML
-      uses: ammaraskar/sphinx-action@master
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: html-docs
-        path: docs/build/html/
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/main'
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/build/html
+      - uses: actions/checkout@v2
+      - uses: sphinx-toolbox/sphinx-action@master
+        with:
+          pre-build-command: "pip install .[docs]"
+          docs-folder: "docs/"
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/master'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/_build/html
