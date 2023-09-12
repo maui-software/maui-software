@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>maui.visualizations.visualizations &mdash; maui-software 0.1.17 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/documentation_options.js?v=71734efd"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            maui-software
+              <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.acoustic_indices.html">Acoustic Indices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.eda.html">Exploratory data analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.io.html">Input and Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.visualizations.html">Visualizations</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">maui-software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">maui.visualizations.visualizations</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for maui.visualizations.visualizations</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
+<span class="kn">from</span> <span class="nn">plotly.subplots</span> <span class="kn">import</span> <span class="n">make_subplots</span>
+<span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
+
+<span class="kn">import</span> <span class="nn">maad</span>
+
+
+<div class="viewcode-block" id="indices_radar_plot">
+<a class="viewcode-back" href="../../../maui.visualizations.html#maui.visualizations.indices_radar_plot">[docs]</a>
+<span class="k">def</span> <span class="nf">indices_radar_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">agg_type</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">group_by</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_cols</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">fig_size</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_plot</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a radar plot to compare indices in a DataFrame.</span>
+
+<span class="sd">    This function generates a radar plot to compare multiple indices from a DataFrame.</span>
+<span class="sd">    It allows aggregating data based on specified aggregation types and grouping by</span>
+<span class="sd">    one or two columns from the DataFrame.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        The input DataFrame containing the data.</span>
+<span class="sd">    indices : list</span>
+<span class="sd">        A list of column names in the DataFrame representing the indices to be compared.</span>
+<span class="sd">    agg_type : str</span>
+<span class="sd">        The type of aggregation to be applied (&#39;mean&#39;, &#39;median&#39;, &#39;stddev&#39;, &#39;var&#39;, &#39;max&#39;, &#39;min&#39;).</span>
+<span class="sd">    group_by : list, optional</span>
+<span class="sd">        A list of one or two column names for grouping data (default is None).</span>
+<span class="sd">    max_cols : int, optional</span>
+<span class="sd">        Maximum number of columns for subplots (default is 3).</span>
+<span class="sd">    fig_size : dict, optional</span>
+<span class="sd">        A dictionary specifying the height and width of the plot (default is None).</span>
+<span class="sd">    show_plot : bool, optional</span>
+<span class="sd">        Whether to display the plot (default is True).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    plotly.graph_objs._figure.Figure</span>
+<span class="sd">        A Plotly Figure object representing the radar plot.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    AssertionError</span>
+<span class="sd">        If the arguments are not correctly specified.</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If the input data or arguments are invalid.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; data = {&#39;Category&#39;: [&#39;A&#39;, &#39;A&#39;, &#39;B&#39;, &#39;B&#39;, &#39;C&#39;, &#39;C&#39;],</span>
+<span class="sd">    ...         &#39;Index1&#39;: np.random.rand(6),</span>
+<span class="sd">    ...         &#39;Index2&#39;: np.random.rand(6),</span>
+<span class="sd">    ...         &#39;Index3&#39;: np.random.rand(6)}</span>
+<span class="sd">    &gt;&gt;&gt; df = pd.DataFrame(data)</span>
+<span class="sd">    &gt;&gt;&gt; indices_radar_plot(df, indices=[&#39;Index1&#39;, &#39;Index2&#39;], agg_type=&#39;mean&#39;, group_by=[&#39;Category&#39;], max_cols=2)</span>
+<span class="sd">    # Generates a radar plot comparing &#39;Index1&#39; and &#39;Index2&#39; aggregated by &#39;Category&#39;.</span>
+<span class="sd">    </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The &#39;agg_type&#39; argument must be one of [&#39;mean&#39;, &#39;median&#39;, &#39;stddev&#39;, &#39;var&#39;, &#39;max&#39;, &#39;min&#39;].</span>
+<span class="sd">    - The &#39;group_by&#39; argument can contain one or two columns for grouping data.</span>
+<span class="sd">    - &#39;fig_size&#39; should be a dictionary with &#39;height&#39; and &#39;width&#39; keys.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    
+    <span class="c1"># 0. Initial configuration</span>
+    <span class="c1"># 0.1. Verify if agg_type is available</span>
+    <span class="n">agg_options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;median&#39;</span><span class="p">,</span> <span class="s1">&#39;stddev&#39;</span><span class="p">,</span> <span class="s1">&#39;var&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">agg_type</span> <span class="ow">in</span> <span class="n">agg_options</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">agg_type</span><span class="si">}</span><span class="s2">&#39; is not in </span><span class="si">{</span><span class="n">agg_options</span><span class="si">}</span><span class="s2">&quot;</span>
+    
+    <span class="c1"># 0.2. Verify if group_by column is available</span>
+    <span class="k">if</span> <span class="n">group_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">group_by</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39; is not in </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">column</span><span class="si">}</span><span class="s2">&quot;</span>
+            
+        <span class="c1"># 0.2.1. Verify if there is a maximum of two categories to group by</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_by</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Sorry, the maximum categories to group by is 2&quot;</span><span class="p">)</span>
+        
+    <span class="c1"># 0.3. Verify if the select indices have been already calculated</span>
+    <span class="k">if</span> <span class="n">indices</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Sorry, the indices list must be non empty.&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&#39; is not in </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s2">. Verify if it is correctly spelled and if it have been calculated already.&quot;</span>
+        
+    <span class="c1"># 0.4. Verify if fig_size is correctly defined (has two keys, height and width)</span>
+    <span class="k">if</span> <span class="n">fig_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;height&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fig_size</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;width&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fig_size</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;fig_size must contain width and height keys.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># 0.5 Create a copy of the dataframe</span>
+    <span class="n">df_unpivot</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    
+    <span class="c1">#--------------------------------------------</span>
+
+    <span class="c1"># 1. Normalize columns to better suit the plot</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+        <span class="n">df_unpivot</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_unpivot</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">-</span><span class="n">df_unpivot</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">/</span><span class="p">(</span><span class="n">df_unpivot</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="n">df_unpivot</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+        
+    <span class="c1">#--------------------------------------------</span>
+        
+    <span class="c1"># 2. Unpivot dataframe</span>
+    <span class="n">df_unpivot</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">df_unpivot</span><span class="p">,</span> <span class="n">id_vars</span><span class="o">=</span><span class="n">group_by</span><span class="p">,</span> <span class="n">value_vars</span><span class="o">=</span><span class="n">indices</span><span class="p">)</span>
+    
+    <span class="c1">#--------------------------------------------</span>
+        
+    <span class="c1"># 3. Aggregate data</span>
+    <span class="n">gb_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">group_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">group_by</span><span class="p">:</span> <span class="n">gb_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">agg_type</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+        <span class="n">df_unpivot</span> <span class="o">=</span> <span class="n">df_unpivot</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">gb_cols</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">agg_type</span> <span class="o">==</span> <span class="s1">&#39;median&#39;</span><span class="p">:</span>
+        <span class="n">df_unpivot</span> <span class="o">=</span> <span class="n">df_unpivot</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">gb_cols</span><span class="p">)</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">agg_type</span> <span class="o">==</span> <span class="s1">&#39;stddev&#39;</span><span class="p">:</span>
+        <span class="n">df_unpivot</span> <span class="o">=</span> <span class="n">df_unpivot</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">gb_cols</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">agg_type</span> <span class="o">==</span> <span class="s1">&#39;var&#39;</span><span class="p">:</span>
+        <span class="n">df_unpivot</span> <span class="o">=</span> <span class="n">df_unpivot</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">gb_cols</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">agg_type</span> <span class="o">==</span> <span class="s1">&#39;max&#39;</span><span class="p">:</span>
+        <span class="n">df_unpivot</span> <span class="o">=</span> <span class="n">df_unpivot</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">gb_cols</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">agg_type</span> <span class="o">==</span> <span class="s1">&#39;min&#39;</span><span class="p">:</span>
+        <span class="n">df_unpivot</span> <span class="o">=</span> <span class="n">df_unpivot</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">gb_cols</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    
+    <span class="n">df_unpivot</span> <span class="o">=</span> <span class="n">df_unpivot</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;variable&#39;</span><span class="p">:</span> <span class="s1">&#39;index&#39;</span><span class="p">})</span>
+    
+    <span class="c1">#--------------------------------------------</span>
+        
+    <span class="c1"># 4. Plot data</span>
+    
+    <span class="n">n_cols</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">n_rows</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">group_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_by</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">n_cols</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">unique</span><span class="p">())),</span> <span class="n">max_cols</span><span class="p">)</span>
+        <span class="n">n_rows</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">unique</span><span class="p">()))</span> <span class="o">/</span> <span class="n">max_cols</span><span class="p">)</span> 
+        
+        
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">make_subplots</span><span class="p">(</span>
+            <span class="n">rows</span><span class="o">=</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">n_cols</span><span class="p">,</span> 
+            <span class="n">specs</span><span class="o">=</span><span class="p">[[{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;polar&#39;</span><span class="p">}]</span><span class="o">*</span><span class="n">n_cols</span><span class="p">]</span><span class="o">*</span><span class="n">n_rows</span><span class="p">,</span>
+            <span class="n">subplot_titles</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39; &#39;</span><span class="p">]</span><span class="o">*</span><span class="n">n_cols</span><span class="o">*</span><span class="n">n_rows</span>
+        <span class="p">)</span>
+    
+    <span class="n">col</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">showlegend</span> <span class="o">=</span> <span class="kc">True</span>
+    
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">qualitative</span><span class="o">.</span><span class="n">Plotly</span>
+    
+    <span class="c1"># se não for agrupar    </span>
+    <span class="k">if</span> <span class="n">group_by</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df_tmp</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">df_unpivot</span><span class="p">)</span>
+            
+            <span class="n">r</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_tmp</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_tmp</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">])</span>
+            <span class="n">theta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            
+            <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span> <span class="n">go</span><span class="o">.</span><span class="n">Scatterpolar</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">),</span> 
+                          <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_by</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="n">lables_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="n">lables_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lables_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">):</span>  <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;There are more categories than available color, some categories may use the same color&quot;</span><span class="p">)</span>
+            
+        <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">category</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">unique</span><span class="p">())):</span> 
+
+
+            <span class="n">df_tmp</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">df_unpivot</span><span class="p">[</span><span class="n">df_unpivot</span><span class="p">[</span><span class="n">group_by</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">==</span> <span class="n">category</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_by</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_tmp</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+                <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">theta</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_tmp</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">])</span>
+                <span class="n">theta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                
+                <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span> <span class="n">go</span><span class="o">.</span><span class="n">Scatterpolar</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="n">category</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">legendgroup</span><span class="o">=</span><span class="n">category</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="n">showlegend</span><span class="p">),</span> 
+                              <span class="n">row</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">lables_list</span><span class="p">:</span> <span class="n">lables_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lables_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="n">showlegend</span> <span class="o">=</span> <span class="kc">False</span>
+                    
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">filter_col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">unique</span><span class="p">())):</span>
+
+                    <span class="n">df_tmp_final</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">df_tmp</span><span class="p">[</span><span class="n">df_tmp</span><span class="p">[</span><span class="n">group_by</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">==</span> <span class="n">filter_col</span><span class="p">])</span>
+                    
+        
+                    <span class="n">r</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_tmp_final</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="n">theta</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_tmp_final</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">])</span>
+                        <span class="n">theta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+                        <span class="k">if</span> <span class="n">filter_col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lables_list</span><span class="p">:</span> <span class="n">showlegend</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">else</span><span class="p">:</span> 
+                            <span class="n">lables_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filter_col</span><span class="p">)</span>
+                            <span class="n">showlegend</span> <span class="o">=</span> <span class="kc">True</span>
+                            
+                        
+                        <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span> <span class="n">go</span><span class="o">.</span><span class="n">Scatterpolar</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="n">filter_col</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">legendgroup</span><span class="o">=</span><span class="n">filter_col</span><span class="p">,</span> 
+                                                       <span class="n">showlegend</span><span class="o">=</span><span class="n">showlegend</span><span class="p">,</span> <span class="n">line_color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">j</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)]),</span> 
+                                      <span class="n">row</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>   
+                        <span class="n">fig</span><span class="o">.</span><span class="n">update_polars</span><span class="p">(</span><span class="n">radialaxis_showticklabels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                            
+                <span class="n">fig</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="n">ind</span><span class="p">][</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">category</span>
+                <span class="n">fig</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="n">ind</span><span class="p">][</span><span class="s1">&#39;yshift&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">25</span>
+                
+                <span class="k">if</span> <span class="n">col</span> <span class="o">&gt;=</span> <span class="n">max_cols</span><span class="p">:</span>
+                    <span class="n">col</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">row</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">col</span> <span class="o">+=</span> <span class="mi">1</span>
+                    
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;Radar Plot - Comparisson between indices&#39;&#39;&#39;</span><span class="p">,</span>
+        <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span>
+    <span class="p">)</span>
+    
+    <span class="n">fig</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">autosize</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">fig_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">fig_size</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="n">fig_size</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">])</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">polar</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">radialaxis</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">showticklabels</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)))</span>
+    
+    <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+    
+<span class="c1"># --------------------------------------------------------------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="indices_histogram_plot">
+<a class="viewcode-back" href="../../../maui.visualizations.html#maui.visualizations.indices_histogram_plot">[docs]</a>
+<span class="k">def</span> <span class="nf">indices_histogram_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">group_by</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_cols</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">fig_size</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_plot</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create histogram plots to visualize the distribution of indices in a DataFrame.</span>
+
+<span class="sd">    This function generates histogram plots to visualize the distribution of one</span>
+<span class="sd">    or more indices from a DataFrame. It provides the option to group data by a</span>
+<span class="sd">    single category column.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        The input DataFrame containing the data.</span>
+<span class="sd">    indices : list</span>
+<span class="sd">        A list of column names in the DataFrame representing the indices to be plotted.</span>
+<span class="sd">    group_by : str, optional</span>
+<span class="sd">        A column name for grouping data (default is None).</span>
+<span class="sd">    max_cols : int, optional</span>
+<span class="sd">        Maximum number of columns for subplots (default is 3).</span>
+<span class="sd">    fig_size : dict, optional</span>
+<span class="sd">        A dictionary specifying the height and width of the plot (default is None).</span>
+<span class="sd">    show_plot : bool, optional</span>
+<span class="sd">        Whether to display the plot (default is True).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    plotly.graph_objs._figure.Figure</span>
+<span class="sd">        A Plotly Figure object representing the histogram plot.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    AssertionError</span>
+<span class="sd">        If the arguments are not correctly specified.</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If the input data or arguments are invalid.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; data = {&#39;Category&#39;: [&#39;A&#39;, &#39;A&#39;, &#39;B&#39;, &#39;B&#39;, &#39;C&#39;, &#39;C&#39;],</span>
+<span class="sd">    ...         &#39;Index1&#39;: np.random.rand(6),</span>
+<span class="sd">    ...         &#39;Index2&#39;: np.random.rand(6),</span>
+<span class="sd">    ...         &#39;Index3&#39;: np.random.rand(6)}</span>
+<span class="sd">    &gt;&gt;&gt; df = pd.DataFrame(data)</span>
+<span class="sd">    &gt;&gt;&gt; indices_histogram_plot(df, indices=[&#39;Index1&#39;, &#39;Index2&#39;], group_by=&#39;Category&#39;, max_cols=2)</span>
+<span class="sd">    # Generates histogram plots for &#39;Index1&#39; and &#39;Index2&#39; grouped by &#39;Category&#39;.</span>
+<span class="sd">    </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The &#39;group_by&#39; argument is optional, but if provided, only one index can be plotted.</span>
+<span class="sd">    - &#39;fig_size&#39; should be a dictionary with &#39;height&#39; and &#39;width&#39; keys.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    
+    <span class="c1"># 0. Initial configuration</span>
+    <span class="c1"># 0.1. Verify if group_by column is available</span>
+    <span class="k">if</span> <span class="n">group_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">group_by</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">group_by</span><span class="si">}</span><span class="s2">&#39; is not in </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">column</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Sorry, to group by some category, only one index is supported.&quot;</span><span class="p">)</span>
+        
+            
+        
+    <span class="c1"># 0.2. Verify if the select indices have been already calculated</span>
+    <span class="k">if</span> <span class="n">indices</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Sorry, the indices list must be non empty.&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&#39; is not in </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s2">. Verify if it is correctly spelled and if it have been calculated already.&quot;</span>
+        
+    <span class="c1"># 0.3. Verify if fig_size is correctly defined (has two keys, height and width)</span>
+    <span class="k">if</span> <span class="n">fig_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;height&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fig_size</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;width&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fig_size</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;fig_size must contain width and height keys.&quot;</span><span class="p">)</span>
+    
+        
+    <span class="c1">#--------------------------------------------</span>
+    
+    <span class="c1"># 1. Plot data</span>
+
+    <span class="k">if</span> <span class="n">group_by</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n_cols</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">),</span> <span class="n">max_cols</span><span class="p">)</span>
+        <span class="n">n_rows</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">/</span> <span class="n">max_cols</span><span class="p">)</span> 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">n_cols</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()),</span> <span class="n">max_cols</span><span class="p">)</span>
+        <span class="n">n_rows</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">/</span> <span class="n">max_cols</span><span class="p">)</span> 
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">make_subplots</span><span class="p">(</span>
+            <span class="n">rows</span><span class="o">=</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">n_cols</span><span class="p">,</span> 
+            <span class="n">specs</span><span class="o">=</span><span class="p">[[{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;histogram&#39;</span><span class="p">}]</span><span class="o">*</span><span class="n">n_cols</span><span class="p">]</span><span class="o">*</span><span class="n">n_rows</span><span class="p">,</span>
+            <span class="n">subplot_titles</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39; &#39;</span><span class="p">]</span><span class="o">*</span><span class="n">n_cols</span><span class="o">*</span><span class="n">n_rows</span>
+        <span class="p">)</span>
+    
+    <span class="n">col</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">showlegend</span> <span class="o">=</span> <span class="kc">True</span>
+    
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">qualitative</span><span class="o">.</span><span class="n">Plotly</span>
+    <span class="k">if</span> <span class="n">group_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">lables_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+    
+    <span class="c1"># add one trace for each index</span>
+    <span class="k">if</span> <span class="n">group_by</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indices</span><span class="p">):</span>
+
+            <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span> <span class="n">go</span><span class="o">.</span><span class="n">Histogram</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="n">index</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">showlegend</span><span class="o">=</span><span class="n">showlegend</span><span class="p">),</span> 
+                                         <span class="n">row</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>   
+            <span class="n">fig</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;yshift&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">25</span>
+
+            <span class="k">if</span> <span class="n">col</span> <span class="o">&gt;=</span> <span class="n">max_cols</span><span class="p">:</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">row</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">col</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">category</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
+            <span class="n">df_index</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">]</span> <span class="o">==</span> <span class="n">category</span><span class="p">]</span>
+
+            <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span> <span class="n">go</span><span class="o">.</span><span class="n">Histogram</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="n">index</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">df_index</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">showlegend</span><span class="o">=</span><span class="n">showlegend</span><span class="p">),</span> 
+                                         <span class="n">row</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>   
+            <span class="n">fig</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">category</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;yshift&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">25</span>
+
+            <span class="k">if</span> <span class="n">col</span> <span class="o">&gt;=</span> <span class="n">max_cols</span><span class="p">:</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">row</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">col</span> <span class="o">+=</span> <span class="mi">1</span>
+    
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;Histogram Plot - Distribution of selected indices&#39;&#39;&#39;</span><span class="p">,</span>
+        <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span>
+    <span class="p">)</span>
+        
+        
+    <span class="n">fig</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">autosize</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">fig_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">fig_size</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="n">fig_size</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">])</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">polar</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">radialaxis</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">showticklabels</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)))</span>
+    
+    <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+        
+<span class="c1"># --------------------------------------------------------------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="indices_violin_plot">
+<a class="viewcode-back" href="../../../maui.visualizations.html#maui.visualizations.indices_violin_plot">[docs]</a>
+<span class="k">def</span> <span class="nf">indices_violin_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">group_by</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fig_size</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_plot</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create violin plots to visualize the distribution of indices in a DataFrame.</span>
+
+<span class="sd">    This function generates violin plots to visualize the distribution of one or</span>
+<span class="sd">    more indices from a DataFrame. It provides the option to group data by a single</span>
+<span class="sd">    category column.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        The input DataFrame containing the data.</span>
+<span class="sd">    indices : list</span>
+<span class="sd">        A list of column names in the DataFrame representing the indices to be plotted.</span>
+<span class="sd">    group_by : str, optional</span>
+<span class="sd">        A column name for grouping data (default is None).</span>
+<span class="sd">    fig_size : dict, optional</span>
+<span class="sd">        A dictionary specifying the height and width of the plot (default is None).</span>
+<span class="sd">    show_plot : bool, optional</span>
+<span class="sd">        Whether to display the plot (default is True).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    plotly.graph_objs._figure.Figure</span>
+<span class="sd">        A Plotly Figure object representing the violin plot.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    AssertionError</span>
+<span class="sd">        If the arguments are not correctly specified.</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If the input data or arguments are invalid.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; data = {&#39;Category&#39;: [&#39;A&#39;, &#39;A&#39;, &#39;B&#39;, &#39;B&#39;, &#39;C&#39;, &#39;C&#39;],</span>
+<span class="sd">    ...         &#39;Index1&#39;: np.random.rand(6),</span>
+<span class="sd">    ...         &#39;Index2&#39;: np.random.rand(6),</span>
+<span class="sd">    ...         &#39;Index3&#39;: np.random.rand(6)}</span>
+<span class="sd">    &gt;&gt;&gt; df = pd.DataFrame(data)</span>
+<span class="sd">    &gt;&gt;&gt; indices_violin_plot(df, indices=[&#39;Index1&#39;, &#39;Index2&#39;], group_by=&#39;Category&#39;)</span>
+<span class="sd">    # Generates violin plots for &#39;Index1&#39; and &#39;Index2&#39; grouped by &#39;Category&#39;.</span>
+<span class="sd">    </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The &#39;group_by&#39; argument is optional and allows grouping data by a single category column.</span>
+<span class="sd">    - &#39;fig_size&#39; should be a dictionary with &#39;height&#39; and &#39;width&#39; keys.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># 0. Initial configuration</span>
+    <span class="c1"># 0.1. Verify if group_by column is available</span>
+    <span class="k">if</span> <span class="n">group_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">group_by</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">group_by</span><span class="si">}</span><span class="s2">&#39; is not in </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s2">&quot;</span>
+        
+
+    <span class="c1"># 0.2. Verify if the select indices have been already calculated</span>
+    <span class="k">if</span> <span class="n">indices</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Sorry, the indices list must be non empty.&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&#39; is not in </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s2">. Verify if it is correctly spelled and if it have been calculated already.&quot;</span>
+        
+    <span class="c1"># 0.4. Verify if fig_size is correctly defined (has two keys, height and width)</span>
+    <span class="k">if</span> <span class="n">fig_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;height&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fig_size</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;width&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fig_size</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;fig_size must contain width and height keys.&quot;</span><span class="p">)</span>
+    
+    
+    <span class="c1">#--------------------------------------------</span>
+    <span class="c1"># 2. Plot data</span>
+    
+    <span class="n">n_cols</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">n_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">make_subplots</span><span class="p">(</span>
+            <span class="n">rows</span><span class="o">=</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">n_cols</span><span class="p">,</span> 
+            <span class="n">specs</span><span class="o">=</span><span class="p">[[{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;histogram&#39;</span><span class="p">}]</span><span class="o">*</span><span class="n">n_cols</span><span class="p">]</span><span class="o">*</span><span class="n">n_rows</span><span class="p">,</span>
+            <span class="n">subplot_titles</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39; &#39;</span><span class="p">]</span><span class="o">*</span><span class="n">n_cols</span><span class="o">*</span><span class="n">n_rows</span>
+        <span class="p">)</span>
+    
+    <span class="n">showlegend</span> <span class="o">=</span> <span class="kc">True</span>
+    
+    <span class="n">violin_width</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">fig_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">group_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">violin_width</span> <span class="o">=</span> <span class="p">(</span><span class="n">fig_size</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()))))</span> <span class="o">/</span> <span class="n">fig_size</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">fig_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">group_by</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">violin_width</span> <span class="o">=</span> <span class="mf">0.3</span>
+        
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">qualitative</span><span class="o">.</span><span class="n">Plotly</span>
+    
+    <span class="k">if</span> <span class="n">group_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+        <span class="n">lables_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+        <span class="n">categories</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lables_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">):</span>  <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;There are more categories than available color, some categories may use the same color&quot;</span><span class="p">)</span>
+        
+    
+    <span class="c1"># add one trace for each index</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indices</span><span class="p">):</span>
+        
+        <span class="k">if</span> <span class="n">group_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>           
+            
+            
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">lab</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">categories</span><span class="p">):</span>
+        
+                <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Violin</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">][</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">]</span> <span class="o">==</span> <span class="n">lab</span><span class="p">],</span>
+                                        <span class="n">y</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="n">df</span><span class="p">[</span><span class="n">group_by</span><span class="p">]</span> <span class="o">==</span> <span class="n">lab</span><span class="p">],</span>
+                                        <span class="n">name</span><span class="o">=</span><span class="n">lab</span><span class="p">,</span>
+                                        <span class="n">box_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                        <span class="n">meanline_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                        <span class="n">points</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span>
+                                        <span class="n">scalemode</span><span class="o">=</span><span class="s1">&#39;width&#39;</span><span class="p">,</span>
+                                        <span class="n">width</span><span class="o">=</span><span class="n">violin_width</span><span class="p">,</span>
+                                        <span class="n">legendgroup</span><span class="o">=</span><span class="n">lab</span><span class="p">,</span>
+                                        <span class="n">showlegend</span><span class="o">=</span><span class="n">showlegend</span><span class="p">,</span>
+                                        <span class="n">marker_color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">j</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)],</span>
+                                        <span class="n">line_color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">j</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)]</span>
+                                       <span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            
+                <span class="k">if</span> <span class="n">lab</span> <span class="ow">in</span> <span class="n">lables_list</span><span class="p">:</span> <span class="n">lables_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">lab</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lables_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="n">showlegend</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Violin</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
+                                    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                    <span class="n">box_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">meanline_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">points</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span>
+                                    <span class="n">scalemode</span><span class="o">=</span><span class="s1">&#39;width&#39;</span><span class="p">,</span>
+                                    <span class="n">width</span><span class="o">=</span><span class="n">violin_width</span><span class="p">,</span>
+                                    <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span>
+                                   <span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            
+        <span class="n">fig</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;yshift&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">25</span>
+        
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;Violin Plot - Distribution of selected indices&#39;&#39;&#39;</span><span class="p">,</span>
+        <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span>
+    <span class="p">)</span>
+
+        
+        
+    <span class="n">fig</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">autosize</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">fig_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">fig_size</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="n">fig_size</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">])</span>
+        
+    <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+        
+<span class="c1"># --------------------------------------------------------------------------------------------------------------------------------</span>
+    
+<div class="viewcode-block" id="spectrogram_plot">
+<a class="viewcode-back" href="../../../maui.visualizations.html#maui.visualizations.spectrogram_plot">[docs]</a>
+<span class="k">def</span> <span class="nf">spectrogram_plot</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;hann&#39;</span><span class="p">,</span> <span class="n">nperseg</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">noverlap</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fig_size</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_plot</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a spectrogram plot from an audio file.</span>
+
+<span class="sd">    This function loads an audio file, computes its spectrogram, and generates a</span>
+<span class="sd">    heatmap plot to visualize the frequency content over time.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file_path : str</span>
+<span class="sd">        The path to the audio file.</span>
+<span class="sd">    mode : str, optional</span>
+<span class="sd">        The spectrogram mode (&#39;psd&#39;, &#39;mean&#39;, &#39;complex&#39;). Default is None.</span>
+<span class="sd">    window : str, optional</span>
+<span class="sd">        The window function to be used for the spectrogram calculation. Default is &#39;hann&#39;.</span>
+<span class="sd">    nperseg : int, optional</span>
+<span class="sd">        The number of data points used in each block for the FFT. Default is 1024.</span>
+<span class="sd">    noverlap : int, optional</span>
+<span class="sd">        The number of points of overlap between blocks. Default is None.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Whether to display verbose information during computation. Default is False.</span>
+<span class="sd">    fig_size : dict, optional</span>
+<span class="sd">        A dictionary specifying the height and width of the plot. Default is None.</span>
+<span class="sd">    show_plot : bool, optional</span>
+<span class="sd">        Whether to display the plot. Default is True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    plotly.graph_objs._figure.Figure</span>
+<span class="sd">        A Plotly Figure object representing the spectrogram plot.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    AssertionError</span>
+<span class="sd">        If the arguments are not correctly specified.</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If there are errors in the file loading or spectrogram computation.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; spectrogram_plot(&#39;audio.wav&#39;, mode=&#39;psd&#39;, window=&#39;hann&#39;, nperseg=1024, fig_size={&#39;height&#39;: 500, &#39;width&#39;: 1200})</span>
+<span class="sd">    # Generates a spectrogram plot from the &#39;audio.wav&#39; file in PSD mode.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The &#39;mode&#39; parameter specifies the type of spectrogram to be computed: Power Spectral Density (&#39;psd&#39;),</span>
+<span class="sd">      Amplitude Spectrogram (&#39;amplitude&#39;), or Complex Spectrogram (&#39;complex&#39;).</span>
+<span class="sd">    - &#39;fig_size&#39; should be a dictionary with &#39;height&#39; and &#39;width&#39; keys.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># 0. Validations</span>
+    <span class="c1"># 0.1. available modes </span>
+    <span class="n">mode_options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;psd&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;complex&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">mode</span> <span class="ow">in</span> <span class="n">mode_options</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&#39; is not in </span><span class="si">{</span><span class="n">mode_options</span><span class="si">}</span><span class="s2">&quot;</span>
+    
+    <span class="c1"># 0.2. Verify if fig_size is correctly defined (has two keys, height and width)</span>
+    <span class="k">if</span> <span class="n">fig_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;height&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fig_size</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;width&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fig_size</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;fig_size must contain width and height keys.&quot;</span><span class="p">)</span>
+    
+    <span class="c1">#--------------------------------------------</span>
+    
+    <span class="c1"># 1. Load file</span>
+    <span class="n">s</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    
+    <span class="c1"># 2. Calculate spectrogram</span>
+    <span class="n">Sxx</span><span class="p">,</span><span class="n">tn</span><span class="p">,</span><span class="n">fn</span><span class="p">,</span><span class="n">ext</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">spectrogram</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">nperseg</span><span class="o">=</span><span class="n">nperseg</span><span class="p">,</span> <span class="n">noverlap</span><span class="o">=</span><span class="n">noverlap</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">)</span> 
+    
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;psd&#39;</span><span class="p">:</span>
+        <span class="n">Sxx_disp</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">power2dB</span><span class="p">(</span><span class="n">Sxx</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;amplitude&#39;</span><span class="p">:</span>
+        <span class="n">Sxx_disp</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">amplitude2dB</span><span class="p">(</span><span class="n">Sxx</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;complex&#39;</span><span class="p">:</span>
+        <span class="n">Sxx_disp</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">amplitude2dB</span><span class="p">(</span><span class="n">Sxx</span><span class="p">)</span>
+    
+    <span class="n">fig_size</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;height&#39;</span><span class="p">:</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;width&#39;</span><span class="p">:</span><span class="mi">1200</span><span class="p">}</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">go</span><span class="o">.</span><span class="n">Heatmap</span><span class="p">(</span>
+            <span class="n">z</span><span class="o">=</span><span class="n">Sxx_disp</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">tn</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span>
+            <span class="n">colorscale</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span>
+            <span class="n">hoverinfo</span><span class="o">=</span><span class="kc">None</span>
+          <span class="p">))</span>
+    
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;Spectrogram generate from the file </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;&#39;&#39;</span><span class="p">,</span>
+        <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span>
+    <span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">fig_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">fig_size</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="n">fig_size</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">])</span>
+            
+    <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+    
+    
+    
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Caio Ferreira Bernardo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

@@ -401,30 +401,53 @@ def parallelize_dataframe(df, func, args, num_cores):
 
 def calculate_acoustic_indices(df_init, indices_list: list, store_df=False, base_dir=None, file_name=None, file_type=None, parallel=True):
     """
-    Calculate a set of acoustic indices for an audio dataset and store the results in a DataFrame.
+    Calculate a set of acoustic indices for audio files and optionally store the results.
 
-    Parameters:
-    - indices_list (list): A list of acoustic indices to calculate.
-    - df_init (pd.DataFrame): The input DataFrame containing information about audio files.
-    - parallel (bool, optional): If True, calculate indices in parallel using multiprocessing. Default is False.
-    - store_df (bool, optional): If True, store the resulting DataFrame to a file. Default is False.
-    - file_type (str, optional): The file type to use when storing the DataFrame (e.g., 'csv', 'hdf5'). Default is None.
-    - base_dir (str, optional): The base directory where the stored DataFrame file should be located. Default is None.
-    - file_name (str, optional): The name of the stored DataFrame file. Default is None.
+    This function calculates a set of specified acoustic indices for audio files in the input DataFrame. The supported
+    indices include median_amplitude_envelope, temporal_entropy, acoustic_richness, and others. The calculated indices
+    are added as columns to the DataFrame, and the resulting DataFrame is returned. If the 'store_df' parameter is set
+    to True, the DataFrame can be saved to a file.
 
-    Returns:
-    - df_processed (pd.DataFrame): A DataFrame containing calculated acoustic indices.
+    Parameters
+    ----------
+    df_init : pd.DataFrame
+        The DataFrame containing audio file data with a 'file_path' column specifying the path to each audio file.
+    indices_list : List[str]
+        A list of acoustic indices to calculate.
+    store_df : bool, optional
+        Whether to store the resulting DataFrame to a file. Default is False.
+    base_dir : str, optional
+        The base directory where the output file will be saved. Required if 'store_df' is True.
+    file_name : str, optional
+        The name of the output file to save the DataFrame. Required if 'store_df' is True.
+    file_type : str, optional
+        The file format for saving the DataFrame, e.g., 'csv', 'xlsx'. Required if 'store_df' is True.
+    parallel : bool, optional
+        Whether to use parallel processing for calculating indices. Default is True.
 
-    Raises:
-    - Exception: If the provided indices_list contains indices that are not in the available_indices list.
-    - Exception: If the input DataFrame df_init does not contain the necessary 'file_path' column.
+    Returns
+    -------
+    pd.DataFrame
+        The DataFrame containing the calculated acoustic indices.
 
-    Example usage:
-    ```
-    indices_list = ['median_amplitude_envelope', 'temporal_entropy']
-    df = pd.DataFrame({'file_path': ['audio1.wav', 'audio2.wav']})
-    result_df = calculate_acoustic_indices(indices_list, df, parallel=True, store_df=True, file_type='csv', base_dir='output', file_name='acoustic_indices.csv')
-    ```
+    Raises
+    ------
+    Exception
+        If the selected indices are not available or if the DataFrame is missing the 'file_path' column.
+
+    Example
+    -------
+    >>> import pandas as pd
+    >>> df = pd.read_csv('audio_data.csv')
+    >>> indices_list = ['median_amplitude_envelope', 'temporal_entropy']
+    >>> result_df = calculate_acoustic_indices(df, indices_list, store_df=True, base_dir='output', file_name='indices_result.csv', file_type='csv', parallel=True)
+
+    Notes
+    -----
+    - The function calculates a specified set of acoustic indices for each audio file in the DataFrame.
+    - The 'indices_list' parameter should contain a list of available indices to be calculated.
+    - The 'store_df', 'base_dir', 'file_name', and 'file_type' parameters control whether and where to save the resulting DataFrame.
+    - If parallel processing is enabled ('parallel' is True), the function will use multiple CPU cores for faster calculations.
     """
 
 
