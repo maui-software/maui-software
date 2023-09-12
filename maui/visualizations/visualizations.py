@@ -13,65 +13,60 @@ import maad
 
 def indices_radar_plot(df, indices:list, agg_type:str, group_by:list=None, max_cols:int=3, fig_size:dict=None, show_plot:bool=True):
     """
-    Create a radar plot (spider plot) comparing multiple indices from a DataFrame.
+    Create a radar plot to compare indices in a DataFrame.
 
-    Parameters:
-    -----------
-    df : pandas DataFrame
+    This function generates a radar plot to compare multiple indices from a DataFrame.
+    It allows aggregating data based on specified aggregation types and grouping by
+    one or two columns from the DataFrame.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
         The input DataFrame containing the data.
-
-    indices : list of str
-        A list of column names representing the indices to be compared.
-
+    indices : list
+        A list of column names in the DataFrame representing the indices to be compared.
     agg_type : str
-        The type of aggregation to be applied to the data. Supported options are:
-        - 'mean': Calculate the mean value for each index.
-        - 'median': Calculate the median value for each index.
-        - 'stddev': Calculate the standard deviation for each index.
-        - 'var': Calculate the variance for each index.
-        - 'max': Calculate the maximum value for each index.
-        - 'min': Calculate the minimum value for each index.
-
-    group_by : list of str, optional
-        A list of column names by which the data should be grouped. Each unique value
-        in these columns will be represented as a separate category in the radar plot.
-        Defaults to None, indicating no grouping.
-
+        The type of aggregation to be applied ('mean', 'median', 'stddev', 'var', 'max', 'min').
+    group_by : list, optional
+        A list of one or two column names for grouping data (default is None).
     max_cols : int, optional
-        The maximum number of columns for the subplots in the radar plot grid. This
-        parameter is only relevant when grouping data. Defaults to 3.
-
+        Maximum number of columns for subplots (default is 3).
     fig_size : dict, optional
-        A dictionary specifying the height and width of the radar plot figure. It
-        should have 'height' and 'width' keys. Defaults to None.
-
+        A dictionary specifying the height and width of the plot (default is None).
     show_plot : bool, optional
-        Whether to display the radar plot immediately using Plotly. Defaults to True.
+        Whether to display the plot (default is True).
 
-    Returns:
-    --------
-    fig : plotly.graph_objs.Figure
-        The Plotly figure object representing the radar plot.
-
-    Raises:
+    Returns
     -------
+    plotly.graph_objs._figure.Figure
+        A Plotly Figure object representing the radar plot.
+
+    Raises
+    ------
     AssertionError
-        - If 'agg_type' is not one of the supported aggregation options.
-        - If a column specified in 'group_by' is not found in the DataFrame.
-        - If 'indices' is empty or contains indices not present in the DataFrame.
-        - If 'fig_size' dictionary is missing 'height' or 'width' keys.
-
+        If the arguments are not correctly specified.
     Exception
-        - If the maximum number of categories to group by exceeds 2.
+        If the input data or arguments are invalid.
 
-    Warning
-        - If there are more unique categories in 'group_by' than available colors.
-
-    Example:
+    Examples
     --------
-    # Create a radar plot comparing 'index1' and 'index2' aggregated by 'category'
-    fig = indices_radar_plot(data_df, ['index1', 'index2'], 'mean', group_by=['category'])
+    >>> import pandas as pd
+    >>> import numpy as np
+    >>> data = {'Category': ['A', 'A', 'B', 'B', 'C', 'C'],
+    ...         'Index1': np.random.rand(6),
+    ...         'Index2': np.random.rand(6),
+    ...         'Index3': np.random.rand(6)}
+    >>> df = pd.DataFrame(data)
+    >>> indices_radar_plot(df, indices=['Index1', 'Index2'], agg_type='mean', group_by=['Category'], max_cols=2)
+    # Generates a radar plot comparing 'Index1' and 'Index2' aggregated by 'Category'.
+    
+    Notes
+    -----
+    - The 'agg_type' argument must be one of ['mean', 'median', 'stddev', 'var', 'max', 'min'].
+    - The 'group_by' argument can contain one or two columns for grouping data.
+    - 'fig_size' should be a dictionary with 'height' and 'width' keys.
     """
+    
     
     # 0. Initial configuration
     # 0.1. Verify if agg_type is available
@@ -241,54 +236,55 @@ def indices_radar_plot(df, indices:list, agg_type:str, group_by:list=None, max_c
 
 def indices_histogram_plot(df, indices:list, group_by:str=None, max_cols:int=3, fig_size:dict=None, show_plot:bool=True):
     """
-    Create a histogram plot comparing the distribution of selected indices in a DataFrame.
+    Create histogram plots to visualize the distribution of indices in a DataFrame.
 
-    Parameters:
-    -----------
-    df : pandas DataFrame
+    This function generates histogram plots to visualize the distribution of one
+    or more indices from a DataFrame. It provides the option to group data by a
+    single category column.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
         The input DataFrame containing the data.
-
-    indices : list of str
-        A list of column names representing the indices to be compared.
-
+    indices : list
+        A list of column names in the DataFrame representing the indices to be plotted.
     group_by : str, optional
-        A column name by which the data should be grouped. Each unique value in this
-        column will be represented as a separate category in the histogram plot.
-        Defaults to None, indicating no grouping.
-
+        A column name for grouping data (default is None).
     max_cols : int, optional
-        The maximum number of columns for the subplots in the histogram plot grid.
-        Defaults to 3.
-
+        Maximum number of columns for subplots (default is 3).
     fig_size : dict, optional
-        A dictionary specifying the height and width of the histogram plot figure. It
-        should have 'height' and 'width' keys. Defaults to None.
-
+        A dictionary specifying the height and width of the plot (default is None).
     show_plot : bool, optional
-        Whether to display the histogram plot immediately using Plotly. Defaults to True.
+        Whether to display the plot (default is True).
 
-    Returns:
-    --------
-    fig : plotly.graph_objs.Figure
-        The Plotly figure object representing the histogram plot.
-
-    Raises:
+    Returns
     -------
+    plotly.graph_objs._figure.Figure
+        A Plotly Figure object representing the histogram plot.
+
+    Raises
+    ------
     AssertionError
-        - If 'group_by' is specified, but the column is not found in the DataFrame.
-        - If 'indices' is empty or contains indices not present in the DataFrame.
-        - If 'fig_size' dictionary is missing 'height' or 'width' keys.
-
+        If the arguments are not correctly specified.
     Exception
-        - If 'group_by' is specified, but more than one index is provided for comparison.
+        If the input data or arguments are invalid.
 
-    Example:
+    Examples
     --------
-    # Create a histogram plot for the distribution of 'index1'
-    fig = indices_histogram_plot(data_df, ['index1'])
-
-    # Create a grouped histogram plot for the distribution of 'index2' by 'category'
-    fig = indices_histogram_plot(data_df, ['index2'], group_by='category')
+    >>> import pandas as pd
+    >>> import numpy as np
+    >>> data = {'Category': ['A', 'A', 'B', 'B', 'C', 'C'],
+    ...         'Index1': np.random.rand(6),
+    ...         'Index2': np.random.rand(6),
+    ...         'Index3': np.random.rand(6)}
+    >>> df = pd.DataFrame(data)
+    >>> indices_histogram_plot(df, indices=['Index1', 'Index2'], group_by='Category', max_cols=2)
+    # Generates histogram plots for 'Index1' and 'Index2' grouped by 'Category'.
+    
+    Notes
+    -----
+    - The 'group_by' argument is optional, but if provided, only one index can be plotted.
+    - 'fig_size' should be a dictionary with 'height' and 'width' keys.
     """
 
     
@@ -382,49 +378,54 @@ def indices_histogram_plot(df, indices:list, group_by:str=None, max_cols:int=3, 
 
 def indices_violin_plot(df, indices:list, group_by:str=None, fig_size:dict=None, show_plot:bool=True):
     """
-    Create a violin plot comparing the distribution of selected indices in a DataFrame.
+    Create violin plots to visualize the distribution of indices in a DataFrame.
 
-    Parameters:
-    -----------
-    df : pandas DataFrame
+    This function generates violin plots to visualize the distribution of one or
+    more indices from a DataFrame. It provides the option to group data by a single
+    category column.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
         The input DataFrame containing the data.
-
-    indices : list of str
-        A list of column names representing the indices to be compared.
-
+    indices : list
+        A list of column names in the DataFrame representing the indices to be plotted.
     group_by : str, optional
-        A column name by which the data should be grouped. Each unique value in this
-        column will be represented as a separate category in the violin plot.
-        Defaults to None, indicating no grouping.
-
+        A column name for grouping data (default is None).
     fig_size : dict, optional
-        A dictionary specifying the height and width of the violin plot figure. It
-        should have 'height' and 'width' keys. Defaults to None.
-
+        A dictionary specifying the height and width of the plot (default is None).
     show_plot : bool, optional
-        Whether to display the violin plot immediately using Plotly. Defaults to True.
+        Whether to display the plot (default is True).
 
-    Returns:
-    --------
-    fig : plotly.graph_objs.Figure
-        The Plotly figure object representing the violin plot.
-
-    Raises:
+    Returns
     -------
+    plotly.graph_objs._figure.Figure
+        A Plotly Figure object representing the violin plot.
+
+    Raises
+    ------
     AssertionError
-        - If 'group_by' is specified, but the column is not found in the DataFrame.
-        - If 'indices' is empty or contains indices not present in the DataFrame.
-        - If 'fig_size' dictionary is missing 'height' or 'width' keys.
+        If the arguments are not correctly specified.
+    Exception
+        If the input data or arguments are invalid.
 
-    Example:
+    Examples
     --------
-    # Create a violin plot for the distribution of 'index1'
-    fig = indices_violin_plot(data_df, ['index1'])
-
-    # Create a grouped violin plot for the distribution of 'index2' by 'category'
-    fig = indices_violin_plot(data_df, ['index2'], group_by='category')
+    >>> import pandas as pd
+    >>> import numpy as np
+    >>> data = {'Category': ['A', 'A', 'B', 'B', 'C', 'C'],
+    ...         'Index1': np.random.rand(6),
+    ...         'Index2': np.random.rand(6),
+    ...         'Index3': np.random.rand(6)}
+    >>> df = pd.DataFrame(data)
+    >>> indices_violin_plot(df, indices=['Index1', 'Index2'], group_by='Category')
+    # Generates violin plots for 'Index1' and 'Index2' grouped by 'Category'.
+    
+    Notes
+    -----
+    - The 'group_by' argument is optional and allows grouping data by a single category column.
+    - 'fig_size' should be a dictionary with 'height' and 'width' keys.
     """
- 
     
     # 0. Initial configuration
     # 0.1. Verify if group_by column is available
@@ -528,57 +529,52 @@ def indices_violin_plot(df, indices:list, group_by:str=None, fig_size:dict=None,
     
 def spectrogram_plot(file_path:str, mode:str=None, window:str='hann', nperseg:int=1024, noverlap:int=None, verbose:bool=False, fig_size:dict=None, show_plot:bool=True):
     """
-    Create and display a spectrogram plot for an audio file using the scikit-maad package.
+    Create a spectrogram plot from an audio file.
 
-    Parameters:
-    -----------
+    This function loads an audio file, computes its spectrogram, and generates a
+    heatmap plot to visualize the frequency content over time.
+
+    Parameters
+    ----------
     file_path : str
-        The path to the audio file to be processed.
-
+        The path to the audio file.
     mode : str, optional
-        The mode for spectrogram computation. Supported options are:
-        - 'psd': Power Spectral Density (default).
-        - 'amplitude': Amplitude.
-        - 'complex': Complex representation.
-        Defaults to 'psd'.
-
+        The spectrogram mode ('psd', 'mean', 'complex'). Default is None.
     window : str, optional
-        The window function to be applied to the signal. Defaults to 'hann'.
-
+        The window function to be used for the spectrogram calculation. Default is 'hann'.
     nperseg : int, optional
-        The number of data points used in each block for the FFT. Defaults to 1024.
-
+        The number of data points used in each block for the FFT. Default is 1024.
     noverlap : int, optional
-        The number of points of overlap between blocks. If None, 50% overlap is used by default.
-
+        The number of points of overlap between blocks. Default is None.
     verbose : bool, optional
-        Whether to display verbose output during spectrogram computation. Defaults to False.
-
+        Whether to display verbose information during computation. Default is False.
     fig_size : dict, optional
-        A dictionary specifying the height and width of the spectrogram plot figure.
-        It should have 'height' and 'width' keys. Defaults to None.
-
+        A dictionary specifying the height and width of the plot. Default is None.
     show_plot : bool, optional
-        Whether to display the spectrogram plot immediately using Plotly. Defaults to True.
+        Whether to display the plot. Default is True.
 
-    Returns:
-    --------
-    fig : plotly.graph_objs.Figure
-        The Plotly figure object representing the spectrogram plot.
-
-    Raises:
+    Returns
     -------
+    plotly.graph_objs._figure.Figure
+        A Plotly Figure object representing the spectrogram plot.
+
+    Raises
+    ------
     AssertionError
-        - If 'mode' is not one of the supported mode options.
-        - If 'fig_size' dictionary is missing 'height' or 'width' keys.
+        If the arguments are not correctly specified.
+    Exception
+        If there are errors in the file loading or spectrogram computation.
 
-    Example:
+    Examples
     --------
-    # Create a spectrogram plot for an audio file with the default settings
-    fig = spectrogram_plot("audio_file.wav")
+    >>> spectrogram_plot('audio.wav', mode='psd', window='hann', nperseg=1024, fig_size={'height': 500, 'width': 1200})
+    # Generates a spectrogram plot from the 'audio.wav' file in PSD mode.
 
-    # Create a spectrogram plot with custom parameters
-    fig = spectrogram_plot("audio_file.wav", mode='amplitude', window='hamming', nperseg=512, noverlap=256)
+    Notes
+    -----
+    - The 'mode' parameter specifies the type of spectrogram to be computed: Power Spectral Density ('psd'),
+      Amplitude Spectrogram ('amplitude'), or Complex Spectrogram ('complex').
+    - 'fig_size' should be a dictionary with 'height' and 'width' keys.
     """
     
     # 0. Validations
