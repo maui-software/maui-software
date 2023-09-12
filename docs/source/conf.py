@@ -7,7 +7,7 @@ import os
 import sys
 # sys.path.insert('/usr/lib/python3.9/lib-dynload')
 # sys.path.insert('/usr/lib/python39.zip')
-sys.path.insert(0, os.path.abspath('../../maui/'))
+sys.path.insert(0, os.path.abspath('../../'))
 
 print(sys.path)
 
