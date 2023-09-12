@@ -6,3 +6,5 @@ audioread
 numpy
 pandas
 kaleido
+sphinx
+sphinx-rtd-theme
