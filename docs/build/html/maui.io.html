@@ -4,14 +4,15 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Input and Output &mdash; maui-software 0.1.17 documentation</title>
+  <title>Input and Output &mdash; maui-software 0.1.20 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/documentation_options.js?v=71734efd"></script>
+        <script src="_static/documentation_options.js?v=17aaaefc"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -33,6 +34,9 @@
             maui-software
               <img src="_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
+              <div class="version">
+                0.1.20
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -126,14 +130,15 @@ It can handle both single audio files and entire directories of audio files.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">audio_file</span> <span class="o">=</span> <span class="s2">&quot;forest_channelA_20210911_153000_jungle.wav&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">get_audio_info</span><span class="p">(</span><span class="n">audio_file</span><span class="p">,</span> <span class="n">store_duration</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">perc_sample</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">io</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">audio_file</span> <span class="o">=</span> <span class="s2">&quot;forest_channelA_20210911_153000_jungle.wav&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">io</span><span class="o">.</span><span class="n">get_audio_info</span><span class="p">(</span><span class="n">audio_file</span><span class="p">,</span> <span class="n">store_duration</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">perc_sample</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 <span class="go">   landscape   channel      date    time environment      timestamp_init timestamp_end  duration                                   file_path</span>
 <span class="go">0     forest  channelA  20210911  153000      jungle 2021-09-11 15:30:00          None       NaN  forest_channelA_20210911_153000_jungle.wav</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">audio_dir</span> <span class="o">=</span> <span class="s2">&quot;/path/to/audio/directory&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">get_audio_info</span><span class="p">(</span><span class="n">audio_dir</span><span class="p">,</span> <span class="n">store_duration</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">perc_sample</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">io</span><span class="o">.</span><span class="n">get_audio_info</span><span class="p">(</span><span class="n">audio_dir</span><span class="p">,</span> <span class="n">store_duration</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">perc_sample</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="go">   landscape   channel      date    time environment      timestamp_init          file_path</span>
 <span class="go">0     forest  channelA  20210911  153000      jungle 2021-09-11 15:30:00  /path/to/audio/directory/forest_channelA_20210911_153000_jungle.wav</span>
 <span class="go">1   mountains  channelB  20210911  160000      forest 2021-09-11 16:00:00  /path/to/audio/directory/mountains_channelB_20210911_160000_forest.wav</span>
@@ -148,6 +153,8 @@ It can handle both single audio files and entire directories of audio files.</p>
 <p>This function takes a filename and extracts relevant information from it to
 create a dictionary containing details like landscape, channel, date, time,
 and environment.</p>
+<p>The structure of the file_name should be as follows:</p>
+<p>LANDSCAPE__CHANNEL__DATE_TIME_ENVIRONMENT.wav</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -168,14 +175,15 @@ and environment.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;forest_channelA_20210911_153000_jungle.wav&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">get_file_structure_leec</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">io</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;LLEC40_0_20210911_153000_br.wav&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">io</span><span class="o">.</span><span class="n">get_file_structure_leec</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 <span class="go">{</span>
-<span class="go">    &#39;landscape&#39;: &#39;forest&#39;,</span>
-<span class="go">    &#39;channel&#39;: &#39;channelA&#39;,</span>
+<span class="go">    &#39;landscape&#39;: &#39;LLEC40&#39;,</span>
+<span class="go">    &#39;channel&#39;: &#39;0&#39;,</span>
 <span class="go">    &#39;date&#39;: &#39;20210911&#39;,</span>
 <span class="go">    &#39;time&#39;: &#39;153000&#39;,</span>
-<span class="go">    &#39;environment&#39;: &#39;jungle&#39;,</span>
+<span class="go">    &#39;environment&#39;: &#39;br&#39;,</span>
 <span class="go">    &#39;timestamp_init&#39;: datetime.datetime(2021, 9, 11, 15, 30)</span>
 <span class="go">}</span>
 </pre></div>
@@ -208,13 +216,14 @@ and environment.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]}</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">io</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">store_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">,</span> <span class="s1">&#39;/path/to/directory&#39;</span><span class="p">,</span> <span class="s1">&#39;my_dataframe&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">io</span><span class="o">.</span><span class="n">store_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">,</span> <span class="s1">&#39;/path/to/directory&#39;</span><span class="p">,</span> <span class="s1">&#39;my_dataframe&#39;</span><span class="p">)</span>
 <span class="go"># Saves the DataFrame as &#39;/path/to/directory/my_dataframe.csv&#39;</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;pickle&#39;</span><span class="p">,</span> <span class="s1">&#39;/path/to/directory&#39;</span><span class="p">,</span> <span class="s1">&#39;my_dataframe&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">io</span><span class="o">.</span><span class="n">store_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;pickle&#39;</span><span class="p">,</span> <span class="s1">&#39;/path/to/directory&#39;</span><span class="p">,</span> <span class="s1">&#39;my_dataframe&#39;</span><span class="p">)</span>
 <span class="go"># Saves the DataFrame as &#39;/path/to/directory/my_dataframe.pkl&#39;</span>
 </pre></div>
 </div>
