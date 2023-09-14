@@ -3,14 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.acoustic_indices.acoustic_indices &mdash; maui-software 0.1.17 documentation</title>
+  <title>maui.acoustic_indices.acoustic_indices &mdash; maui-software 0.1.20 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/documentation_options.js?v=71734efd"></script>
+        <script src="../../../_static/documentation_options.js?v=17aaaefc"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -30,6 +31,9 @@
             maui-software
               <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
+              <div class="version">
+                0.1.20
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -512,10 +516,10 @@
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
-<span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
-<span class="sd">    &gt;&gt;&gt; df = pd.read_csv(&#39;audio_data.csv&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples, acoustic_indices</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
 <span class="sd">    &gt;&gt;&gt; indices_list = [&#39;median_amplitude_envelope&#39;, &#39;temporal_entropy&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; result_df = calculate_acoustic_indices(df, indices_list, store_df=True, base_dir=&#39;output&#39;, file_name=&#39;indices_result.csv&#39;, file_type=&#39;csv&#39;, parallel=True)</span>
+<span class="sd">    &gt;&gt;&gt; df = acoustic_indices.calculate_acoustic_indices(df, indices_list, parallel=False)</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>

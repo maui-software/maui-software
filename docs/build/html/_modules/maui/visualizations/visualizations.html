@@ -3,14 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.visualizations.visualizations &mdash; maui-software 0.1.17 documentation</title>
+  <title>maui.visualizations.visualizations &mdash; maui-software 0.1.20 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/documentation_options.js?v=71734efd"></script>
+        <script src="../../../_static/documentation_options.js?v=17aaaefc"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -30,6 +31,9 @@
             maui-software
               <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
+              <div class="version">
+                0.1.20
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -125,14 +129,11 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
-<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">    &gt;&gt;&gt; data = {&#39;Category&#39;: [&#39;A&#39;, &#39;A&#39;, &#39;B&#39;, &#39;B&#39;, &#39;C&#39;, &#39;C&#39;],</span>
-<span class="sd">    ...         &#39;Index1&#39;: np.random.rand(6),</span>
-<span class="sd">    ...         &#39;Index2&#39;: np.random.rand(6),</span>
-<span class="sd">    ...         &#39;Index3&#39;: np.random.rand(6)}</span>
-<span class="sd">    &gt;&gt;&gt; df = pd.DataFrame(data)</span>
-<span class="sd">    &gt;&gt;&gt; indices_radar_plot(df, indices=[&#39;Index1&#39;, &#39;Index2&#39;], agg_type=&#39;mean&#39;, group_by=[&#39;Category&#39;], max_cols=2)</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples, acoustic_indices, visualizations</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
+<span class="sd">    &gt;&gt;&gt; indices_list = [&#39;median_amplitude_envelope&#39;, &#39;temporal_entropy&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; df = acoustic_indices.calculate_acoustic_indices(df, indices_list, parallel=False)</span>
+<span class="sd">    &gt;&gt;&gt; visualizations.indices_radar_plot(df, indices=[&#39;M&#39;, &#39;Ht&#39;,  &#39;AR&#39;], agg_type=&#39;mean&#39;, group_by=[&#39;environment&#39;], max_cols=3)</span>
 <span class="sd">    # Generates a radar plot comparing &#39;Index1&#39; and &#39;Index2&#39; aggregated by &#39;Category&#39;.</span>
 <span class="sd">    </span>
 <span class="sd">    Notes</span>
@@ -349,15 +350,11 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
-<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">    &gt;&gt;&gt; data = {&#39;Category&#39;: [&#39;A&#39;, &#39;A&#39;, &#39;B&#39;, &#39;B&#39;, &#39;C&#39;, &#39;C&#39;],</span>
-<span class="sd">    ...         &#39;Index1&#39;: np.random.rand(6),</span>
-<span class="sd">    ...         &#39;Index2&#39;: np.random.rand(6),</span>
-<span class="sd">    ...         &#39;Index3&#39;: np.random.rand(6)}</span>
-<span class="sd">    &gt;&gt;&gt; df = pd.DataFrame(data)</span>
-<span class="sd">    &gt;&gt;&gt; indices_histogram_plot(df, indices=[&#39;Index1&#39;, &#39;Index2&#39;], group_by=&#39;Category&#39;, max_cols=2)</span>
-<span class="sd">    # Generates histogram plots for &#39;Index1&#39; and &#39;Index2&#39; grouped by &#39;Category&#39;.</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples, acoustic_indices, visualizations</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
+<span class="sd">    &gt;&gt;&gt; indices_list = [&#39;median_amplitude_envelope&#39;, &#39;temporal_entropy&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; df = acoustic_indices.calculate_acoustic_indices(df, indices_list, parallel=False)</span>
+<span class="sd">    &gt;&gt;&gt; fig = visualizations.indices_histogram_plot(df, indices=[&#39;M&#39;, &#39;Ht&#39;,  &#39;AR&#39;], group_by=None, max_cols=3)</span>
 <span class="sd">    </span>
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -492,15 +489,11 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
-<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">    &gt;&gt;&gt; data = {&#39;Category&#39;: [&#39;A&#39;, &#39;A&#39;, &#39;B&#39;, &#39;B&#39;, &#39;C&#39;, &#39;C&#39;],</span>
-<span class="sd">    ...         &#39;Index1&#39;: np.random.rand(6),</span>
-<span class="sd">    ...         &#39;Index2&#39;: np.random.rand(6),</span>
-<span class="sd">    ...         &#39;Index3&#39;: np.random.rand(6)}</span>
-<span class="sd">    &gt;&gt;&gt; df = pd.DataFrame(data)</span>
-<span class="sd">    &gt;&gt;&gt; indices_violin_plot(df, indices=[&#39;Index1&#39;, &#39;Index2&#39;], group_by=&#39;Category&#39;)</span>
-<span class="sd">    # Generates violin plots for &#39;Index1&#39; and &#39;Index2&#39; grouped by &#39;Category&#39;.</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples, acoustic_indices, visualizations</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
+<span class="sd">    &gt;&gt;&gt; indices_list = [&#39;median_amplitude_envelope&#39;, &#39;temporal_entropy&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; df = acoustic_indices.calculate_acoustic_indices(df, indices_list, parallel=False)</span>
+<span class="sd">    &gt;&gt;&gt; fig = visualizations.indices_violin_plot(df, indices=[&#39;M&#39;, &#39;Ht&#39;,  &#39;AR&#39;], group_by=None)</span>
 <span class="sd">    </span>
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -651,8 +644,11 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; spectrogram_plot(&#39;audio.wav&#39;, mode=&#39;psd&#39;, window=&#39;hann&#39;, nperseg=1024, fig_size={&#39;height&#39;: 500, &#39;width&#39;: 1200})</span>
-<span class="sd">    # Generates a spectrogram plot from the &#39;audio.wav&#39; file in PSD mode.</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples, visualizations</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
+<span class="sd">    &gt;&gt;&gt; file_path = df.at[df.index[1],&#39;file_path&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; mode = &#39;psd&#39;</span>
+<span class="sd">    &gt;&gt;&gt;fig = visualizations.spectrogram_plot(file_path, mode=mode)</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -696,7 +692,7 @@
           <span class="p">))</span>
     
     <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
-        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;Spectrogram generate from the file </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;&#39;&#39;</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;Spectrogram generated from the file </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;&#39;&#39;</span><span class="p">,</span>
         <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span>
     <span class="p">)</span>
     

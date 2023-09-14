@@ -3,14 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.io.io &mdash; maui-software 0.1.17 documentation</title>
+  <title>maui.io.io &mdash; maui-software 0.1.20 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/documentation_options.js?v=71734efd"></script>
+        <script src="../../../_static/documentation_options.js?v=17aaaefc"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -30,6 +31,9 @@
             maui-software
               <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
+              <div class="version">
+                0.1.20
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -93,6 +97,10 @@
 <span class="sd">    create a dictionary containing details like landscape, channel, date, time,</span>
 <span class="sd">    and environment.</span>
 
+<span class="sd">    The structure of the file_name should be as follows:</span>
+
+<span class="sd">    LANDSCAPE__CHANNEL__DATE_TIME_ENVIRONMENT.wav</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">        filename:str</span>
@@ -109,14 +117,15 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; filename = &quot;forest_channelA_20210911_153000_jungle.wav&quot;</span>
-<span class="sd">        &gt;&gt;&gt; get_file_structure_leec(filename)</span>
+<span class="sd">        &gt;&gt;&gt; from maui import io</span>
+<span class="sd">        &gt;&gt;&gt; filename = &quot;LLEC40_0_20210911_153000_br.wav&quot;</span>
+<span class="sd">        &gt;&gt;&gt; io.get_file_structure_leec(filename)</span>
 <span class="sd">        {</span>
-<span class="sd">            &#39;landscape&#39;: &#39;forest&#39;,</span>
-<span class="sd">            &#39;channel&#39;: &#39;channelA&#39;,</span>
+<span class="sd">            &#39;landscape&#39;: &#39;LLEC40&#39;,</span>
+<span class="sd">            &#39;channel&#39;: &#39;0&#39;,</span>
 <span class="sd">            &#39;date&#39;: &#39;20210911&#39;,</span>
 <span class="sd">            &#39;time&#39;: &#39;153000&#39;,</span>
-<span class="sd">            &#39;environment&#39;: &#39;jungle&#39;,</span>
+<span class="sd">            &#39;environment&#39;: &#39;br&#39;,</span>
 <span class="sd">            &#39;timestamp_init&#39;: datetime.datetime(2021, 9, 11, 15, 30)</span>
 <span class="sd">        }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -176,13 +185,14 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from maui import io</span>
 <span class="sd">        &gt;&gt;&gt; audio_file = &quot;forest_channelA_20210911_153000_jungle.wav&quot;</span>
-<span class="sd">        &gt;&gt;&gt; get_audio_info(audio_file, store_duration=1, perc_sample=0.8)</span>
+<span class="sd">        &gt;&gt;&gt; io.get_audio_info(audio_file, store_duration=1, perc_sample=0.8)</span>
 <span class="sd">           landscape   channel      date    time environment      timestamp_init timestamp_end  duration                                   file_path</span>
 <span class="sd">        0     forest  channelA  20210911  153000      jungle 2021-09-11 15:30:00          None       NaN  forest_channelA_20210911_153000_jungle.wav</span>
 
 <span class="sd">        &gt;&gt;&gt; audio_dir = &quot;/path/to/audio/directory&quot;</span>
-<span class="sd">        &gt;&gt;&gt; get_audio_info(audio_dir, store_duration=0, perc_sample=0.5)</span>
+<span class="sd">        &gt;&gt;&gt; io.get_audio_info(audio_dir, store_duration=0, perc_sample=0.5)</span>
 <span class="sd">           landscape   channel      date    time environment      timestamp_init          file_path</span>
 <span class="sd">        0     forest  channelA  20210911  153000      jungle 2021-09-11 15:30:00  /path/to/audio/directory/forest_channelA_20210911_153000_jungle.wav</span>
 <span class="sd">        1   mountains  channelB  20210911  160000      forest 2021-09-11 16:00:00  /path/to/audio/directory/mountains_channelB_20210911_160000_forest.wav</span>
@@ -237,6 +247,10 @@
                 <span class="n">file_dict</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_dict_temp</span><span class="p">)</span>
         
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">file_dict</span><span class="p">)</span>
+
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp_init&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">hour</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp_init&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">time</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp_init&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span>
         
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The input must be a file or a directory&quot;</span><span class="p">)</span>
@@ -272,12 +286,13 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from maui import io</span>
 <span class="sd">        &gt;&gt;&gt; data = {&#39;A&#39;: [1, 2, 3], &#39;B&#39;: [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]}</span>
 <span class="sd">        &gt;&gt;&gt; df = pd.DataFrame(data)</span>
-<span class="sd">        &gt;&gt;&gt; store_df(df, &#39;csv&#39;, &#39;/path/to/directory&#39;, &#39;my_dataframe&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; io.store_df(df, &#39;csv&#39;, &#39;/path/to/directory&#39;, &#39;my_dataframe&#39;)</span>
 <span class="sd">        # Saves the DataFrame as &#39;/path/to/directory/my_dataframe.csv&#39;</span>
 
-<span class="sd">        &gt;&gt;&gt; store_df(df, &#39;pickle&#39;, &#39;/path/to/directory&#39;, &#39;my_dataframe&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; io.store_df(df, &#39;pickle&#39;, &#39;/path/to/directory&#39;, &#39;my_dataframe&#39;)</span>
 <span class="sd">        # Saves the DataFrame as &#39;/path/to/directory/my_dataframe.pkl&#39;</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>

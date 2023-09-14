@@ -17,7 +17,8 @@ print(sys.path)
 project = 'maui-software'
 copyright = '2023, Caio Ferreira Bernardo'
 author = 'Caio Ferreira Bernardo'
-release = '0.1.17'
+release = '0.1.20'
+version = '0.1.20'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -53,6 +54,7 @@ import sphinx_rtd_theme
 html_theme = 'sphinx_rtd_theme'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 html_logo = '../../maui/data/logo/color_logo_no_background.svg'
+html_favicon = '../../maui/data/logo/favicon.ico'
 #html_theme_options = {'logo_only': True}
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
