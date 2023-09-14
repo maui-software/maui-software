@@ -2,7 +2,7 @@
 # maui-software
 
 <div align="center">
-    <img src="maui/data/logo/color_logo_no_background.svg" alt="maui-software logo"/>
+    <img src="maui/data/logo/color_logo_no_background.png" alt="maui-software logo"/>
 </div>
 
 **maui-software** is an open-source Python package to visualize eco-acoustic data. This work intends to help ecology specialists to perform data analysis with no need to implement visualizations, enabling faster analysis.
