@@ -11,6 +11,7 @@ Subpackages
    maui.eda
    maui.io
    maui.visualizations
+   maui.samples
 
 Module contents
 ---------------

@@ -54,6 +54,7 @@
 <li class="toctree-l1"><a class="reference internal" href="maui.eda.html">Exploratory data analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maui.io.html">Input and Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maui.visualizations.html">Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maui.samples.html">Samples</a></li>
 </ul>
 
         </div>
@@ -137,6 +138,13 @@ to True, the DataFrame can be saved to a file.</p>
 <li><p>The ‘store_df’, ‘base_dir’, ‘file_name’, and ‘file_type’ parameters control whether and where to save the resulting DataFrame.</p></li>
 <li><p>If parallel processing is enabled (‘parallel’ is True), the function will use multiple CPU cores for faster calculations.</p></li>
 </ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">acoustic_indices</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indices_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;median_amplitude_envelope&#39;</span><span class="p">,</span> <span class="s1">&#39;temporal_entropy&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">acoustic_indices</span><span class="o">.</span><span class="n">calculate_acoustic_indices</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">indices_list</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>

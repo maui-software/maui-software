@@ -20,6 +20,7 @@
    maui.eda
    maui.io
    maui.visualizations
+   maui.samples
 
 Operating Systems
 =================

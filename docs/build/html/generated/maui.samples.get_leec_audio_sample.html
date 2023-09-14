@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Overview: module code &mdash; maui-software 0.1.20 documentation</title>
+  <title>maui.samples.get_leec_audio_sample &mdash; maui-software 0.1.20 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
@@ -16,7 +17,8 @@
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Samples" href="../maui.samples.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -43,12 +45,18 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../maui.acoustic_indices.html">Acoustic Indices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.eda.html">Exploratory data analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.io.html">Input and Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.visualizations.html">Visualizations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../maui.samples.html">Samples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../maui.samples.html">Samples</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">maui.samples.get_leec_audio_sample</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#maui.samples.get_leec_audio_sample"><code class="docutils literal notranslate"><span class="pre">get_leec_audio_sample()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -65,8 +73,10 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Overview: module code</li>
+          <li class="breadcrumb-item"><a href="../maui.samples.html">Samples</a></li>
+      <li class="breadcrumb-item active">maui.samples.get_leec_audio_sample</li>
       <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/generated/maui.samples.get_leec_audio_sample.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -74,17 +84,41 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>All modules for which code is available</h1>
-<ul><li><a href="maui/acoustic_indices/acoustic_indices.html">maui.acoustic_indices.acoustic_indices</a></li>
-<li><a href="maui/eda/eda.html">maui.eda.eda</a></li>
-<li><a href="maui/io/io.html">maui.io.io</a></li>
-<li><a href="maui/samples/audio_samples.html">maui.samples.audio_samples</a></li>
-<li><a href="maui/visualizations/visualizations.html">maui.visualizations.visualizations</a></li>
-</ul>
+  <section id="maui-samples-get-leec-audio-sample">
+<h1>maui.samples.get_leec_audio_sample<a class="headerlink" href="#maui-samples-get-leec-audio-sample" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="maui.samples.get_leec_audio_sample">
+<span class="sig-prename descclassname"><span class="pre">maui.samples.</span></span><span class="sig-name descname"><span class="pre">get_leec_audio_sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/samples/audio_samples.html#get_leec_audio_sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.samples.get_leec_audio_sample" title="Link to this definition">¶</a></dt>
+<dd><p>Get Leec Audio Samples available in maui.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>None</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>A DataFrame containing information about the audio samples.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>To retrieve Leec audio samples and store the information in a DataFrame, you can call this function as follows:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../maui.samples.html" class="btn btn-neutral float-left" title="Samples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 
