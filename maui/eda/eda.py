@@ -32,23 +32,24 @@ def card_summary(df, show_plot:bool=True):
 
 	Returns
 	-------
-	dict
+	card_dict : dict
 		A dictionary containing the calculated summary statistics.
-	plotly.graph_objs._figure.Figure
+	fig : plotly.graph_objs._figure.Figure
 		A Plotly Figure object representing the summary card plot.
 
 	Examples
 	--------
-	>>> import pandas as pd
-	>>> df = pd.read_csv('data.csv')
-	>>> summary, fig = card_summary(df)
+	>>> from maui import samples, eda
+	>>> df = samples.get_leec_audio_sample()
+	>>> df = io.get_audio_info(audio_dir, store_duration=1, perc_sample=0.01)
+	>>> summary, fig = eda.card_summary(df)
 	>>> print(summary)
 	{
-		'n_samples': 100,
-		'n_landscapes': 5,
-		'n_environments': 10,
-		'distinct_days': 30,
-		'total_time_duration': 150.0,
+		'n_samples': 120,
+		'n_landscapes': 6,
+		'n_environments': 3,
+		'distinct_days': 18,
+		'total_time_duration': 120.0,
 		'mean_time_duration': 1.5
 	}
 
@@ -157,9 +158,9 @@ def landscape_environment_heatmap(df, show_plot:bool=True):
 
 	Examples
 	--------
-	>>> import pandas as pd
-	>>> df = pd.read_csv('data.csv')
-	>>> heatmap_data, fig = landscape_environment_heatmap(df)
+	>>> from maui import samples, eda
+	>>> df = samples.get_leec_audio_sample()
+	>>> heatmap_data, fig = eda.landscape_environment_heatmap(df)
 
 
 	Notes
@@ -210,8 +211,7 @@ def plot_landscape_histogram(df, show_plot:bool=True):
 	--------
 	>>> import pandas as pd
 	>>> df = pd.read_csv('data.csv')
-	>>> fig = plot_landscape_histogram(df)
-	>>> fig.show()
+	>>> fig = eda.plot_landscape_histogram(df)
 
 	Notes
 	-----
@@ -250,10 +250,9 @@ def plot_landscape_duration(df, show_plot=True):
 
 	Examples
 	--------
-	>>> import pandas as pd
-	>>> df = pd.read_csv('data.csv')
-	>>> fig = plot_landscape_duration(df)
-	>>> fig.show()
+	>>> from maui import samples, eda
+	>>> df = samples.get_leec_audio_sample()
+	>>> fig = eda.plot_landscape_duration(df)
 
 	Notes
 	-----
@@ -293,10 +292,9 @@ def plot_landscape_daily_distribution(df, show_plot=True):
 
 	Examples
 	--------
-	>>> import pandas as pd
-	>>> df = pd.read_csv('data.csv')
-	>>> fig = plot_landscape_daily_distribution(df)
-	>>> fig.show()
+	>>> from maui import samples, eda
+	>>> df = samples.get_leec_audio_sample()
+	>>> fig = eda.plot_landscape_daily_distribution(df)
 
 	Notes
 	-----
@@ -337,10 +335,9 @@ def plot_environment_histogram(df, show_plot=True):
 
 	Examples
 	--------
-	>>> import pandas as pd
-	>>> df = pd.read_csv('data.csv')
-	>>> fig = plot_environment_histogram(df)
-	>>> fig.show()
+	>>> from maui import samples, eda
+	>>> df = samples.get_leec_audio_sample()
+	>>> fig = eda.plot_environment_histogram(df)
 
 	Notes
 	-----
@@ -382,10 +379,9 @@ def plot_environment_duration(df, show_plot=True):
 
 	Examples
 	--------
-	>>> import pandas as pd
-	>>> df = pd.read_csv('data.csv')
-	>>> fig = plot_environment_duration(df)
-	>>> fig.show()
+	>>> from maui import samples, eda
+	>>> df = samples.get_leec_audio_sample()
+	>>> fig = eda.plot_environment_duration(df)
 
 	Notes
 	-----
@@ -424,9 +420,9 @@ def plot_environment_daily_distribution(df, show_plot=True):
 
 	Examples
 	--------
-	>>> import pandas as pd
-	>>> df = pd.read_csv('data.csv')
-	>>> fig = plot_environment_daily_distribution(df)
+	>>> from maui import samples, eda
+	>>> df = samples.get_leec_audio_sample()
+	>>> fig = eda.plot_environment_daily_distribution(df)
 	>>> fig.show()
 
 	Notes
@@ -466,9 +462,9 @@ def plot_duration_distribution(df, show_plot=True):
 
 	Examples
 	--------
-	>>> import pandas as pd
-	>>> df = pd.read_csv('data.csv')
-	>>> fig = plot_duration_distribution(df)
+	>>> from maui import samples, eda
+	>>> df = samples.get_leec_audio_sample()
+	>>> fig = eda.plot_duration_distribution(df)
 	>>> fig.show()
 
 	Notes
@@ -569,9 +565,9 @@ def export_file_names_summary_pdf(df, file_name, analysis_title=None, width=210,
 
 	Examples
 	--------
-	>>> import pandas as pd
-	>>> df = pd.read_csv('audio_data.csv')
-	>>> export_file_names_summary_pdf(df, 'audio_summary.pdf', 'Audio Data Analysis')
+	>>> from maui import samples, eda
+	>>> df = samples.get_leec_audio_sample()
+	>>> eda.export_file_names_summary_pdf(df, 'audio_summary.pdf', 'Audio Data Analysis')
 
 	Notes
 	-----

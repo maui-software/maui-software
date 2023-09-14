@@ -18,6 +18,10 @@ def get_file_structure_leec(filename):
     create a dictionary containing details like landscape, channel, date, time,
     and environment.
 
+    The structure of the file_name should be as follows:
+
+    LANDSCAPE__CHANNEL__DATE_TIME_ENVIRONMENT.wav
+
     Parameters
     ----------
         filename:str
@@ -34,14 +38,15 @@ def get_file_structure_leec(filename):
 
     Examples
     --------
-        >>> filename = "forest_channelA_20210911_153000_jungle.wav"
-        >>> get_file_structure_leec(filename)
+        >>> from maui import io
+        >>> filename = "LLEC40_0_20210911_153000_br.wav"
+        >>> io.get_file_structure_leec(filename)
         {
-            'landscape': 'forest',
-            'channel': 'channelA',
+            'landscape': 'LLEC40',
+            'channel': '0',
             'date': '20210911',
             'time': '153000',
-            'environment': 'jungle',
+            'environment': 'br',
             'timestamp_init': datetime.datetime(2021, 9, 11, 15, 30)
         }
     """
@@ -98,13 +103,14 @@ def get_audio_info(audio_path, store_duration=0, perc_sample=1):
 
     Examples
     --------
+        >>> from maui import io
         >>> audio_file = "forest_channelA_20210911_153000_jungle.wav"
-        >>> get_audio_info(audio_file, store_duration=1, perc_sample=0.8)
+        >>> io.get_audio_info(audio_file, store_duration=1, perc_sample=0.8)
            landscape   channel      date    time environment      timestamp_init timestamp_end  duration                                   file_path
         0     forest  channelA  20210911  153000      jungle 2021-09-11 15:30:00          None       NaN  forest_channelA_20210911_153000_jungle.wav
 
         >>> audio_dir = "/path/to/audio/directory"
-        >>> get_audio_info(audio_dir, store_duration=0, perc_sample=0.5)
+        >>> io.get_audio_info(audio_dir, store_duration=0, perc_sample=0.5)
            landscape   channel      date    time environment      timestamp_init          file_path
         0     forest  channelA  20210911  153000      jungle 2021-09-11 15:30:00  /path/to/audio/directory/forest_channelA_20210911_153000_jungle.wav
         1   mountains  channelB  20210911  160000      forest 2021-09-11 16:00:00  /path/to/audio/directory/mountains_channelB_20210911_160000_forest.wav
@@ -159,6 +165,10 @@ def get_audio_info(audio_path, store_duration=0, perc_sample=1):
                 file_dict.append(file_dict_temp)
         
         df = pd.DataFrame(file_dict)
+
+        df['hour'] = pd.to_datetime(df['timestamp_init']).dt.hour
+        df['time'] = pd.to_datetime(df['timestamp_init']).dt.time
+        df['dt'] = pd.to_datetime(df['timestamp_init']).dt.date
         
     else:
         raise Exception("The input must be a file or a directory")
@@ -191,12 +201,13 @@ def store_df(df, file_type, base_dir, file_name):
 
     Examples
     --------
+        >>> from maui import io
         >>> data = {'A': [1, 2, 3], 'B': ['a', 'b', 'c']}
         >>> df = pd.DataFrame(data)
-        >>> store_df(df, 'csv', '/path/to/directory', 'my_dataframe')
+        >>> io.store_df(df, 'csv', '/path/to/directory', 'my_dataframe')
         # Saves the DataFrame as '/path/to/directory/my_dataframe.csv'
 
-        >>> store_df(df, 'pickle', '/path/to/directory', 'my_dataframe')
+        >>> io.store_df(df, 'pickle', '/path/to/directory', 'my_dataframe')
         # Saves the DataFrame as '/path/to/directory/my_dataframe.pkl'
 
     """

@@ -50,14 +50,11 @@ def indices_radar_plot(df, indices:list, agg_type:str, group_by:list=None, max_c
 
     Examples
     --------
-    >>> import pandas as pd
-    >>> import numpy as np
-    >>> data = {'Category': ['A', 'A', 'B', 'B', 'C', 'C'],
-    ...         'Index1': np.random.rand(6),
-    ...         'Index2': np.random.rand(6),
-    ...         'Index3': np.random.rand(6)}
-    >>> df = pd.DataFrame(data)
-    >>> indices_radar_plot(df, indices=['Index1', 'Index2'], agg_type='mean', group_by=['Category'], max_cols=2)
+    >>> from maui import samples, acoustic_indices, visualizations
+    >>> df = samples.get_leec_audio_sample()
+    >>> indices_list = ['median_amplitude_envelope', 'temporal_entropy']
+    >>> df = acoustic_indices.calculate_acoustic_indices(df, indices_list, parallel=False)
+    >>> visualizations.indices_radar_plot(df, indices=['M', 'Ht',  'AR'], agg_type='mean', group_by=['environment'], max_cols=3)
     # Generates a radar plot comparing 'Index1' and 'Index2' aggregated by 'Category'.
     
     Notes
@@ -271,15 +268,11 @@ def indices_histogram_plot(df, indices:list, group_by:str=None, max_cols:int=3, 
 
     Examples
     --------
-    >>> import pandas as pd
-    >>> import numpy as np
-    >>> data = {'Category': ['A', 'A', 'B', 'B', 'C', 'C'],
-    ...         'Index1': np.random.rand(6),
-    ...         'Index2': np.random.rand(6),
-    ...         'Index3': np.random.rand(6)}
-    >>> df = pd.DataFrame(data)
-    >>> indices_histogram_plot(df, indices=['Index1', 'Index2'], group_by='Category', max_cols=2)
-    # Generates histogram plots for 'Index1' and 'Index2' grouped by 'Category'.
+    >>> from maui import samples, acoustic_indices, visualizations
+    >>> df = samples.get_leec_audio_sample()
+    >>> indices_list = ['median_amplitude_envelope', 'temporal_entropy']
+    >>> df = acoustic_indices.calculate_acoustic_indices(df, indices_list, parallel=False)
+    >>> fig = visualizations.indices_histogram_plot(df, indices=['M', 'Ht',  'AR'], group_by=None, max_cols=3)
     
     Notes
     -----
@@ -411,15 +404,11 @@ def indices_violin_plot(df, indices:list, group_by:str=None, fig_size:dict=None,
 
     Examples
     --------
-    >>> import pandas as pd
-    >>> import numpy as np
-    >>> data = {'Category': ['A', 'A', 'B', 'B', 'C', 'C'],
-    ...         'Index1': np.random.rand(6),
-    ...         'Index2': np.random.rand(6),
-    ...         'Index3': np.random.rand(6)}
-    >>> df = pd.DataFrame(data)
-    >>> indices_violin_plot(df, indices=['Index1', 'Index2'], group_by='Category')
-    # Generates violin plots for 'Index1' and 'Index2' grouped by 'Category'.
+    >>> from maui import samples, acoustic_indices, visualizations
+    >>> df = samples.get_leec_audio_sample()
+    >>> indices_list = ['median_amplitude_envelope', 'temporal_entropy']
+    >>> df = acoustic_indices.calculate_acoustic_indices(df, indices_list, parallel=False)
+    >>> fig = visualizations.indices_violin_plot(df, indices=['M', 'Ht',  'AR'], group_by=None)
     
     Notes
     -----
@@ -567,8 +556,11 @@ def spectrogram_plot(file_path:str, mode:str=None, window:str='hann', nperseg:in
 
     Examples
     --------
-    >>> spectrogram_plot('audio.wav', mode='psd', window='hann', nperseg=1024, fig_size={'height': 500, 'width': 1200})
-    # Generates a spectrogram plot from the 'audio.wav' file in PSD mode.
+    >>> from maui import samples, visualizations
+    >>> df = samples.get_leec_audio_sample()
+    >>> file_path = df.at[df.index[1],'file_path']
+    >>> mode = 'psd'
+    >>>fig = visualizations.spectrogram_plot(file_path, mode=mode)
 
     Notes
     -----
@@ -612,7 +604,7 @@ def spectrogram_plot(file_path:str, mode:str=None, window:str='hann', nperseg:in
           ))
     
     fig.update_layout(
-        title=f'''Spectrogram generate from the file {os.path.basename(file_path)}''',
+        title=f'''Spectrogram generated from the file {os.path.basename(file_path)}''',
         title_x=0.5
     )
     

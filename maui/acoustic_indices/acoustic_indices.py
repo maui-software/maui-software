@@ -437,10 +437,10 @@ def calculate_acoustic_indices(df_init, indices_list: list, store_df=False, base
 
     Example
     -------
-    >>> import pandas as pd
-    >>> df = pd.read_csv('audio_data.csv')
+    >>> from maui import samples, acoustic_indices
+    >>> df = samples.get_leec_audio_sample()
     >>> indices_list = ['median_amplitude_envelope', 'temporal_entropy']
-    >>> result_df = calculate_acoustic_indices(df, indices_list, store_df=True, base_dir='output', file_name='indices_result.csv', file_type='csv', parallel=True)
+    >>> df = acoustic_indices.calculate_acoustic_indices(df, indices_list, parallel=False)
 
     Notes
     -----
