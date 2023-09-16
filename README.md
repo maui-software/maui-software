@@ -1,4 +1,4 @@
-
+    
 # maui-software
 
 <div align="center">
@@ -14,21 +14,21 @@
 
 `maui-software` was tested on the following operating systems:
 
-- Windows
-- Ubuntu
+  - Windows
+  - Ubuntu
 
 
 # Dependencies
 
-- python >=3.9,<3.13
-- scikit-maad = 1.3.0
-- plotly >= 5.16.1
-- tqdm >= 4.66.1
-- fpdf >= 1.7.2
-- audioread >= 3.0.0
-- numpy >= 1.19.5
-- pandas >= 1.1.5
-- kaleido = 0.2.1
+  - python >=3.9,<3.13
+  - scikit-maad = 1.3.0
+  - plotly >= 5.16.1
+  - tqdm >= 4.66.1
+  - fpdf >= 1.7.2
+  - audioread >= 3.0.0
+  - numpy >= 1.19.5
+  - pandas >= 1.1.5
+  - kaleido = 0.2.1
 
 # Installation
 
