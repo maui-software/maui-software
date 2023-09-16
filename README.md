@@ -7,6 +7,7 @@
 
 **maui-software** is an open-source Python package to visualize eco-acoustic data. This work intends to help ecology specialists to perform data analysis with no need to implement visualizations, enabling faster analysis.
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/7a650127322345c58feb6baa75725051)](https://app.codacy.com/gh/maui-software/maui-software?utm_source=github.com&utm_medium=referral&utm_content=maui-software/maui-software&utm_campaign=Badge_Grade)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#active)
 
 # Operating Systems
