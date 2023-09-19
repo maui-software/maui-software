@@ -200,9 +200,9 @@ def get_acoustic_indices(df, args: dict):
 
 
             if (
-                ('frequency_entropy' in indices_list) or ('number_of_peaks' in indices_list) or ('spectral_activity' in indices_list) or 
-                ('spectral_events' in indices_list) or ('spectral_cover' in indices_list) or ('soundscape_index' in indices_list) or 
-                ('spectral_leq' in indices_list)  or ('tfsd' in indices_list)  or ('more_entropy' in indices_list)  or 
+                ('frequency_entropy' in indices_list) or ('number_of_peaks' in indices_list) or ('spectral_activity' in indices_list) or
+                ('spectral_events' in indices_list) or ('spectral_cover' in indices_list) or ('soundscape_index' in indices_list) or
+                ('spectral_leq' in indices_list)  or ('tfsd' in indices_list)  or ('more_entropy' in indices_list)  or
                 ('acoustic_gradient_index' in indices_list)  or ('frequency_raoq' in indices_list)  or ('region_of_interest_index' in indices_list)
             ):
 
@@ -451,10 +451,10 @@ def calculate_acoustic_indices(df_init, indices_list: list, store_df=False, base
 
 
     # check if the selected indices are available
-    available_indices = ['median_amplitude_envelope', 'temporal_entropy', 'acoustic_richness', 'temporal_activity', 
-                         'temporal_events', 'acoustic_complexity_index', 'frequency_entropy', 'number_of_peaks', 
+    available_indices = ['median_amplitude_envelope', 'temporal_entropy', 'acoustic_richness', 'temporal_activity',
+                         'temporal_events', 'acoustic_complexity_index', 'frequency_entropy', 'number_of_peaks',
                          'spectral_entropy', 'spectral_activity', 'spectral_events', 'spectral_cover', 'soundscape_index',
-                         'acoustic_diversity_index', 'acoustic_eveness_index', 'temporal_leq', 'spectral_leq', 
+                         'acoustic_diversity_index', 'acoustic_eveness_index', 'temporal_leq', 'spectral_leq',
                          'tfsd', 'more_entropy', 'acoustic_gradient_index', 'frequency_raoq', 'region_of_interest_index']
     
     diff = set(indices_list).difference(available_indices)
