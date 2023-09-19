@@ -7,7 +7,6 @@ import random
 import os
 import glob
 
-import time
 import datetime
 
 def get_file_structure_leec(filename):
@@ -130,13 +129,13 @@ def get_audio_info(audio_path, store_duration=0, perc_sample=1):
         file_dict['duration'] =  None
         
         if (store_duration):
-            x = audioread.audio_open(audio_file)
+            x = audioread.audio_open(audio_path)
             duration = x.duration
             
             file_dict['timestamp_end'] =  file_dict['timestamp_init'] + datetime.timedelta(seconds=duration)
             file_dict['duration'] =  duration
         
-        file_dict['file_path'] = audio_file
+        file_dict['file_path'] = audio_path
         
         df = pd.DataFrame(file_dict, index=[0])
 
