@@ -4,24 +4,25 @@
 ## Development installation
 
 1. Clone repository.
-```
+```bash
 git clone https://github.com/maui-software/maui-software.git
 cd ~/maui-software
 ```
 
 2. Install Poetry
+
 Poetry is the package management tool used for this project. Refer to the [oficial website](https://python-poetry.org/docs/#installing-with-pipx) to instructions about how to install Poetry. A symple way is the following:
-```
+```bash
 pipx install poetry
 ```
 
 3. Create a virtual environment within Poetry
-```
+```bash
 poetry env use python3
 ```
 
 4. Install package dependencies
-```
+```bash
 poetry install
 poetry install --all-extras
 ```
@@ -32,30 +33,32 @@ poetry install --all-extras
 If you have to add a new dependency in your development proccess, this dependency should be added using Poetry as follows:
 
 1. Add the dependency to puproject.toml
-```
+```bash
 poetry add dependency_name
 ```
 
 * If you want to add a dependency just for test or dev environment, use one of the following commands:
-```
+```bash
 poetry add dependency_name --group test
 ```
-```
+```bash
 poetry add dependency_name --group dev
 ```
 
 * If you need to remove a dependency, use the following command:
-
+```bash
+poetry remove dependency_name
+```
 
 If you need a specific version of some dependency, refer to the [oficial website](https://python-poetry.org/docs/managing-dependencies/).
 
 2. Update poetry.lock
-```
+```bash
 poetry lock
 ```
 
 3. Install dependencies
-```
+```bash
 poetry install --sync
 ```
 
