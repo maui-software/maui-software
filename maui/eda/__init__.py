@@ -24,7 +24,7 @@ from .eda import (card_summary,
                      duration_analysis,
                      daily_distribution_analysis,
                      duration_distribution,
-                     export_file_names_summary_pdf_LEEC                     
+                     export_file_names_summary_pdf_LEEC
                     )
 
 __all__ = [ # eda

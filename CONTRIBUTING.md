@@ -13,7 +13,9 @@
 2. Install Poetry
 
 	Poetry is the package management tool used for this project. 
-	Refer to the [oficial website](https://python-poetry.org/docs/#installing-with-pipx) to instructions about how to install Poetry. 
+	Refer to the 
+	[oficial website](https://python-poetry.org/docs/#installing-with-pipx) 
+	to instructions about how to install Poetry.
 	A simple way is the following:
 
 	```bash
@@ -36,7 +38,8 @@
 
 ## Managing dependencies
 
-If you have to add a new dependency in your development proccess, this dependency should be added using Poetry as follows:
+If you have to add a new dependency in your development proccess,
+ this dependency should be added using Poetry as follows:
 
 1. Add the dependency to pyproject.toml
 
@@ -76,8 +79,10 @@ If you have to add a new dependency in your development proccess, this dependenc
 
 ## Making changes
 
-Once your changes are done, you should check the __init__.py file of the module that you are working on. 
-All the methods of the module should be listed in that file. If it is everithing ok, run the following command to install the changes:
+Once your changes are done, you should check the __init__.py
+file of the module that you are working on. 
+All the methods of the module should be listed in that file. 
+If it is everithing ok, run the following command to install the changes:
 
 ```bash
 poetry install
@@ -86,7 +91,9 @@ poetry install
 ## Pull requests and branches
 
 It is not allowed to push new developments right into main branch. 
-You should create a new branch, commit and push that new branch and just than create a new Pull request in GitHub. 
-If the Pull request is accepted, it will be merged into dev branch, and will be part of the package in the next release.
+You should create a new branch, commit and push 
+that new branch and just than create a new Pull request in GitHub. 
+If the Pull request is accepted, it will be merged into dev branch, 
+and will be part of the package in the next release.
 
 Remember that the branch name should indicate the objective of that branch.
