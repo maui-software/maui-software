@@ -9,71 +9,13 @@ import glob
 
 import datetime
 
-def get_file_structure_leec(filename):
-    """
-    Parse a filename and extract information to create a dictionary.
+# maui imports
+import maui.files_metadata
 
-    This function takes a filename and extracts relevant information from it to
-    create a dictionary containing details like landscape, channel, date, time,
-    and environment.
-
-    The structure of the file_name should be as follows:
-
-    LANDSCAPE__CHANNEL__DATE_TIME_ENVIRONMENT.wav
-
-    Parameters
-    ----------
-        filename:str
-            The input filename to be processed.
-
-    Returns
-    -------
-        audio_dict: dict
-            A dictionary containing the parsed information.
-        
-    Raises
-    ------
-        ValueError: If the filename does not contain expected segments.
-
-    Examples
-    --------
-        >>> from maui import io
-        >>> filename = "LLEC40_0_20210911_153000_br.wav"
-        >>> io.get_file_structure_leec(filename)
-        {
-            'landscape': 'LLEC40',
-            'channel': '0',
-            'date': '20210911',
-            'time': '153000',
-            'environment': 'br',
-            'timestamp_init': datetime.datetime(2021, 9, 11, 15, 30)
-        }
-    """
-
-
-    file_name_segments = filename.split('_')
-
-    try:
-        while True:
-            file_name_segments.remove('')
-    except ValueError:
-        pass
-
-    dict_keys = ['landscape', 'channel', 'date', 'time', 'environment']
-    dt_timestamp = datetime.datetime.strptime(file_name_segments[2] + ' ' + file_name_segments[3],"%Y%m%d %H%M%S")
-    
-    audio_dict = {
-        'landscape': file_name_segments[0],
-        'environment': file_name_segments[4],
-        'channel': file_name_segments[1],
-        'timestamp_init': dt_timestamp
-    }
-
-    return audio_dict
 
 # ------------------------------------------------
 
-def get_audio_info(audio_path, store_duration=0, perc_sample=1):
+def get_audio_info(audio_path, format_name, date_time_func=None, format_file_path=None, store_duration=0, perc_sample=1):
     """
     Extract audio file information from a file or directory.
 
@@ -123,7 +65,7 @@ def get_audio_info(audio_path, store_duration=0, perc_sample=1):
         basename = os.path.basename(audio_path)
         filename, file_extension = os.path.splitext(basename)
 
-        file_dict = get_file_structure_leec(filename)
+        file_dict = maui.files_metadata.extract_metadata(filename, format_name, date_time_func, format_file_path)
         
         file_dict['timestamp_end'] =  None
         file_dict['duration'] =  None
@@ -141,14 +83,14 @@ def get_audio_info(audio_path, store_duration=0, perc_sample=1):
 
     elif os.path.isdir(audio_path):
         file_dict = []
-        
         for file_path in glob.glob(audio_path + '/*.wav'):
+
             if random.uniform(0, 1) < perc_sample:
                 basename = os.path.basename(file_path)
                 filename, file_extension = os.path.splitext(basename)
 
-                file_dict_temp = get_file_structure_leec(filename)
-                
+                file_dict_temp = maui.files_metadata.extract_metadata(filename, format_name, date_time_func, format_file_path)
+
                 file_dict_temp['timestamp_end'] =  None
                 file_dict_temp['duration'] =  None
 
