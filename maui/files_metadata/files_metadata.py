@@ -27,13 +27,13 @@ def verify_yaml_format(data):
         # Iterate through each format data in the 'formats' list
         if ('format_name' not in format_data or 'file_name_format' not in format_data or
           'file_extension' not in format_data or  'metadata_tag_info' not in format_data):
-        
+
             # If any of the required keys are missing in format data, return False
             return False
 
         metadata_tag_info = format_data['metadata_tag_info']
 
-        for tag_name, tag_info in metadata_tag_info.items():
+        for _, tag_info in metadata_tag_info.items():
             # Iterate through each metadata tag info in the 'metadata_tag_info' dictionary
             if 'description' not in tag_info or 'type' not in tag_info or 'format' not in tag_info:
                 # If any of the required keys are missing in tag info, return False
