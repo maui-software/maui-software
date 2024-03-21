@@ -1,5 +1,3 @@
-import os
-import shutil
 import tempfile
 import time
 
@@ -12,7 +10,6 @@ from plotly.subplots import make_subplots
 
 class CategoryLimitError(Exception):
     """Exception raised when more than two categories are selected."""
-    pass
 
 def card_summary(df, categories, show_plot:bool = True):
 	"""
