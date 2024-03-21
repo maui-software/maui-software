@@ -62,6 +62,14 @@ poetry lock
 poetry install --sync
 ```
 
+## Making changes
+
+Once your changes are done, you should check the __init__.py file of the module that you are working on. All the methods of the the module should be listed in that file. If it is everithing ok, run the following command to install the changes:
+
+```bash
+poetry install
+```
+
 ## Pull requests and branches
 
 It is not allowed to push new developments right into main branch. You should create a new branch, commit and push that new branch and just than create a new Pull request in GitHub. If the Pull request is accepted, it will be merged into dev branch, and will be part of the package in the next release.
