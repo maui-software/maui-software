@@ -52,4 +52,5 @@ df
 
 Special thanks to the spatial ecology and conservation laboratory (LEEC, in portuguese) at São Paulo State University (UNESP, in portuguese) for the data set provided and expert support.
 
-Also, `maui-software` uses `scikit-maad` to calculates acoustic indices and spectrograms from audio. We finally acknowledge the financial support of FAPESP (The State of Sao Paulo Research Foundation) Grant # 2021/08322-3.
+Also, `maui-software` uses `scikit-maad` to calculate acoustic indices and spectrograms from audio. 
+We finally acknowledge the financial support of FAPESP (The State of Sao Paulo Research Foundation) Grant # 2021/08322-3.

@@ -1,6 +1,5 @@
 import re
 import yaml
-import time
 import datetime
 from importlib import resources
 
@@ -26,10 +25,9 @@ def verify_yaml_format(data):
 
     for format_data in data['formats']:
         # Iterate through each format data in the 'formats' list
-        if ('format_name' not in format_data or
-            'file_name_format' not in format_data or
-            'file_extension' not in format_data or 
-            'metadata_tag_info' not in format_data):
+        if ('format_name' not in format_data or 'file_name_format' not in format_data or
+          'file_extension' not in format_data or  'metadata_tag_info' not in format_data):
+        
             # If any of the required keys are missing in format data, return False
             return False
 
