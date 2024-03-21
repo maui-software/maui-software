@@ -7,7 +7,6 @@ import random
 import os
 import glob
 
-import time
 import datetime
 
 # maui imports
@@ -72,13 +71,13 @@ def get_audio_info(audio_path, format_name, date_time_func=None, format_file_pat
         file_dict['duration'] =  None
         
         if (store_duration):
-            x = audioread.audio_open(audio_file)
+            x = audioread.audio_open(audio_path)
             duration = x.duration
             
             file_dict['timestamp_end'] =  file_dict['timestamp_init'] + datetime.timedelta(seconds=duration)
             file_dict['duration'] =  duration
         
-        file_dict['file_path'] = audio_file
+        file_dict['file_path'] = audio_path
         
         df = pd.DataFrame(file_dict, index=[0])
 
