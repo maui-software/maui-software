@@ -1,19 +1,17 @@
-import pandas as pd
-
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.figure_factory as ff
 
-import fpdf
 from fpdf import FPDF
 import time
 
 import shutil
 import os
 import pkg_resources
+import tempfile
 
-def card_summary(df, categories, show_plot:bool=True):
+def card_summary(df, categories, show_plot:bool = True):
 	"""
     Generates a summary card and plots for specified categories from a DataFrame.
 
@@ -65,7 +63,7 @@ def card_summary(df, categories, show_plot:bool=True):
     """
 
 	if len(categories) > 2:
-		raise Exception("At most three categories should be selected.")
+		raise Exception("At most two categories should be selected.")
 
 	df_count = df.nunique(axis=0)
 	duration_mean = df['duration'].mean() / 60
@@ -144,7 +142,7 @@ def card_summary(df, categories, show_plot:bool=True):
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 
-def heatmap_analysis(df, x_axis:str, y_axis:str, color_continuous_scale='Viridis', show_plot:bool=True):
+def heatmap_analysis(df, x_axis:str, y_axis:str, color_continuous_scale = 'Viridis', show_plot:bool = True):
 	"""
     Generates a heatmap to analyze the relationship between two categorical variables in a DataFrame.
 
@@ -204,7 +202,7 @@ def heatmap_analysis(df, x_axis:str, y_axis:str, color_continuous_scale='Viridis
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 
-def histogram_analysis(df, x_axis:str, category_column:str, show_plot:bool=True):
+def histogram_analysis(df, x_axis:str, category_column:str, show_plot:bool = True):
 	"""
     Generates a histogram plot for data distribution across a specified axis, optionally segmented by categories.
 
@@ -246,7 +244,7 @@ def histogram_analysis(df, x_axis:str, category_column:str, show_plot:bool=True)
     >>> fig = eda.histogram_analysis(df, 'landscape', 'environment')
     """
 
-	fig = px.histogram(df, x=x_axis, color=category_column, opacity=0.7, title=f'''Ammount of samples by {x_axis}''')
+	fig = px.histogram(df, x=x_axis, color=category_column, opacity=0.7, title=f'''Amount of samples by {x_axis} and segmented by {category_column}''')
 	fig.update_layout(bargap=0.1, title_x=0.5)
 
 	if show_plot:
@@ -256,7 +254,7 @@ def histogram_analysis(df, x_axis:str, category_column:str, show_plot:bool=True)
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 
-def duration_analysis(df, category_column:str, duration_column:str, show_plot=True):
+def duration_analysis(df, category_column:str, duration_column:str, show_plot = True):
 	"""
     Generates a box plot visualizing the distribution of durations across different categories.
 
@@ -309,7 +307,7 @@ def duration_analysis(df, category_column:str, duration_column:str, show_plot=Tr
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 
-def daily_distribution_analysis(df, date_column:str, category_column:str, show_plot=True):
+def daily_distribution_analysis(df, date_column:str, category_column:str, show_plot = True):
 	"""
     Analyzes and visualizes the daily distribution of samples by categories.
 
@@ -361,7 +359,7 @@ def daily_distribution_analysis(df, date_column:str, category_column:str, show_p
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 
-def duration_distribution(df, show_plot=True):
+def duration_distribution(df, show_plot = True):
 	"""
     Generates a distribution plot for the 'duration' column in the provided DataFrame.
 
@@ -421,7 +419,7 @@ class PDF(FPDF):
 def create_letterhead(pdf, WIDTH, image):
 	pdf.image(image, 0, 0, WIDTH)
 
-def create_title(pdf, title, subtitle=None):
+def create_title(pdf, title, subtitle = None):
 	
 	# Add main title
 	pdf.set_font('Helvetica', 'b', 20)  
@@ -460,7 +458,7 @@ def write_subtitle(pdf, words):
 	
 	pdf.write(5, words)
 
-def export_file_names_summary_pdf_LEEC(df, file_name:str, categories:list, analysis_title=None, width=210, hight=297):
+def export_file_names_summary_pdf_LEEC(df, file_name:str, categories:list, analysis_title = None, width = 210, height = 297):
 	"""
     Exports an exploratory data analysis summary of audio files as a PDF.
 
@@ -511,31 +509,30 @@ def export_file_names_summary_pdf_LEEC(df, file_name:str, categories:list, analy
     >>> eda.export_file_names_summary_pdf_LEEC(df, 'analysis_report.pdf', categories)    
     """
 	
-	if not os.path.exists("images_summary_pdf_temp"):
-		os.mkdir("images_summary_pdf_temp")
+	temp_dir = tempfile.TemporaryDirectory()
 
 	
-	card_dict, fig = card_summary(df, categories, show_plot=False)
-	fig.write_image("images_summary_pdf_temp/summary1.png", height=300, width=1200)
-	df_group, fig = heatmap_analysis(df, 'landscape', 'environment', color_continuous_scale='Viridis', show_plot=False)
-	fig.write_image("images_summary_pdf_temp/summary2.png")
+	_, fig = card_summary(df, categories, show_plot=False)
+	fig.write_image(f'''{temp_dir.name}/summary1.png''', height=300, width=1200)
+	_, fig = heatmap_analysis(df, 'landscape', 'environment', color_continuous_scale='Viridis', show_plot=False)
+	fig.write_image(f'''{temp_dir.name}/summary2.png''')
 
 	fig = histogram_analysis(df, 'landscape', 'environment', show_plot=False)
-	fig.write_image("images_summary_pdf_temp/landscape1.png", height=400, width=1200)
+	fig.write_image(f'''{temp_dir.name}/landscape1.png''', height=400, width=1200)
 	fig = duration_analysis(df, 'landscape', 'duration', show_plot=False)
-	fig.write_image("images_summary_pdf_temp/landscape2.png", height=400, width=1200)
+	fig.write_image(f'''{temp_dir.name}/landscape2.png''', height=400, width=1200)
 	fig = daily_distribution_analysis(df, 'dt', 'landscape', show_plot=False)
-	fig.write_image("images_summary_pdf_temp/landscape3.png", height=400, width=1200)
+	fig.write_image(f'''{temp_dir.name}/landscape3.png''', height=400, width=1200)
 
 	fig = histogram_analysis(df, 'environment', 'landscape', show_plot=False)
-	fig.write_image("images_summary_pdf_temp/environment1.png", height=400, width=1200)
+	fig.write_image(f'''{temp_dir.name}/environment1.png''', height=400, width=1200)
 	fig = duration_analysis(df, 'environment', 'duration', show_plot=False)
-	fig.write_image("images_summary_pdf_temp/environment2.png", height=400, width=1200)
+	fig.write_image(f'''{temp_dir.name}/environment2.png''', height=400, width=1200)
 	fig = daily_distribution_analysis(df, 'dt', 'environment', show_plot=False)
-	fig.write_image("images_summary_pdf_temp/environment3.png", height=400, width=1200)
+	fig.write_image(f'''{temp_dir.name}/environment3.png''', height=400, width=1200)
 
 	fig = duration_distribution(df, show_plot=False)
-	fig.write_image("images_summary_pdf_temp/duration1.png", height=400, width=1200)
+	fig.write_image(f'''{temp_dir.name}/duration1.png''', height=400, width=1200)
 
 	# Global Variables
 	TITLE = "Audio Files Exploratory Data Analysis"
@@ -560,7 +557,7 @@ def export_file_names_summary_pdf_LEEC(df, file_name:str, categories:list, analy
 
 	# Add table
 	w = 200
-	pdf.image("images_summary_pdf_temp/summary1.png", w=w, x=(WIDTH-w)/2)
+	pdf.image(f'''{temp_dir.name}/summary1.png''', w=w, x=(WIDTH-w)/2)
 	pdf.ln(5)
 
 	intro_text = """
@@ -577,11 +574,11 @@ def export_file_names_summary_pdf_LEEC(df, file_name:str, categories:list, analy
 	pdf.ln(20)
 	write_subtitle(pdf, "1. Landscape Analysis")
 	pdf.ln(20)
-	pdf.image("images_summary_pdf_temp/landscape1.png", w=w, x=(WIDTH-w)/2)
+	pdf.image(f'''{temp_dir.name}/landscape1.png''', w=w, x=(WIDTH-w)/2)
 	pdf.ln(5)
-	pdf.image("images_summary_pdf_temp/landscape2.png", w=w, x=(WIDTH-w)/2)
+	pdf.image(f'''{temp_dir.name}/landscape2.png''', w=w, x=(WIDTH-w)/2)
 	pdf.ln(5)
-	pdf.image("images_summary_pdf_temp/landscape3.png", w=w, x=(WIDTH-w)/2)
+	pdf.image(f'''{temp_dir.name}/landscape3.png''', w=w, x=(WIDTH-w)/2)
 	pdf.ln(10)
 
 
@@ -591,11 +588,11 @@ def export_file_names_summary_pdf_LEEC(df, file_name:str, categories:list, analy
 	pdf.ln(20)
 	write_subtitle(pdf, "2. Environment Analysis")
 	pdf.ln(20)
-	pdf.image("images_summary_pdf_temp/environment1.png", w=w, x=(WIDTH-w)/2)
+	pdf.image(f'''{temp_dir.name}/environment1.png''', w=w, x=(WIDTH-w)/2)
 	pdf.ln(5)
-	pdf.image("images_summary_pdf_temp/environment2.png", w=w, x=(WIDTH-w)/2)
+	pdf.image(f'''{temp_dir.name}/environment2.png''', w=w, x=(WIDTH-w)/2)
 	pdf.ln(5)
-	pdf.image("images_summary_pdf_temp/environment3.png", w=w, x=(WIDTH-w)/2)
+	pdf.image(f'''{temp_dir.name}/environment3.png''', w=w, x=(WIDTH-w)/2)
 	pdf.ln(10)
 
 	pdf.add_page()
@@ -604,11 +601,10 @@ def export_file_names_summary_pdf_LEEC(df, file_name:str, categories:list, analy
 	pdf.ln(20)
 	write_subtitle(pdf, "3. Duration Analysis")
 	pdf.ln(20)
-	pdf.image("images_summary_pdf_temp/duration1.png", w=w, x=(WIDTH-w)/2)
+	pdf.image(f'''{temp_dir.name}/duration1.png''', w=w, x=(WIDTH-w)/2)
 
 
 	pdf.output(file_name, 'F')
 	
-	shutil.rmtree('images_summary_pdf_temp')
 	
 	
