@@ -1,5 +1,8 @@
 # Contributors Guide
+Hello! If you are reding this, you probably desire to
+contribute with maui-software. Thank you so much!
 
+Here you can find some steps to conributing with maui.
 
 ## Development installation
 

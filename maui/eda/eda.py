@@ -1,19 +1,23 @@
-import plotly.graph_objects as go
-import plotly.express as px
-from plotly.subplots import make_subplots
-import plotly.figure_factory as ff
-
-from fpdf import FPDF
+import os
+import shutil
+import tempfile
 import time
 
-import shutil
-import os
 import pkg_resources
-import tempfile
+from fpdf import FPDF
+import plotly.express as px
+import plotly.figure_factory as ff
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+class CategoryLimitError(Exception):
+    """Exception raised when more than two categories are selected."""
+    pass
 
 def card_summary(df, categories, show_plot:bool = True):
 	"""
-    Generates a summary card and plots for specified categories from a DataFrame.
+    Generates a summary card and plots for specified categories from a
+    DataFrame.
 
     This function processes the input DataFrame to compute various statistics, including the
     number of samples, distinct days, total and mean duration (in minutes) of some activities.
@@ -63,7 +67,7 @@ def card_summary(df, categories, show_plot:bool = True):
     """
 
 	if len(categories) > 2:
-		raise Exception("At most two categories should be selected.")
+		raise CategoryLimitError("At most two categories should be selected.")
 
 	df_count = df.nunique(axis=0)
 	duration_mean = df['duration'].mean() / 60
@@ -131,7 +135,7 @@ def card_summary(df, categories, show_plot:bool = True):
 			domain = {'x': [0, 1], 'y': [0, 1]})
 		fig.append_trace(trace_tmp, i, j)
 
-		j = (j%3) + 1
+		j = (j % 3) + 1
 		if j == 1: i = i + 1
 
 	# fig.update_layout(paper_bgcolor = "lightgray")
@@ -244,7 +248,8 @@ def histogram_analysis(df, x_axis:str, category_column:str, show_plot:bool = Tru
     >>> fig = eda.histogram_analysis(df, 'landscape', 'environment')
     """
 
-	fig = px.histogram(df, x=x_axis, color=category_column, opacity=0.7, title=f'''Amount of samples by {x_axis} and segmented by {category_column}''')
+	fig = px.histogram(df, x=x_axis, color=category_column, opacity=0.7,
+        title=f'''Amount of samples by {x_axis} and segmented by {category_column}''')
 	fig.update_layout(bargap=0.1, title_x=0.5)
 
 	if show_plot:
