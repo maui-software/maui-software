@@ -15,7 +15,6 @@ def card_summary(df, categories, show_plot:bool = True):
 	"""
     Generates a summary card and plots for specified categories from a
     DataFrame.
-
     This function processes the input DataFrame to compute various statistics, including the
     number of samples, distinct days, total and mean duration (in minutes) of some activities.
     It also dynamically incorporates additional specified categories into its computations and
