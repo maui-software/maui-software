@@ -9,58 +9,58 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 class CategoryLimitError(Exception):
-    """Exception raised when more than two categories are selected."""
+	"""Exception raised when more than two categories are selected."""
 
 def card_summary(df, categories, show_plot:bool = True):
 	"""
-    Generates a summary card and plots for specified categories from a
-    DataFrame.
-    This function processes the input DataFrame to compute various statistics, including the
-    number of samples, distinct days, total and mean duration (in minutes) of some activities.
-    It also dynamically incorporates additional specified categories into its computations and
-    visualizations. If enabled, a plot is generated using Plotly to visually represent these
-    statistics alongside the categories specified.
+	Generates a summary card and plots for specified categories from a
+	DataFrame.
+	This function processes the input DataFrame to compute various statistics, including the
+	number of samples, distinct days, total and mean duration (in minutes) of some activities.
+	It also dynamically incorporates additional specified categories into its computations and
+	visualizations. If enabled, a plot is generated using Plotly to visually represent these
+	statistics alongside the categories specified.
 
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        The input DataFrame containing at least the following columns: 'file_path', 'dt', 
-        and 'duration'. Additional columns should match the specified categories if any.
-    categories : list of str
-        A list of category names (column names in `df`) to include in the summary and plot. 
-        At most two categories can be specified.
-    show_plot : bool, optional
-        If True (default), the function will generate and show a Plotly plot representing the 
-        calculated statistics and specified categories. If False, no plot will be displayed.
+	Parameters
+	----------
+	df : pandas.DataFrame
+		The input DataFrame containing at least the following columns: 'file_path', 'dt', 
+		and 'duration'. Additional columns should match the specified categories if any.
+	categories : list of str
+		A list of category names (column names in `df`) to include in the summary and plot. 
+		At most two categories can be specified.
+	show_plot : bool, optional
+		If True (default), the function will generate and show a Plotly plot representing the 
+		calculated statistics and specified categories. If False, no plot will be displayed.
 
-    Raises
-    ------
-    Exception
-        If more than two categories are specified, an exception is raised due to plotting limitations.
+	Raises
+	------
+	Exception
+		If more than two categories are specified, an exception is raised due to plotting limitations.
 
-    Returns
-    -------
-    tuple
-        Returns a tuple containing:
-        - card_dict (dict): A dictionary with keys for 'n_samples', 'distinct_days', 'total_time_duration', 
-          'mean_time_duration', and one key per category specified. The values are the respective 
-          computed statistics.
-        - fig (plotly.graph_objs._figure.Figure): A Plotly figure object with indicators for each of the 
-          statistics and categories specified. Only returned if `show_plot` is True.
+	Returns
+	-------
+	tuple
+		Returns a tuple containing:
+		- card_dict (dict): A dictionary with keys for 'n_samples', 'distinct_days', 'total_time_duration', 
+		  'mean_time_duration', and one key per category specified. The values are the respective 
+		  computed statistics.
+		- fig (plotly.graph_objs._figure.Figure): A Plotly figure object with indicators for each of the 
+		  statistics and categories specified. Only returned if `show_plot` is True.
 
-    Notes
-    -----
-    The function is designed to work with data pertaining to durations and occurrences across
-    different categories. It's particularly useful for analyzing time series or event data.
-    The 'duration' column is expected to be in seconds.
+	Notes
+	-----
+	The function is designed to work with data pertaining to durations and occurrences across
+	different categories. It's particularly useful for analyzing time series or event data.
+	The 'duration' column is expected to be in seconds.
 
-    Examples
-    --------
-    >>> from maui import samples, eda
+	Examples
+	--------
+	>>> from maui import samples, eda
 	>>> df = samples.get_leec_audio_sample()
-    >>> categories = ['landscape', 'environment']
-    >>> card_dict, fig = eda.card_summary(df, categories)
-    """
+	>>> categories = ['landscape', 'environment']
+	>>> card_dict, fig = eda.card_summary(df, categories)
+	"""
 
 	if len(categories) > 2:
 		raise CategoryLimitError("At most two categories should be selected.")
@@ -144,47 +144,47 @@ def card_summary(df, categories, show_plot:bool = True):
 
 def heatmap_analysis(df, x_axis:str, y_axis:str, color_continuous_scale = 'Viridis', show_plot:bool = True):
 	"""
-    Generates a heatmap to analyze the relationship between two categorical variables in a DataFrame.
+	Generates a heatmap to analyze the relationship between two categorical variables in a DataFrame.
 
-    This function groups the data by the specified `x_axis` and `y_axis` categories, counts the occurrences
-    of each group, and then creates a heatmap visualization of these counts using Plotly Express. The heatmap
-    intensity is determined by the count of occurrences, with an option to customize the color scale.
+	This function groups the data by the specified `x_axis` and `y_axis` categories, counts the occurrences
+	of each group, and then creates a heatmap visualization of these counts using Plotly Express. The heatmap
+	intensity is determined by the count of occurrences, with an option to customize the color scale.
 
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        The input DataFrame containing the data to be analyzed. Must include the columns specified by 
-        `x_axis` and `y_axis`, as well as a 'file_path' column used for counting occurrences.
-    x_axis : str
-        The name of the column in `df` to be used as the x-axis in the heatmap.
-    y_axis : str
-        The name of the column in `df` to be used as the y-axis in the heatmap.
-    color_continuous_scale : str, optional
-        The name of the color scale to use for the heatmap. Defaults to 'Viridis'. For more options, refer
-        to Plotly's documentation on color scales.
-    show_plot : bool, optional
-        If True (default), displays the heatmap plot. If False, the plot is not displayed but is still returned.
+	Parameters
+	----------
+	df : pandas.DataFrame
+		The input DataFrame containing the data to be analyzed. Must include the columns specified by 
+		`x_axis` and `y_axis`, as well as a 'file_path' column used for counting occurrences.
+	x_axis : str
+		The name of the column in `df` to be used as the x-axis in the heatmap.
+	y_axis : str
+		The name of the column in `df` to be used as the y-axis in the heatmap.
+	color_continuous_scale : str, optional
+		The name of the color scale to use for the heatmap. Defaults to 'Viridis'. For more options, refer
+		to Plotly's documentation on color scales.
+	show_plot : bool, optional
+		If True (default), displays the heatmap plot. If False, the plot is not displayed but is still returned.
 
-    Returns
-    -------
-    tuple
-        A tuple containing:
-        - df_group (pandas.DataFrame): A DataFrame with the grouped counts for each combination of `x_axis`
-          and `y_axis` values.
-        - fig (plotly.graph_objs._figure.Figure): A Plotly figure object containing the heatmap.
+	Returns
+	-------
+	tuple
+		A tuple containing:
+		- df_group (pandas.DataFrame): A DataFrame with the grouped counts for each combination of `x_axis`
+		  and `y_axis` values.
+		- fig (plotly.graph_objs._figure.Figure): A Plotly figure object containing the heatmap.
 
-    Notes
-    -----
-    The 'file_path' column in the input DataFrame is used to count occurrences of each group formed by the 
-    specified `x_axis` and `y_axis` values. This function is useful for visualizing the distribution and 
-    relationship between two categorical variables.
+	Notes
+	-----
+	The 'file_path' column in the input DataFrame is used to count occurrences of each group formed by the 
+	specified `x_axis` and `y_axis` values. This function is useful for visualizing the distribution and 
+	relationship between two categorical variables.
 
-    Examples
-    --------
+	Examples
+	--------
 	>>> from maui import samples, eda
 	>>> df = samples.get_leec_audio_sample()
-    >>> df_group, fig = eda.heatmap_analysis(df, 'landscape', 'environment')
-    """
+	>>> df_group, fig = eda.heatmap_analysis(df, 'landscape', 'environment')
+	"""
 
 	df_group = df.groupby([x_axis, y_axis], as_index=False)['file_path'].count()
 	df_group = df_group.rename(columns={"file_path": "count"})
@@ -204,48 +204,48 @@ def heatmap_analysis(df, x_axis:str, y_axis:str, color_continuous_scale = 'Virid
 
 def histogram_analysis(df, x_axis:str, category_column:str, show_plot:bool = True):
 	"""
-    Generates a histogram plot for data distribution across a specified axis, optionally segmented by categories.
+	Generates a histogram plot for data distribution across a specified axis, optionally segmented by categories.
 
-    This function creates a histogram to visualize the distribution of data in `df` along the `x_axis`,
-    with data optionally segmented by `category_column`. The histogram's appearance, such as opacity and
-    bar gap, is customizable. The plot is generated using Plotly Express and can be displayed in the notebook
-    or IDE if `show_plot` is set to True.
+	This function creates a histogram to visualize the distribution of data in `df` along the `x_axis`,
+	with data optionally segmented by `category_column`. The histogram's appearance, such as opacity and
+	bar gap, is customizable. The plot is generated using Plotly Express and can be displayed in the notebook
+	or IDE if `show_plot` is set to True.
 
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        The DataFrame containing the data to plot. Must include the columns specified by `x_axis`
-        and `category_column`.
-    x_axis : str
-        The name of the column in `df` to be used for the x-axis of the histogram.
-    category_column : str
-        The name of the column in `df` that contains categorical data for segmenting the histogram. Each
-        category will be represented with a different color.
-    show_plot : bool, optional
-        If True (default), the generated plot will be immediately displayed. If False, the plot will not
-        be displayed but will still be returned by the function.
+	Parameters
+	----------
+	df : pandas.DataFrame
+		The DataFrame containing the data to plot. Must include the columns specified by `x_axis`
+		and `category_column`.
+	x_axis : str
+		The name of the column in `df` to be used for the x-axis of the histogram.
+	category_column : str
+		The name of the column in `df` that contains categorical data for segmenting the histogram. Each
+		category will be represented with a different color.
+	show_plot : bool, optional
+		If True (default), the generated plot will be immediately displayed. If False, the plot will not
+		be displayed but will still be returned by the function.
 
-    Returns
-    -------
-    plotly.graph_objs._figure.Figure
-        The Plotly figure object for the generated histogram. This object can be further customized or
-        saved after the function returns.
+	Returns
+	-------
+	plotly.graph_objs._figure.Figure
+		The Plotly figure object for the generated histogram. This object can be further customized or
+		saved after the function returns.
 
-    Notes
-    -----
-    This function is designed to offer a quick and convenient way to visualize the distribution of data
-    in a DataFrame along a specified axis. It is particularly useful for exploratory data analysis and
-    for identifying patterns or outliers in dataset segments.
+	Notes
+	-----
+	This function is designed to offer a quick and convenient way to visualize the distribution of data
+	in a DataFrame along a specified axis. It is particularly useful for exploratory data analysis and
+	for identifying patterns or outliers in dataset segments.
 
-    Examples
-    --------
+	Examples
+	--------
 	>>> from maui import samples, eda
 	>>> df = samples.get_leec_audio_sample()
-    >>> fig = eda.histogram_analysis(df, 'landscape', 'environment')
-    """
+	>>> fig = eda.histogram_analysis(df, 'landscape', 'environment')
+	"""
 
 	fig = px.histogram(df, x=x_axis, color=category_column, opacity=0.7,
-        title=f'''Amount of samples by {x_axis} and segmented by {category_column}''')
+		title=f'''Amount of samples by {x_axis} and segmented by {category_column}''')
 	fig.update_layout(bargap=0.1, title_x=0.5)
 
 	if show_plot:
@@ -257,45 +257,45 @@ def histogram_analysis(df, x_axis:str, category_column:str, show_plot:bool = Tru
 
 def duration_analysis(df, category_column:str, duration_column:str, show_plot = True):
 	"""
-    Generates a box plot visualizing the distribution of durations across different categories.
+	Generates a box plot visualizing the distribution of durations across different categories.
 
-    This function takes a DataFrame and creates a box plot to analyze the distribution of 
-    durations (or any numerical data) across specified categories. The box plot provides a visual 
-    representation of the central tendency, dispersion, and skewness of the data and identifies outliers.
+	This function takes a DataFrame and creates a box plot to analyze the distribution of 
+	durations (or any numerical data) across specified categories. The box plot provides a visual 
+	representation of the central tendency, dispersion, and skewness of the data and identifies outliers.
 
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        The DataFrame containing the data to be analyzed. It should include at least two columns:
-        one for the category and one for the duration (or any numerical data to be analyzed).
-    category_column : str
-        The name of the column in `df` that contains the categorical data. This column will be
-        used to group the numerical data into different categories for the box plot.
-    duration_column : str
-        The name of the column in `df` that contains the numerical data to be analyzed. This data
-        will be distributed into boxes according to the categories specified by `category_column`.
-    show_plot : bool, optional
-        If True (default), the function will display the generated box plot. If False, the plot
-        will not be displayed, but the figure object will still be returned.
+	Parameters
+	----------
+	df : pandas.DataFrame
+		The DataFrame containing the data to be analyzed. It should include at least two columns:
+		one for the category and one for the duration (or any numerical data to be analyzed).
+	category_column : str
+		The name of the column in `df` that contains the categorical data. This column will be
+		used to group the numerical data into different categories for the box plot.
+	duration_column : str
+		The name of the column in `df` that contains the numerical data to be analyzed. This data
+		will be distributed into boxes according to the categories specified by `category_column`.
+	show_plot : bool, optional
+		If True (default), the function will display the generated box plot. If False, the plot
+		will not be displayed, but the figure object will still be returned.
 
-    Returns
-    -------
-    plotly.graph_objs._figure.Figure
-        The generated Plotly figure object containing the box plot. This object can be used
-        for further customization or to display the plot at a later time if `show_plot` is False.
+	Returns
+	-------
+	plotly.graph_objs._figure.Figure
+		The generated Plotly figure object containing the box plot. This object can be used
+		for further customization or to display the plot at a later time if `show_plot` is False.
 
-    Notes
-    -----
-    The box plot generated by this function can help identify the range, interquartile range,
-    median, and potential outliers within each category. This visual analysis is crucial for
-    understanding the distribution characteristics of numerical data across different groups.
+	Notes
+	-----
+	The box plot generated by this function can help identify the range, interquartile range,
+	median, and potential outliers within each category. This visual analysis is crucial for
+	understanding the distribution characteristics of numerical data across different groups.
 
-    Examples
-    --------
+	Examples
+	--------
 	>>> from maui import samples, eda
 	>>> df = samples.get_leec_audio_sample()
-    >>> fig = eda.duration_analysis(df, 'landscape', 'duration')    
-    """
+	>>> fig = eda.duration_analysis(df, 'landscape', 'duration')	
+	"""
 
 
 	fig = px.box(df, x=category_column, y=duration_column, title=f'''Duration distribution by {category_column}''')
@@ -310,45 +310,45 @@ def duration_analysis(df, category_column:str, duration_column:str, show_plot = 
 
 def daily_distribution_analysis(df, date_column:str, category_column:str, show_plot = True):
 	"""
-    Analyzes and visualizes the daily distribution of samples by categories.
+	Analyzes and visualizes the daily distribution of samples by categories.
 
-    This function generates a histogram that shows the distribution of samples over days, separated
-    by a specified category. It provides insights into how the frequency of samples varies daily
-    and according to the categories within the specified category column.
+	This function generates a histogram that shows the distribution of samples over days, separated
+	by a specified category. It provides insights into how the frequency of samples varies daily
+	and according to the categories within the specified category column.
 
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        The DataFrame containing the data to be analyzed. It must include the specified `date_column`
-        and `category_column`.
-    date_column : str
-        The name of the column in `df` that contains date information. The values in this column
-        should be in a date or datetime format.
-    category_column : str
-        The name of the column in `df` that contains categorical data, which will be used to color
-        the bars in the histogram.
-    show_plot : bool, optional
-        If True (default), the function will display the generated plot. If False, the plot will
-        not be displayed but will still be returned.
+	Parameters
+	----------
+	df : pandas.DataFrame
+		The DataFrame containing the data to be analyzed. It must include the specified `date_column`
+		and `category_column`.
+	date_column : str
+		The name of the column in `df` that contains date information. The values in this column
+		should be in a date or datetime format.
+	category_column : str
+		The name of the column in `df` that contains categorical data, which will be used to color
+		the bars in the histogram.
+	show_plot : bool, optional
+		If True (default), the function will display the generated plot. If False, the plot will
+		not be displayed but will still be returned.
 
-    Returns
-    -------
-    plotly.graph_objs._figure.Figure
-        A Plotly figure object representing the histogram of daily sample distribution by the specified
-        category. The histogram bars are colored based on the categories in the `category_column`.
+	Returns
+	-------
+	plotly.graph_objs._figure.Figure
+		A Plotly figure object representing the histogram of daily sample distribution by the specified
+		category. The histogram bars are colored based on the categories in the `category_column`.
 
-    Notes
-    -----
-    The function leverages Plotly for plotting, thus ensuring interactive plots that can be further
-    explored in a web browser. It's particularly useful for time series data where understanding the
-    distribution of events or samples over time and across different categories is crucial.
+	Notes
+	-----
+	The function leverages Plotly for plotting, thus ensuring interactive plots that can be further
+	explored in a web browser. It's particularly useful for time series data where understanding the
+	distribution of events or samples over time and across different categories is crucial.
 
-    Examples
-    --------
+	Examples
+	--------
 	>>> from maui import samples, eda
 	>>> df = samples.get_leec_audio_sample()
-    >>> fig = eda.daily_distribution_analysis(df, 'dt', 'landscape')   
-    """
+	>>> fig = eda.daily_distribution_analysis(df, 'dt', 'landscape')   
+	"""
 
 	fig = px.histogram(df, x=date_column, color=category_column, opacity=0.7, title=f'''Ammount of samples by Day and {category_column}''')
 	fig.update_layout(bargap=0.1, title_x=0.5)
@@ -362,40 +362,40 @@ def daily_distribution_analysis(df, date_column:str, category_column:str, show_p
 
 def duration_distribution(df, show_plot = True):
 	"""
-    Generates a distribution plot for the 'duration' column in the provided DataFrame.
+	Generates a distribution plot for the 'duration' column in the provided DataFrame.
 
-    This function creates a distribution plot, including a histogram and a kernel density estimate (KDE),
-    for the 'duration' column in the input DataFrame. It is designed to give a visual understanding of the
-    distribution of duration values across the dataset.
+	This function creates a distribution plot, including a histogram and a kernel density estimate (KDE),
+	for the 'duration' column in the input DataFrame. It is designed to give a visual understanding of the
+	distribution of duration values across the dataset.
 
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        The DataFrame containing the data to be analyzed. It must include a column named 'duration',
-        which contains numeric data.
-    show_plot : bool, optional
-        If True (default), the function will display the generated plot. If False, the plot will
-        not be displayed but will still be returned.
+	Parameters
+	----------
+	df : pandas.DataFrame
+		The DataFrame containing the data to be analyzed. It must include a column named 'duration',
+		which contains numeric data.
+	show_plot : bool, optional
+		If True (default), the function will display the generated plot. If False, the plot will
+		not be displayed but will still be returned.
 
-    Returns
-    -------
-    plotly.graph_objs._figure.Figure
-        A Plotly figure object representing the distribution plot of the 'duration' column. The plot
-        includes both a histogram of the data and a kernel density estimate (KDE) curve.
+	Returns
+	-------
+	plotly.graph_objs._figure.Figure
+		A Plotly figure object representing the distribution plot of the 'duration' column. The plot
+		includes both a histogram of the data and a kernel density estimate (KDE) curve.
 
-    Notes
-    -----
-    The function uses Plotly's `create_distplot` function from the `plotly.figure_factory` module,
-    offering a detailed visual representation of data distribution. It's particularly useful for
-    analyzing the spread and skewness of numeric data. The KDE curve provides insight into the
-    probability density of the durations, complementing the histogram's discrete bins.
+	Notes
+	-----
+	The function uses Plotly's `create_distplot` function from the `plotly.figure_factory` module,
+	offering a detailed visual representation of data distribution. It's particularly useful for
+	analyzing the spread and skewness of numeric data. The KDE curve provides insight into the
+	probability density of the durations, complementing the histogram's discrete bins.
 
-    Examples
-    --------
-    >>> from maui import samples, eda
+	Examples
+	--------
+	>>> from maui import samples, eda
 	>>> df = samples.get_leec_audio_sample()
-    >>> fig = eda.duration_distribution(df)
-    """
+	>>> fig = eda.duration_distribution(df)
+	"""
 
 	group_labels = ['duration'] # name of the dataset
 
@@ -461,151 +461,150 @@ def write_subtitle(pdf, words):
 
 def export_file_names_summary_pdf_LEEC(df, file_name:str, categories:list, analysis_title = None, width = 210, height = 297):
 	"""
-    Exports an exploratory data analysis summary of audio files as a PDF.
+	Exports an exploratory data analysis summary of audio files as a PDF.
 
-    This function generates a series of analysis plots from a given DataFrame and exports them as
-    images, which are then compiled into a PDF report. The report includes analyses such as card summary,
-    heatmaps, histograms, box plots, and distribution plots, each focusing on different aspects of the data
-    like landscapes, environments, and durations. The generated images are temporarily stored and then
-    included in a PDF file, which is saved with the specified file name.
+	This function generates a series of analysis plots from a given DataFrame and exports them as
+	images, which are then compiled into a PDF report. The report includes analyses such as card summary,
+	heatmaps, histograms, box plots, and distribution plots, each focusing on different aspects of the data
+	like landscapes, environments, and durations. The generated images are temporarily stored and then
+	included in a PDF file, which is saved with the specified file name.
 
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        The DataFrame containing the audio file data to be analyzed. Expected to include columns
-        corresponding to the specified categories and any columns required by the analysis functions
-        like `card_summary`, `heatmap_analysis`, etc.
-    file_name : str
-        The name (and path) of the PDF file to be created.
-    categories : list of str
-        A list of category names to be included in the card summary analysis.
-    analysis_title : str, optional
-        A title for the analysis report. If None, a default subtitle is used.
-    width : int, optional
-        The width of the PDF document in millimeters. Default is set to 210 (A4 width).
-    height : int, optional
-        The height of the PDF document in millimeters. Default is set to 297 (A4 height).
+	Parameters
+	----------
+	df : pandas.DataFrame
+		The DataFrame containing the audio file data to be analyzed. Expected to include columns
+		corresponding to the specified categories and any columns required by the analysis functions
+		like `card_summary`, `heatmap_analysis`, etc.
+	file_name : str
+		The name (and path) of the PDF file to be created.
+	categories : list of str
+		A list of category names to be included in the card summary analysis.
+	analysis_title : str, optional
+		A title for the analysis report. If None, a default subtitle is used.
+	width : int, optional
+		The width of the PDF document in millimeters. Default is set to 210 (A4 width).
+	height : int, optional
+		The height of the PDF document in millimeters. Default is set to 297 (A4 height).
 
-    Returns
-    -------
-    None
-        This function does not return a value. It generates a PDF file at the specified location.
+	Returns
+	-------
+	None
+		This function does not return a value. It generates a PDF file at the specified location.
 
-    Notes
-    -----
-    The function requires several dependencies to run, including Plotly for generating plots and a PDF library
-    for creating the PDF document. It also assumes the existence of certain functions (`card_summary`, 
-    `heatmap_analysis`, `histogram_analysis`, `duration_analysis`, `daily_distribution_analysis`, 
-    `duration_distribution`) that perform the individual analyses and plotting.
+	Notes
+	-----
+	The function requires several dependencies to run, including Plotly for generating plots and a PDF library
+	for creating the PDF document. It also assumes the existence of certain functions (`card_summary`, 
+	`heatmap_analysis`, `histogram_analysis`, `duration_analysis`, `daily_distribution_analysis`, 
+	`duration_distribution`) that perform the individual analyses and plotting.
 
-    The generated PDF includes a cover page, a brief introductory text, and separate sections for landscape,
-    environment, and duration analyses, each containing relevant plots. Temporary images are stored in a 
-    directory named 'images_summary_pdf_temp' which is deleted after the PDF is created.
+	The generated PDF includes a cover page, a brief introductory text, and separate sections for landscape,
+	environment, and duration analyses, each containing relevant plots. Temporary images are stored in a 
+	directory named 'images_summary_pdf_temp' which is deleted after the PDF is created.
 
-    Examples
-    --------
-    >>> from maui import samples, eda
+	Examples
+	--------
+	>>> from maui import samples, eda
 	>>> df = samples.get_leec_audio_sample()
-    >>> categories = ['landscape', 'environment']
-    >>> eda.export_file_names_summary_pdf_LEEC(df, 'analysis_report.pdf', categories)    
-    """
-	
-	temp_dir = tempfile.TemporaryDirectory()
+	>>> categories = ['landscape', 'environment']
+	>>> eda.export_file_names_summary_pdf_LEEC(df, 'analysis_report.pdf', categories)	
+	"""
 
-	
-	_, fig = card_summary(df, categories, show_plot=False)
-	fig.write_image(f'''{temp_dir.name}/summary1.png''', height=300, width=1200)
-	_, fig = heatmap_analysis(df, 'landscape', 'environment', color_continuous_scale='Viridis', show_plot=False)
-	fig.write_image(f'''{temp_dir.name}/summary2.png''')
+	with tempfile.TemporaryDirectory() as temp_dir:
 
-	fig = histogram_analysis(df, 'landscape', 'environment', show_plot=False)
-	fig.write_image(f'''{temp_dir.name}/landscape1.png''', height=400, width=1200)
-	fig = duration_analysis(df, 'landscape', 'duration', show_plot=False)
-	fig.write_image(f'''{temp_dir.name}/landscape2.png''', height=400, width=1200)
-	fig = daily_distribution_analysis(df, 'dt', 'landscape', show_plot=False)
-	fig.write_image(f'''{temp_dir.name}/landscape3.png''', height=400, width=1200)
+		_, fig = card_summary(df, categories, show_plot=False)
+		fig.write_image(f'''{temp_dir}/summary1.png''', height=300, width=1200)
+		_, fig = heatmap_analysis(df, 'landscape', 'environment', color_continuous_scale='Viridis', show_plot=False)
+		fig.write_image(f'''{temp_dir}/summary2.png''')
 
-	fig = histogram_analysis(df, 'environment', 'landscape', show_plot=False)
-	fig.write_image(f'''{temp_dir.name}/environment1.png''', height=400, width=1200)
-	fig = duration_analysis(df, 'environment', 'duration', show_plot=False)
-	fig.write_image(f'''{temp_dir.name}/environment2.png''', height=400, width=1200)
-	fig = daily_distribution_analysis(df, 'dt', 'environment', show_plot=False)
-	fig.write_image(f'''{temp_dir.name}/environment3.png''', height=400, width=1200)
+		fig = histogram_analysis(df, 'landscape', 'environment', show_plot=False)
+		fig.write_image(f'''{temp_dir}/landscape1.png''', height=400, width=1200)
+		fig = duration_analysis(df, 'landscape', 'duration', show_plot=False)
+		fig.write_image(f'''{temp_dir}/landscape2.png''', height=400, width=1200)
+		fig = daily_distribution_analysis(df, 'dt', 'landscape', show_plot=False)
+		fig.write_image(f'''{temp_dir}/landscape3.png''', height=400, width=1200)
 
-	fig = duration_distribution(df, show_plot=False)
-	fig.write_image(f'''{temp_dir.name}/duration1.png''', height=400, width=1200)
+		fig = histogram_analysis(df, 'environment', 'landscape', show_plot=False)
+		fig.write_image(f'''{temp_dir}/environment1.png''', height=400, width=1200)
+		fig = duration_analysis(df, 'environment', 'duration', show_plot=False)
+		fig.write_image(f'''{temp_dir}/environment2.png''', height=400, width=1200)
+		fig = daily_distribution_analysis(df, 'dt', 'environment', show_plot=False)
+		fig.write_image(f'''{temp_dir}/environment3.png''', height=400, width=1200)
 
-	# Global Variables
-	TITLE = "Audio Files Exploratory Data Analysis"
-	SUBTITLE = analysis_title
-	WIDTH = width
+		fig = duration_distribution(df, show_plot=False)
+		fig.write_image(f'''{temp_dir}/duration1.png''', height=400, width=1200)
 
-	# Create PDF
-	pdf = PDF() # A4 (210 by 297 mm)
+		# Global Variables
+		TITLE = "Audio Files Exploratory Data Analysis"
+		SUBTITLE = analysis_title
+		WIDTH = width
 
-	'''
-	First Page of PDF
-	'''
-	# Add Page
-	pdf.add_page()
+		# Create PDF
+		pdf = PDF() # A4 (210 by 297 mm)
 
-	letterhead_cover = pkg_resources.resource_filename('maui', 'data/letterhead_cover.png')
-	letterhead = pkg_resources.resource_filename('maui', 'data/letterhead.png')
+		'''
+		First Page of PDF
+		'''
+		# Add Page
+		pdf.add_page()
 
-	# Add lettterhead and title
-	create_letterhead(pdf, WIDTH, letterhead_cover)
-	create_title(pdf, TITLE, SUBTITLE)
+		letterhead_cover = pkg_resources.resource_filename('maui', 'data/letterhead_cover.png')
+		letterhead = pkg_resources.resource_filename('maui', 'data/letterhead.png')
 
-	# Add table
-	w = 200
-	pdf.image(f'''{temp_dir.name}/summary1.png''', w=w, x=(WIDTH-w)/2)
-	pdf.ln(5)
+		# Add lettterhead and title
+		create_letterhead(pdf, WIDTH, letterhead_cover)
+		create_title(pdf, TITLE, SUBTITLE)
 
-	intro_text = """
-	This report contains a brief exploratory data analysis comprehending the data obtained by audio file names. 
-	The objective is to present an overview of the acoustic landscapes and environments of the recordings, as well as their duration. 
-	Further analysis such as false color spectrograms and acoustic indices summarization can be performed with Maui Sotware analysis and visualization tools."""
-	write_to_pdf(pdf, intro_text)
+		# Add table
+		w = 200
+		pdf.image(f'''{temp_dir}/summary1.png''', w=w, x=(WIDTH-w)/2)
+		pdf.ln(5)
 
-
-	pdf.add_page()
-
-	create_letterhead(pdf, WIDTH, letterhead)
-
-	pdf.ln(20)
-	write_subtitle(pdf, "1. Landscape Analysis")
-	pdf.ln(20)
-	pdf.image(f'''{temp_dir.name}/landscape1.png''', w=w, x=(WIDTH-w)/2)
-	pdf.ln(5)
-	pdf.image(f'''{temp_dir.name}/landscape2.png''', w=w, x=(WIDTH-w)/2)
-	pdf.ln(5)
-	pdf.image(f'''{temp_dir.name}/landscape3.png''', w=w, x=(WIDTH-w)/2)
-	pdf.ln(10)
+		intro_text = """
+		This report contains a brief exploratory data analysis comprehending the data obtained by audio file names. 
+		The objective is to present an overview of the acoustic landscapes and environments of the recordings, as well as their duration. 
+		Further analysis such as false color spectrograms and acoustic indices summarization can be performed with Maui Sotware analysis and visualization tools."""
+		write_to_pdf(pdf, intro_text)
 
 
-	pdf.add_page()
-	create_letterhead(pdf, WIDTH, letterhead)
+		pdf.add_page()
 
-	pdf.ln(20)
-	write_subtitle(pdf, "2. Environment Analysis")
-	pdf.ln(20)
-	pdf.image(f'''{temp_dir.name}/environment1.png''', w=w, x=(WIDTH-w)/2)
-	pdf.ln(5)
-	pdf.image(f'''{temp_dir.name}/environment2.png''', w=w, x=(WIDTH-w)/2)
-	pdf.ln(5)
-	pdf.image(f'''{temp_dir.name}/environment3.png''', w=w, x=(WIDTH-w)/2)
-	pdf.ln(10)
+		create_letterhead(pdf, WIDTH, letterhead)
 
-	pdf.add_page()
-	create_letterhead(pdf, WIDTH, letterhead)
-
-	pdf.ln(20)
-	write_subtitle(pdf, "3. Duration Analysis")
-	pdf.ln(20)
-	pdf.image(f'''{temp_dir.name}/duration1.png''', w=w, x=(WIDTH-w)/2)
+		pdf.ln(20)
+		write_subtitle(pdf, "1. Landscape Analysis")
+		pdf.ln(20)
+		pdf.image(f'''{temp_dir}/landscape1.png''', w=w, x=(WIDTH-w)/2)
+		pdf.ln(5)
+		pdf.image(f'''{temp_dir}/landscape2.png''', w=w, x=(WIDTH-w)/2)
+		pdf.ln(5)
+		pdf.image(f'''{temp_dir}/landscape3.png''', w=w, x=(WIDTH-w)/2)
+		pdf.ln(10)
 
 
-	pdf.output(file_name, 'F')
+		pdf.add_page()
+		create_letterhead(pdf, WIDTH, letterhead)
+
+		pdf.ln(20)
+		write_subtitle(pdf, "2. Environment Analysis")
+		pdf.ln(20)
+		pdf.image(f'''{temp_dir}/environment1.png''', w=w, x=(WIDTH-w)/2)
+		pdf.ln(5)
+		pdf.image(f'''{temp_dir}/environment2.png''', w=w, x=(WIDTH-w)/2)
+		pdf.ln(5)
+		pdf.image(f'''{temp_dir}/environment3.png''', w=w, x=(WIDTH-w)/2)
+		pdf.ln(10)
+
+		pdf.add_page()
+		create_letterhead(pdf, WIDTH, letterhead)
+
+		pdf.ln(20)
+		write_subtitle(pdf, "3. Duration Analysis")
+		pdf.ln(20)
+		pdf.image(f'''{temp_dir}/duration1.png''', w=w, x=(WIDTH-w)/2)
+
+
+		pdf.output(file_name, 'F')
 	
 	
 	
