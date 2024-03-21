@@ -541,7 +541,6 @@ def export_file_names_summary_pdf_LEEC(df, file_name:str, categories:list, analy
 	TITLE = "Audio Files Exploratory Data Analysis"
 	SUBTITLE = analysis_title
 	WIDTH = width
-	HEIGHT = hight
 
 	# Create PDF
 	pdf = PDF() # A4 (210 by 297 mm)
@@ -564,7 +563,10 @@ def export_file_names_summary_pdf_LEEC(df, file_name:str, categories:list, analy
 	pdf.image("images_summary_pdf_temp/summary1.png", w=w, x=(WIDTH-w)/2)
 	pdf.ln(5)
 
-	intro_text = "This report contains a brief exploratory data analysis comprehending the data obtained by audio file names. The objective is to present an overview of the acoustic landscapes and environments of the recordings, as well as their duration. Further analysis such as false color spectrograms and acoustic indices summarization can be performed with Maui Sotware analysis and visualization tools."
+	intro_text = """
+	This report contains a brief exploratory data analysis comprehending the data obtained by audio file names. 
+	The objective is to present an overview of the acoustic landscapes and environments of the recordings, as well as their duration. 
+	Further analysis such as false color spectrograms and acoustic indices summarization can be performed with Maui Sotware analysis and visualization tools."""
 	write_to_pdf(pdf, intro_text)
 
 

@@ -151,14 +151,14 @@ def indices_radar_plot(df, indices:list, agg_type:str, group_by:list=None, max_c
     
     # se não for agrupar    
     if group_by is None:
-            df_tmp = copy.copy(df_unpivot)
-            
-            r = list(df_tmp["value"])
-            r.append(r[0])
-            theta = list(df_tmp["index"])
-            theta.append(theta[0])
-            
-            fig.add_trace( go.Scatterpolar(r=r, theta=theta, mode='lines'), 
+        df_tmp = copy.copy(df_unpivot)
+        
+        r = list(df_tmp["value"])
+        r.append(r[0])
+        theta = list(df_tmp["index"])
+        theta.append(theta[0])
+        
+        fig.add_trace( go.Scatterpolar(r=r, theta=theta, mode='lines'), 
                           row=1, col=1)
     else:
         if len(group_by) == 1: lables_list = list(df[group_by[0]].unique())
@@ -231,7 +231,7 @@ def indices_radar_plot(df, indices:list, agg_type:str, group_by:list=None, max_c
     
 # --------------------------------------------------------------------------------------------------------------------------------
 
-def indices_histogram_plot(df, indices:list, group_by:str=None, max_cols:int=3, fig_size:dict=None, show_plot:bool=True):
+def indices_histogram_plot(df, indices:list, group_by:str = None, max_cols:int = 3, fig_size:dict = None, show_plot:bool = True):
     """
     Create histogram plots to visualize the distribution of indices in a DataFrame.
 
@@ -320,7 +320,6 @@ def indices_histogram_plot(df, indices:list, group_by:str=None, max_cols:int=3, 
     row = 1
     showlegend = True
     
-    colors = px.colors.qualitative.Plotly
     if group_by is not None: lables_list = list(df[group_by].unique())
     
     # add one trace for each index
@@ -369,7 +368,7 @@ def indices_histogram_plot(df, indices:list, group_by:str=None, max_cols:int=3, 
         
 # --------------------------------------------------------------------------------------------------------------------------------
 
-def indices_violin_plot(df, indices:list, group_by:str=None, fig_size:dict=None, show_plot:bool=True):
+def indices_violin_plot(df, indices:list, group_by:str = None, fig_size:dict = None, show_plot:bool = True):
     """
     Create violin plots to visualize the distribution of indices in a DataFrame.
 
@@ -500,7 +499,7 @@ def indices_violin_plot(df, indices:list, group_by:str=None, fig_size:dict=None,
         fig.layout.annotations[i]['yshift'] = 25
         
     fig.update_layout(
-        title=f'''Violin Plot - Distribution of selected indices''',
+        title='''Violin Plot - Distribution of selected indices''',
         title_x=0.5
     )
 
@@ -516,7 +515,7 @@ def indices_violin_plot(df, indices:list, group_by:str=None, fig_size:dict=None,
         
 # --------------------------------------------------------------------------------------------------------------------------------
     
-def spectrogram_plot(file_path:str, mode:str=None, window:str='hann', nperseg:int=1024, noverlap:int=None, verbose:bool=False, fig_size:dict=None, show_plot:bool=True):
+def spectrogram_plot(file_path:str, mode:str = None, window:str = 'hann', nperseg:int = 1024, noverlap:int = None, verbose:bool = False, fig_size:dict = None, show_plot:bool = True):
     """
     Create a spectrogram plot from an audio file.
 
@@ -595,13 +594,15 @@ def spectrogram_plot(file_path:str, mode:str=None, window:str='hann', nperseg:in
     
     fig_size = {'height':500, 'width':1200}
 
-    fig = go.Figure(data=go.Heatmap(
-            z=Sxx_disp,
-            x=tn,
-            y=fn,
-            colorscale='gray',
-            hoverinfo=None
-          ))
+    fig = go.Figure(
+        data=go.Heatmap(
+        z=Sxx_disp,
+        x=tn,
+        y=fn,
+        colorscale='gray',
+        hoverinfo=None
+        )
+    )
     
     fig.update_layout(
         title=f'''Spectrogram generated from the file {os.path.basename(file_path)}''',

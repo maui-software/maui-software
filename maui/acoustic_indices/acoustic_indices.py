@@ -5,9 +5,7 @@ import math
 import gc
 
 from tqdm import tqdm
-from multiprocessing import Pool
 import multiprocessing as mp
-import sys
 
 import maad
 
@@ -114,7 +112,6 @@ def get_acoustic_indices(df, args: dict):
     iterator_df = range(df.shape[0]) if args['parallel'] else tqdm(range(df.shape[0]))
 
     for index in iterator_df:
-#     for index, row in df.iterrows(): 
         row = df.iloc[index]
         
         # load audio file
@@ -202,10 +199,12 @@ def get_acoustic_indices(df, args: dict):
 
 
 
-            if (('frequency_entropy' in indices_list) or ('number_of_peaks' in indices_list) or ('spectral_activity' in indices_list) or 
-                ('spectral_events' in indices_list) or ('spectral_cover' in indices_list) or ('soundscape_index' in indices_list) or 
-                ('spectral_leq' in indices_list)  or ('tfsd' in indices_list)  or ('more_entropy' in indices_list)  or 
-                ('acoustic_gradient_index' in indices_list)  or ('frequency_raoq' in indices_list)  or ('region_of_interest_index' in indices_list)  ):
+            if (
+                ('frequency_entropy' in indices_list) or ('number_of_peaks' in indices_list) or ('spectral_activity' in indices_list) or
+                ('spectral_events' in indices_list) or ('spectral_cover' in indices_list) or ('soundscape_index' in indices_list) or
+                ('spectral_leq' in indices_list)  or ('tfsd' in indices_list)  or ('more_entropy' in indices_list)  or
+                ('acoustic_gradient_index' in indices_list)  or ('frequency_raoq' in indices_list)  or ('region_of_interest_index' in indices_list)
+            ):
 
                 Sxx_power, tn, fn, ext = maad.sound.spectrogram (s, fs) 
 
@@ -281,7 +280,6 @@ def get_acoustic_indices(df, args: dict):
 
 
                 if (('spectral_activity' in indices_list) or ('spectral_events' in indices_list) or ('spectral_cover' in indices_list)  ):
-    #                 print('entrou')
 
                     Sxx_noNoise= maad.sound.median_equalizer(Sxx_power, extent=ext) 
                     Sxx_dB_noNoise = maad.util.power2dB(Sxx_noNoise)
@@ -336,6 +334,7 @@ def get_acoustic_indices(df, args: dict):
         
         del(s)
         del(fs)
+
         gc.collect()
 
 
@@ -435,8 +434,8 @@ def calculate_acoustic_indices(df_init, indices_list: list, store_df=False, base
     Exception
         If the selected indices are not available or if the DataFrame is missing the 'file_path' column.
 
-    Example
-    -------
+    Examples
+    --------
     >>> from maui import samples, acoustic_indices
     >>> df = samples.get_leec_audio_sample()
     >>> indices_list = ['median_amplitude_envelope', 'temporal_entropy']
@@ -452,10 +451,11 @@ def calculate_acoustic_indices(df_init, indices_list: list, store_df=False, base
 
 
     # check if the selected indices are available
-    available_indices = ['median_amplitude_envelope', 'temporal_entropy', 'acoustic_richness', 'temporal_activity', 'temporal_events', 'acoustic_complexity_index', 
-                         'frequency_entropy', 'number_of_peaks', 'spectral_entropy', 'spectral_activity', 'spectral_events', 'spectral_cover', 'soundscape_index',
-                         'acoustic_diversity_index', 'acoustic_eveness_index', 'temporal_leq', 'spectral_leq', 'tfsd', 'more_entropy', 'acoustic_gradient_index',
-                         'frequency_raoq', 'region_of_interest_index']
+    available_indices = ['median_amplitude_envelope', 'temporal_entropy', 'acoustic_richness', 'temporal_activity',
+                         'temporal_events', 'acoustic_complexity_index', 'frequency_entropy', 'number_of_peaks',
+                         'spectral_entropy', 'spectral_activity', 'spectral_events', 'spectral_cover', 'soundscape_index',
+                         'acoustic_diversity_index', 'acoustic_eveness_index', 'temporal_leq', 'spectral_leq',
+                         'tfsd', 'more_entropy', 'acoustic_gradient_index', 'frequency_raoq', 'region_of_interest_index']
     
     diff = set(indices_list).difference(available_indices)
     if not (set(indices_list).issubset(available_indices)): raise Exception (f'''The indices {diff} are not available. The list of available indices is: {available_indices}''')
@@ -477,3 +477,4 @@ def calculate_acoustic_indices(df_init, indices_list: list, store_df=False, base
         maui.io.store_df(df_processed, file_type, base_dir, file_name)
     
     return df_processed
+    
