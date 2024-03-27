@@ -28,6 +28,8 @@
 
 import os
 
+import pandas as pd
+
 import maui.io
 
 def get_leec_audio_sample() -> pd.DataFrame:
