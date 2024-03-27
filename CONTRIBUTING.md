@@ -91,6 +91,32 @@ If everything is ok, run the following command to install the changes:
 poetry install
 ```
 
+## Code Style
+
+
+To ensure maintainability and straightforward understanding of the code,
+this project adheres to PEP8 standards. Pull requests will be accepted
+only if they pass code style validations by Codacy and Code Rabbit.
+
+To locally check compliance with the standards, pylint and black libraries
+are installed in dev group. Use the following commands verify and modify
+yout code:
+
+1. Verify standards:
+	
+	```bash
+	pylint your_file.py
+	```
+2. Automatic changes:
+
+	```bash
+	black your_file.py
+	```
+
+This is an iterative process. Periodically check that the developed code
+meets PEP8 standards.
+
+
 ## Pull requests and branches
 
 It is not allowed to push new developments right into main branch. 
