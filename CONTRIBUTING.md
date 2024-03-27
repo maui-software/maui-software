@@ -126,3 +126,23 @@ If the Pull request is accepted, it will be merged into dev branch,
 and will be part of the package in the next release.
 
 Remember that the branch name should indicate the objective of that branch.
+
+## New Releases
+
+Once enough changes has been made and it is time to create a new release,
+the following steps should be performed:
+
+1. Commit the new version to the development branch
+
+	The changes should be done in two files:
+	- pyproject.toml: change the version tag to the new version
+	- docs/source/conf.py: change the release and version to the new version
+
+2. Merge development branch into main branch
+3. Create a new tag in github in main branch with the new version
+4. Create a new release in github from the created tag
+
+Once this steps were performed, the docs will be automaticaly updated and
+the new release will be uploaded to PyPi.
+
+IMPORTANT: Only project admins can create new releases.
