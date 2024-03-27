@@ -1,8 +1,8 @@
 # Contributors Guide
-Hello! If you are reding this, you probably desire to
-contribute with maui-software. Thank you so much!
+Hello! If you are reading this, you probably desire to
+contribute to maui-software. Thank you so much!
 
-Here you can find some steps to conributing with maui.
+Here you can find some steps to contributing with maui.
 
 ## Development installation
 
@@ -90,6 +90,32 @@ If everything is ok, run the following command to install the changes:
 ```bash
 poetry install
 ```
+
+## Code Style
+
+
+To ensure maintainability and straightforward understanding of the code,
+this project adheres to PEP8 standards. Pull requests will be accepted
+only if they pass code style validations by Codacy and Code Rabbit.
+
+To locally check compliance with the standards, pylint and black libraries
+are installed in dev group. Use the following commands to verify and modify
+your code:
+
+1. Verify standards:
+	
+	```bash
+	pylint your_file.py
+	```
+2. Automatic changes:
+
+	```bash
+	black your_file.py
+	```
+
+This is an iterative process. Periodically check that the developed code
+meets PEP8 standards.
+
 
 ## Pull requests and branches
 

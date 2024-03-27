@@ -1,13 +1,43 @@
+"""
+This module provides functionalities for interacting with audio files and
+storing data efficiently. It includes utilities for extracting metadata from
+audio files, such as duration and timestamps, and for saving pandas DataFrames
+to disk in specified formats.
+
+The module uses external libraries like `audioread` for audio file processing
+and `pandas` for data manipulation, ensuring wide compatibility and ease of
+integration into data processing workflows.
+
+Functions:
+- get_audio_info(audio_path, format_name, date_time_func=None,
+  format_file_path=None, store_duration=0, perc_sample=1): Extracts information
+  from audio files, returning a DataFrame with details like timestamps and
+  duration.
+- store_df(df, file_type, base_dir, file_name): Saves a DataFrame to disk in a
+  specified format (CSV or Pickle), facilitating data persistence and sharing.
+
+Examples and detailed parameter information are provided within each function's
+docstring, guiding usage and application in various scenarios.
+
+Note:
+- This module is part of the `maui` package, focusing on audio file analysis and
+  data management.
+
+Dependencies:
+- pandas: For DataFrame operations.
+- audioread: For accessing audio file information.
+- glob, os, datetime, random: For file and directory operations, and handling
+  dates and randomness.
+"""
+
+import random
+import os
+import glob
+import datetime
+
 import audioread
 
 import pandas as pd
-import random
-
-
-import os
-import glob
-
-import datetime
 
 # maui imports
 import maui.files_metadata
@@ -15,7 +45,15 @@ import maui.files_metadata
 
 # ------------------------------------------------
 
-def get_audio_info(audio_path, format_name, date_time_func=None, format_file_path=None, store_duration=0, perc_sample=1):
+
+def get_audio_info(
+    audio_path,
+    format_name,
+    date_time_func=None,
+    format_file_path=None,
+    store_duration=0,
+    perc_sample=1,
+):
     """
     Extract audio file information from a file or directory.
 
@@ -39,7 +77,7 @@ def get_audio_info(audio_path, format_name, date_time_func=None, format_file_pat
 
     Raises
     ------
-        Exception: 
+        Exception:
             If the input is neither a file nor a directory.
 
     Examples
@@ -47,76 +85,79 @@ def get_audio_info(audio_path, format_name, date_time_func=None, format_file_pat
         >>> from maui import io
         >>> audio_file = "forest_channelA_20210911_153000_jungle.wav"
         >>> io.get_audio_info(audio_file, store_duration=1, perc_sample=0.8)
-           landscape   channel      date    time environment      timestamp_init timestamp_end  duration                                   file_path
-        0     forest  channelA  20210911  153000      jungle 2021-09-11 15:30:00          None       NaN  forest_channelA_20210911_153000_jungle.wav
-
+     
         >>> audio_dir = "/path/to/audio/directory"
         >>> io.get_audio_info(audio_dir, store_duration=0, perc_sample=0.5)
-           landscape   channel      date    time environment      timestamp_init          file_path
-        0     forest  channelA  20210911  153000      jungle 2021-09-11 15:30:00  /path/to/audio/directory/forest_channelA_20210911_153000_jungle.wav
-        1   mountains  channelB  20210911  160000      forest 2021-09-11 16:00:00  /path/to/audio/directory/mountains_channelB_20210911_160000_forest.wav
-    
     """
-
 
     file_dict = None
 
     if os.path.isfile(audio_path):
         basename = os.path.basename(audio_path)
-        filename, file_extension = os.path.splitext(basename)
+        filename, _ = os.path.splitext(basename)
 
-        file_dict = maui.files_metadata.extract_metadata(filename, format_name, date_time_func, format_file_path)
-        
-        file_dict['timestamp_end'] =  None
-        file_dict['duration'] =  None
-        
-        if (store_duration):
+        file_dict = maui.files_metadata.extract_metadata(
+            filename, format_name, date_time_func, format_file_path
+        )
+
+        file_dict["timestamp_end"] = None
+        file_dict["duration"] = None
+
+        if store_duration:
             x = audioread.audio_open(audio_path)
             duration = x.duration
-            
-            file_dict['timestamp_end'] =  file_dict['timestamp_init'] + datetime.timedelta(seconds=duration)
-            file_dict['duration'] =  duration
-        
-        file_dict['file_path'] = audio_path
-        
+
+            file_dict["timestamp_end"] = file_dict[
+                "timestamp_init"
+            ] + datetime.timedelta(seconds=duration)
+            file_dict["duration"] = duration
+
+        file_dict["file_path"] = audio_path
+
         df = pd.DataFrame(file_dict, index=[0])
 
     elif os.path.isdir(audio_path):
         file_dict = []
-        for file_path in glob.glob(audio_path + '/*.wav'):
+        for file_path in glob.glob(audio_path + "/*.wav"):
 
             if random.uniform(0, 1) < perc_sample:
                 basename = os.path.basename(file_path)
-                filename, file_extension = os.path.splitext(basename)
+                filename, _ = os.path.splitext(basename)
 
-                file_dict_temp = maui.files_metadata.extract_metadata(filename, format_name, date_time_func, format_file_path)
+                file_dict_temp = maui.files_metadata.extract_metadata(
+                    filename, format_name, date_time_func, format_file_path
+                )
 
-                file_dict_temp['timestamp_end'] =  None
-                file_dict_temp['duration'] =  None
+                file_dict_temp["timestamp_end"] = None
+                file_dict_temp["duration"] = None
 
-                if (store_duration):
+                if store_duration:
                     x = audioread.audio_open(file_path)
                     duration = x.duration
 
-                    file_dict_temp['timestamp_end'] =  file_dict_temp['timestamp_init'] + datetime.timedelta(seconds=duration)
-                    file_dict_temp['duration'] =  duration
-                
-                file_dict_temp['file_path'] = file_path
+                    file_dict_temp["timestamp_end"] = file_dict_temp[
+                        "timestamp_init"
+                    ] + datetime.timedelta(seconds=duration)
+                    file_dict_temp["duration"] = duration
+
+                file_dict_temp["file_path"] = file_path
 
                 file_dict.append(file_dict_temp)
-        
+
         df = pd.DataFrame(file_dict)
 
-        df['hour'] = pd.to_datetime(df['timestamp_init']).dt.hour
-        df['time'] = pd.to_datetime(df['timestamp_init']).dt.time
-        df['dt'] = pd.to_datetime(df['timestamp_init']).dt.date
-        
+        df["hour"] = pd.to_datetime(df["timestamp_init"]).dt.hour
+        df["time"] = pd.to_datetime(df["timestamp_init"]).dt.time
+        df["dt"] = pd.to_datetime(df["timestamp_init"]).dt.date
+
     else:
         raise Exception("The input must be a file or a directory")
 
     return df
 
+
 # ------------------------------------------------
+
 
 def store_df(df, file_type, base_dir, file_name):
     """
@@ -152,16 +193,15 @@ def store_df(df, file_type, base_dir, file_name):
         # Saves the DataFrame as '/path/to/directory/my_dataframe.pkl'
 
     """
-    
-    if (file_type == 'csv'):
-        full_path = os.path.join(base_dir, file_name+'.csv')
+
+    if file_type == "csv":
+        full_path = os.path.join(base_dir, file_name + ".csv")
         df.to_csv(full_path)
-        
+
         return
-    
-    elif (file_type == 'pickle'):
-        full_path = os.path.join(base_dir, file_name+'.pkl')
+
+    if file_type == "pickle":
+        full_path = os.path.join(base_dir, file_name + ".pkl")
         df.to_pickle(full_path)
-        
+
         return
-    
