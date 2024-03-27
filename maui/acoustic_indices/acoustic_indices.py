@@ -43,8 +43,6 @@ function's docstring, offering guidance on applying these tools to your audio
 analysis workflows.
 """
 
-
-import math
 import gc
 import multiprocessing as mp
 
