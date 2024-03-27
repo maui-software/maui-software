@@ -13,7 +13,7 @@ The module ``eda`` has a collection of functions to perform exploratory data ana
     duration_analysis
     daily_distribution_analysis
     duration_distribution
-    export_file_names_summary_pdf_LEEC
+    export_file_names_summary_pdf_leec
     
 
 """
@@ -24,7 +24,7 @@ from .eda import (card_summary,
                      duration_analysis,
                      daily_distribution_analysis,
                      duration_distribution,
-                     export_file_names_summary_pdf_LEEC
+                     export_file_names_summary_pdf_leec
                     )
 
 __all__ = [ # eda
@@ -34,5 +34,5 @@ __all__ = [ # eda
            'duration_analysis',
            'daily_distribution_analysis',
            'duration_distribution',
-           'export_file_names_summary_pdf_LEEC',
+           'export_file_names_summary_pdf_leec',
            ]

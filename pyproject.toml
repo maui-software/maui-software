@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "maui-software"
-version = "0.1.20"
+version = "0.1.21"
 description = "Eco-acoustics data visualization and analysis"
 authors = ["Caio Ferreira Bernardo <caio.bernardo@usp.br>"]
 readme = "README.md"
@@ -26,6 +26,8 @@ matplotlib = "^3.8.3"
 
 [tool.poetry.group.dev.dependencies]
 jupyterlab = "^4.1.5"
+pylint = "^3.1.0"
+black = "^24.3.0"
 
 [build-system]
 requires = ["poetry-core"]
