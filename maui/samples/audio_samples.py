@@ -30,7 +30,7 @@ import os
 
 import maui.io
 
-def get_leec_audio_sample():
+def get_leec_audio_sample() -> pd.DataFrame:
     """
     Get Leec Audio Samples available in maui.
 

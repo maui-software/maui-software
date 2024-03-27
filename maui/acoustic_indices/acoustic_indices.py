@@ -56,7 +56,7 @@ import maad
 import maui.io
 
 
-def get_acoustic_indices(df, args: dict):
+def get_acoustic_indices(df, args: dict) -> pd.DataFrame:
 
     indices_list = args["indices_list"]
 
@@ -441,7 +441,7 @@ def calculate_acoustic_indices_par_aux(args):
 # ----------------------------------------------------------------------------
 
 
-def parallelize_dataframe(df, func, args, num_cores):
+def parallelize_dataframe(df, func, args, num_cores) -> pd.DataFrame:
 
     # slices = math.floor(round(df.shape[0]/num_cores)/num_cores)*num_cores
     slices = math.floor(round(df.shape[0] * df.shape[1] / 8) / 8)
@@ -480,7 +480,7 @@ def calculate_acoustic_indices(
     file_name=None,
     file_type=None,
     parallel=True,
-):
+) -> pd.DataFrame:
     """
     Calculate a set of acoustic indices for audio files and optionally
     store the results.
