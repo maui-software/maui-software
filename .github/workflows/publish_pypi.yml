@@ -3,25 +3,15 @@ on:
   release:
     types: [published]
 jobs:
-  build-and-publish:
+  pypi:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-    
-    - name: Install Poetry
-      run: |
-        curl -sSL https://install.python-poetry.org | python3 -
-
-    - name: Configure Poetry
-      run: |
-        poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
-    
-    - name: Build and Publish to PyPI
-      run: |
-        poetry build
-        poetry publish
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - run: python3 -m pip install --upgrade build && python3 -m build
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
