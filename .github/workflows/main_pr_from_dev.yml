@@ -1,0 +1,17 @@
+name: Enforce Development Branch Merges into main
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-base-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check base branch
+        run: |
+          if [[ "${{ github.head_ref }}" != "development" ]]; then
+            echo "Error: Pull requests can only be merged from 'development' into 'main'."
+            exit 1
+          fi
