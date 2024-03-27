@@ -8,38 +8,31 @@ The module ``eda`` has a collection of functions to perform exploratory data ana
     :toctree: generated/
 
     card_summary
-    landscape_environment_heatmap
-    plot_landscape_histogram
-    plot_landscape_duration
-    plot_landscape_daily_distribution
-    plot_environment_histogram
-    plot_environment_duration
-    plot_environment_daily_distribution
-    plot_duration_distribution
-    export_file_names_summary_pdf
+    heatmap_analysis
+    histogram_analysis
+    duration_analysis
+    daily_distribution_analysis
+    duration_distribution
+    export_file_names_summary_pdf_leec
+    
 
 """
 
 from .eda import (card_summary,
-                     landscape_environment_heatmap,
-                     plot_landscape_histogram,
-                     plot_landscape_duration,
-                     plot_landscape_daily_distribution,
-                     plot_environment_histogram,
-                     plot_environment_duration,
-                     plot_environment_daily_distribution,
-                     plot_duration_distribution,
-                     export_file_names_summary_pdf)
-
+                     heatmap_analysis,
+                     histogram_analysis,
+                     duration_analysis,
+                     daily_distribution_analysis,
+                     duration_distribution,
+                     export_file_names_summary_pdf_leec
+                    )
 
 __all__ = [ # eda
            'card_summary',
-           'landscape_environment_heatmap',
-           'plot_landscape_histogram',
-           'plot_landscape_duration',
-           'plot_landscape_daily_distribution',
-           'plot_environment_histogram',
-           'plot_environment_duration',
-           'plot_environment_daily_distribution',
-           'plot_duration_distribution',
-           'export_file_names_summary_pdf']
+           'heatmap_analysis',
+           'histogram_analysis',
+           'duration_analysis',
+           'daily_distribution_analysis',
+           'duration_distribution',
+           'export_file_names_summary_pdf_leec',
+           ]
