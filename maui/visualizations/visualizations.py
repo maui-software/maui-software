@@ -175,9 +175,9 @@ def indices_radar_plot(
     if agg_type == "var":
         df_unpivot = df_unpivot.groupby(gb_cols).var().reset_index()
     if agg_type == "max":
-        df_unpivot = df_unpivot.groupby(gb_cols).var().reset_index()
+        df_unpivot = df_unpivot.groupby(gb_cols).max().reset_index()
     if agg_type == "min":
-        df_unpivot = df_unpivot.groupby(gb_cols).var().reset_index()
+        df_unpivot = df_unpivot.groupby(gb_cols).min().reset_index()
 
     df_unpivot = df_unpivot.rename(columns={"variable": "index"})
 
