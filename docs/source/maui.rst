@@ -9,6 +9,7 @@ Subpackages
 
    maui.acoustic_indices
    maui.eda
+   maui.files_metadata
    maui.io
    maui.visualizations
    maui.samples
