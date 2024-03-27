@@ -22,4 +22,4 @@ jobs:
         run: poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
 
       - name: Build and publish package
-        run: poetry publish --build -- verbose
+        run: poetry publish --build --verbose
