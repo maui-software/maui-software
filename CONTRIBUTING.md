@@ -2,7 +2,7 @@
 Hello! If you are reading this, you probably desire to
 contribute to maui-software. Thank you so much!
 
-Here you can find some steps to conributing with maui.
+Here you can find some steps to contributing with maui.
 
 ## Development installation
 
@@ -99,8 +99,8 @@ this project adheres to PEP8 standards. Pull requests will be accepted
 only if they pass code style validations by Codacy and Code Rabbit.
 
 To locally check compliance with the standards, pylint and black libraries
-are installed in dev group. Use the following commands verify and modify
-yout code:
+are installed in dev group. Use the following commands to verify and modify
+your code:
 
 1. Verify standards:
 	
