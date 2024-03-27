@@ -1,46 +1,46 @@
 """
-This module is designed to calculate various acoustic indices from audio files,
-providing insights into the characteristics of soundscapes. Utilizing the MAAD
-library for the extraction of acoustic features, it supports a wide range of
-indices, including but not limited to median amplitude envelope, temporal
-entropy, acoustic richness, and spectral entropy. These indices are essential
-for analyzing environmental sounds, bioacoustics data, and general acoustic
-properties of audio recordings.
+    This module is designed to calculate various acoustic indices from audio files,
+    providing insights into the characteristics of soundscapes. Utilizing the MAAD
+    library for the extraction of acoustic features, it supports a wide range of
+    indices, including but not limited to median amplitude envelope, temporal
+    entropy, acoustic richness, and spectral entropy. These indices are essential
+    for analyzing environmental sounds, bioacoustics data, and general acoustic
+    properties of audio recordings.
 
-The core functionality is facilitated through a high-level function that
-accepts a pandas DataFrame containing paths to audio files, a list of indices
-to calculate, and options for parallel processing to expedite calculations
-across multiple audio files. Additional utility functions support parallel
-dataframe processing and interaction with filesystem for result storage.
+    The core functionality is facilitated through a high-level function that
+    accepts a pandas DataFrame containing paths to audio files, a list of indices
+    to calculate, and options for parallel processing to expedite calculations
+    across multiple audio files. Additional utility functions support parallel
+    dataframe processing and interaction with filesystem for result storage.
 
-Features include:
-- Calculation of a comprehensive set of acoustic indices.
-- Parallel processing capabilities for efficiency.
-- Integration with the MAAD library for acoustic feature extraction.
-- Options to save calculated indices to various file formats.
+    Features include:
+    - Calculation of a comprehensive set of acoustic indices.
+    - Parallel processing capabilities for efficiency.
+    - Integration with the MAAD library for acoustic feature extraction.
+    - Options to save calculated indices to various file formats.
 
-Functions:
-- calculate_acoustic_indices: Main function to calculate specified acoustic
-  indices for a collection of audio files.
-- get_acoustic_indices: Calculates acoustic indices for individual audio files.
-- parallelize_dataframe: Splits DataFrame for parallel processing of audio
-  files.
-- calculate_acoustic_indices_par_aux: Auxiliary function for parallel
-  processing.
+    Functions:
+    - calculate_acoustic_indices: Main function to calculate specified acoustic
+      indices for a collection of audio files.
+    - get_acoustic_indices: Calculates acoustic indices for individual audio files.
+    - parallelize_dataframe: Splits DataFrame for parallel processing of audio
+      files.
+    - calculate_acoustic_indices_par_aux: Auxiliary function for parallel
+      processing.
 
-Usage of this module is intended for researchers, ecologists, and sound
-designers interested in quantifying the acoustic properties of soundscapes
-or audio collections for analysis, monitoring, and other scientific studies.
+    Usage of this module is intended for researchers, ecologists, and sound
+    designers interested in quantifying the acoustic properties of soundscapes
+    or audio collections for analysis, monitoring, and other scientific studies.
 
-Dependencies:
-- numpy and pandas for data manipulation.
-- tqdm for progress tracking during calculations.
-- maad for acoustic feature extraction.
-- multiprocessing for parallel computation.
+    Dependencies:
+    - numpy and pandas for data manipulation.
+    - tqdm for progress tracking during calculations.
+    - maad for acoustic feature extraction.
+    - multiprocessing for parallel computation.
 
-Example usage and additional parameter descriptions are provided within each
-function's docstring, offering guidance on applying these tools to your audio
-analysis workflows.
+    Example usage and additional parameter descriptions are provided within each
+    function's docstring, offering guidance on applying these tools to your audio
+    analysis workflows.
 """
 
 import gc
@@ -481,63 +481,63 @@ def calculate_acoustic_indices(
     parallel=True,
 ) -> pd.DataFrame:
     """
-    Calculate a set of acoustic indices for audio files and optionally
-    store the results.
+        Calculate a set of acoustic indices for audio files and optionally
+        store the results.
 
-    This function calculates a set of specified acoustic indices for audio
-    files in the input DataFrame. The supported indices include
-    median_amplitude_envelope, temporal_entropy, acoustic_richness, and others.
-    The calculated indices are added as columns to the DataFrame, and the
-    resulting DataFrame is returned. If the 'store_df' parameter is set
-    to True, the DataFrame can be saved to a file.
+        This function calculates a set of specified acoustic indices for audio
+        files in the input DataFrame. The supported indices include
+        median_amplitude_envelope, temporal_entropy, acoustic_richness, and others.
+        The calculated indices are added as columns to the DataFrame, and the
+        resulting DataFrame is returned. If the 'store_df' parameter is set
+        to True, the DataFrame can be saved to a file.
 
-    Parameters
-    ----------
-    df_init : pd.DataFrame
-        The DataFrame containing audio file data with a 'file_path'
-        column specifying the path to each audio file.
-    indices_list : List[str]
-        A list of acoustic indices to calculate.
-    store_df : bool, optional
-        Whether to store the resulting DataFrame to a file. Default is False.
-    base_dir : str, optional
-        The base directory where the output file will be saved. Required if 'store_df' is True.
-    file_name : str, optional
-        The name of the output file to save the DataFrame. Required if 'store_df' is True.
-    file_type : str, optional
-        The file format for saving the DataFrame, e.g., 'csv', 'xlsx'.
-        Required if 'store_df' is True.
-    parallel : bool, optional
-        Whether to use parallel processing for calculating indices. Default is True.
+        Parameters
+        ----------
+        df_init : pd.DataFrame
+            The DataFrame containing audio file data with a 'file_path'
+            column specifying the path to each audio file.
+        indices_list : List[str]
+            A list of acoustic indices to calculate.
+        store_df : bool, optional
+            Whether to store the resulting DataFrame to a file. Default is False.
+        base_dir : str, optional
+            The base directory where the output file will be saved. Required if 'store_df' is True.
+        file_name : str, optional
+            The name of the output file to save the DataFrame. Required if 'store_df' is True.
+        file_type : str, optional
+            The file format for saving the DataFrame, e.g., 'csv', 'xlsx'.
+            Required if 'store_df' is True.
+        parallel : bool, optional
+            Whether to use parallel processing for calculating indices. Default is True.
 
-    Returns
-    -------
-    pd.DataFrame
-        The DataFrame containing the calculated acoustic indices.
+        Returns
+        -------
+        pd.DataFrame
+            The DataFrame containing the calculated acoustic indices.
 
-    Raises
-    ------
-    Exception
-        If the selected indices are not available or if
-        the DataFrame is missing the 'file_path' column.
+        Raises
+        ------
+        Exception
+            If the selected indices are not available or if
+            the DataFrame is missing the 'file_path' column.
 
-    Examples
-    --------
-    >>> from maui import samples, acoustic_indices
-    >>> df = samples.get_leec_audio_sample()
-    >>> indices_list = ['median_amplitude_envelope', 'temporal_entropy']
-    >>> df = acoustic_indices.calculate_acoustic_indices(df, indices_list, parallel=False)
+        Examples
+        --------
+        >>> from maui import samples, acoustic_indices
+        >>> df = samples.get_leec_audio_sample()
+        >>> indices_list = ['median_amplitude_envelope', 'temporal_entropy']
+        >>> df = acoustic_indices.calculate_acoustic_indices(df, indices_list, parallel=False)
 
-    Notes
-    -----
-    - The function calculates a specified set of acoustic
-    indices for each audio file in the DataFrame.
-    - The 'indices_list' parameter should contain a list of available
-    indices to be calculated.
-    - The 'store_df', 'base_dir', 'file_name', and 'file_type' parameters
-    control whether and where to save the resulting DataFrame.
-    - If parallel processing is enabled ('parallel' is True),
-    the function will use multiple CPU cores for faster calculations.
+        Notes
+        -----
+        - The function calculates a specified set of acoustic
+        indices for each audio file in the DataFrame.
+        - The 'indices_list' parameter should contain a list of available
+        indices to be calculated.
+        - The 'store_df', 'base_dir', 'file_name', and 'file_type' parameters
+        control whether and where to save the resulting DataFrame.
+        - If parallel processing is enabled ('parallel' is True),
+        the function will use multiple CPU cores for faster calculations.
     """
 
     # check if the selected indices are available
