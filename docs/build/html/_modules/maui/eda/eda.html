@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.eda.eda &mdash; maui-software 0.1.20 documentation</title>
+  <title>maui.eda.eda &mdash; maui-software 0.1.21 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -13,7 +13,7 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/documentation_options.js?v=17aaaefc"></script>
+        <script src="../../../_static/documentation_options.js?v=b3d22ae5"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
               <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.20
+                0.1.21
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -162,14 +162,16 @@
 <span class="sd">    -------</span>
 <span class="sd">    tuple</span>
 <span class="sd">            Returns a tuple containing:</span>
+<span class="sd">            </span>
 <span class="sd">            - card_dict (dict): A dictionary with keys for &#39;n_samples&#39;,</span>
-<span class="sd">            &#39;distinct_days&#39;, &#39;total_time_duration&#39;,</span>
-<span class="sd">              &#39;mean_time_duration&#39;, and one key per category specified.</span>
-<span class="sd">              The values are the respective</span>
-<span class="sd">              computed statistics.</span>
+<span class="sd">                &#39;distinct_days&#39;, &#39;total_time_duration&#39;,</span>
+<span class="sd">                &#39;mean_time_duration&#39;, and one key per category specified.</span>
+<span class="sd">                The values are the respective</span>
+<span class="sd">                computed statistics.</span>
+
 <span class="sd">            - fig (plotly.graph_objs._figure.Figure): A Plotly figure object with indicators </span>
-<span class="sd">              for each of the statistics and categories specified.</span>
-<span class="sd">              Only returned if `show_plot` is True.</span>
+<span class="sd">                for each of the statistics and categories specified.</span>
+<span class="sd">                Only returned if `show_plot` is True.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -704,63 +706,37 @@
 <a class="viewcode-back" href="../../../maui.eda.html#maui.eda.export_file_names_summary_pdf_leec">[docs]</a>
 <span class="k">def</span> <span class="nf">export_file_names_summary_pdf_leec</span><span class="p">(</span>
     <span class="n">df</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">analysis_title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">210</span><span class="p">):</span>
+<span class="w">    </span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Exports an exploratory data analysis summary of audio files as a PDF.</span>
-
-<span class="sd">    This function generates a series of analysis plots from a given DataFrame</span>
-<span class="sd">    and exports them as images, which are then compiled into a PDF report.</span>
-<span class="sd">    The report includes analyses such as card summary, heatmaps, histograms,</span>
-<span class="sd">    box plots, and distribution plots, each focusing on different aspects of</span>
-<span class="sd">    the data like landscapes, environments, and durations.</span>
-<span class="sd">    The generated images are temporarily stored and then</span>
-<span class="sd">    included in a PDF file, which is saved with the specified file name.</span>
+<span class="sd">    Export a summary PDF report with analysis of file names for LEEC project.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    df : pandas.DataFrame</span>
-<span class="sd">            The DataFrame containing the audio file data to be analyzed. </span>
-<span class="sd">            Expected to include columns corresponding to the specified</span>
-<span class="sd">            categories and any columns required by the analysis functions</span>
-<span class="sd">            like `card_summary`, `heatmap_analysis`, etc.</span>
+<span class="sd">        DataFrame containing the data to be analyzed.</span>
 <span class="sd">    file_name : str</span>
-<span class="sd">            The name (and path) of the PDF file to be created.</span>
-<span class="sd">    categories : list of str</span>
-<span class="sd">            A list of category names to be included in the card summary analysis.</span>
+<span class="sd">        Name of the output PDF file.</span>
 <span class="sd">    analysis_title : str, optional</span>
-<span class="sd">            A title for the analysis report. If None, a default subtitle is used.</span>
+<span class="sd">        Title of the analysis section in the PDF.</span>
 <span class="sd">    width : int, optional</span>
-<span class="sd">            The width of the PDF document in millimeters. Default is set to 210 (A4 width).</span>
-<span class="sd">    height : int, optional</span>
-<span class="sd">            The height of the PDF document in millimeters. Default is set to 297 (A4 height).</span>
+<span class="sd">        Width of the PDF document in millimeters.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    None</span>
-<span class="sd">            This function does not return a value.</span>
-<span class="sd">            It generates a PDF file at the specified location.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    The function requires several dependencies to run,</span>
-<span class="sd">    including Plotly for generating plots and a PDF library</span>
-<span class="sd">    for creating the PDF document. It also assumes the</span>
-<span class="sd">    existence of certain functions (`card_summary`,</span>
-<span class="sd">    `heatmap_analysis`, `histogram_analysis`, `duration_analysis`,</span>
-<span class="sd">    `daily_distribution_analysis`,</span>
-<span class="sd">    `duration_distribution`) that perform the individual analyses and plotting.</span>
-
-<span class="sd">    The generated PDF includes a cover page, a brief introductory text,</span>
-<span class="sd">    and separate sections for landscape,</span>
-<span class="sd">    environment, and duration analyses, each containing relevant plots.</span>
-<span class="sd">    Temporary images are stored in a directory named</span>
-<span class="sd">    &#39;images_summary_pdf_temp&#39; which is deleted after the PDF is created.</span>
+<span class="sd">    This function exports a summary PDF report with various analyses of file</span>
+<span class="sd">    names for the LEEC project. </span>
+<span class="sd">    It includes landscape analysis, environment analysis, and duration</span>
+<span class="sd">    analysis. </span>
+<span class="sd">    The PDF is created using the provided DataFrame `df` and saved with</span>
+<span class="sd">    the specified `file_name`.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from maui import samples, eda</span>
-<span class="sd">    &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
-<span class="sd">    &gt;&gt;&gt; categories = [&#39;landscape&#39;, &#39;environment&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; eda.export_file_names_summary_pdf_LEEC(df, &#39;analysis_report.pdf&#39;, categories)</span>
+<span class="sd">    &gt;&gt;&gt; export_file_names_summary_pdf_leec(df, &#39;summary_report.pdf&#39;, analysis_title=&#39;Audio Files Analysis&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;landscape&#39;</span><span class="p">,</span> <span class="s1">&#39;environment&#39;</span><span class="p">]</span>

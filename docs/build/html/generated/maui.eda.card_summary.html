@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.eda.card_summary &mdash; maui-software 0.1.20 documentation</title>
+  <title>maui.eda.card_summary &mdash; maui-software 0.1.21 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/documentation_options.js?v=17aaaefc"></script>
+        <script src="../_static/documentation_options.js?v=b3d22ae5"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -37,7 +37,7 @@
               <img src="../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.20
+                0.1.21
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -109,7 +109,7 @@ number of samples, distinct days, total and mean duration (in minutes) of some a
 It also dynamically incorporates additional specified categories into its computations and
 visualizations. If enabled, a plot is generated using Plotly to visually represent these
 statistics alongside the categories specified.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>The input DataFrame containing at least the following columns: ‘file_path’, ‘dt’,
@@ -124,19 +124,23 @@ calculated statistics and specified categories. If False, no plot will be displa
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl>
-<dt>tuple</dt><dd><p>Returns a tuple containing:
-- card_dict (dict): A dictionary with keys for ‘n_samples’,
-‘distinct_days’, ‘total_time_duration’,</p>
-<blockquote>
-<div><p>‘mean_time_duration’, and one key per category specified.
+<dd class="field-even"><dl class="simple">
+<dt>tuple</dt><dd><p>Returns a tuple containing:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>card_dict (dict): A dictionary with keys for ‘n_samples’,</dt><dd><p>‘distinct_days’, ‘total_time_duration’,
+‘mean_time_duration’, and one key per category specified.
 The values are the respective
 computed statistics.</p>
-</div></blockquote>
-<ul class="simple">
-<li><p>fig (plotly.graph_objs._figure.Figure): A Plotly figure object with indicators 
-for each of the statistics and categories specified.
-Only returned if <cite>show_plot</cite> is True.</p></li>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fig (plotly.graph_objs._figure.Figure): A Plotly figure object with indicators </dt><dd><p>for each of the statistics and categories specified.
+Only returned if <cite>show_plot</cite> is True.</p>
+</dd>
+</dl>
+</li>
 </ul>
 </dd>
 </dl>

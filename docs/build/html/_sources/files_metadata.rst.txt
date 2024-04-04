@@ -1,4 +1,4 @@
-Visualizations
+Files Metadata
 ==============
 
 .. Submodules
