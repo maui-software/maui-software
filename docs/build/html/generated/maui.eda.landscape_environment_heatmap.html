@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>maui.eda.landscape_environment_heatmap &mdash; maui-software 0.1.20 documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -17,9 +19,7 @@
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="maui.eda.plot_landscape_histogram" href="maui.eda.plot_landscape_histogram.html" />
-    <link rel="prev" title="maui.eda.card_summary" href="maui.eda.card_summary.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,27 +46,16 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../maui.acoustic_indices.html">Acoustic Indices</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../maui.eda.html">Exploratory data analysis</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.card_summary.html">maui.eda.card_summary</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">maui.eda.landscape_environment_heatmap</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#maui.eda.landscape_environment_heatmap"><code class="docutils literal notranslate"><span class="pre">landscape_environment_heatmap()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.plot_landscape_histogram.html">maui.eda.plot_landscape_histogram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.plot_landscape_duration.html">maui.eda.plot_landscape_duration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.plot_landscape_daily_distribution.html">maui.eda.plot_landscape_daily_distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.plot_environment_histogram.html">maui.eda.plot_environment_histogram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.plot_environment_duration.html">maui.eda.plot_environment_duration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.plot_environment_daily_distribution.html">maui.eda.plot_environment_daily_distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.plot_duration_distribution.html">maui.eda.plot_duration_distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.export_file_names_summary_pdf.html">maui.eda.export_file_names_summary_pdf</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.eda.html">Exploratory data analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.io.html">Input and Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.visualizations.html">Visualizations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.samples.html">Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../example_gallery.html">Example gallery</a></li>
 </ul>
 
         </div>
@@ -83,7 +72,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../maui.eda.html">Exploratory data analysis</a></li>
       <li class="breadcrumb-item active">maui.eda.landscape_environment_heatmap</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/generated/maui.eda.landscape_environment_heatmap.rst.txt" rel="nofollow"> View page source</a>
@@ -96,52 +84,12 @@
              
   <section id="maui-eda-landscape-environment-heatmap">
 <h1>maui.eda.landscape_environment_heatmap<a class="headerlink" href="#maui-eda-landscape-environment-heatmap" title="Link to this heading">¶</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="maui.eda.landscape_environment_heatmap">
-<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">landscape_environment_heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/eda/eda.html#landscape_environment_heatmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.eda.landscape_environment_heatmap" title="Link to this definition">¶</a></dt>
-<dd><p>Generate a heatmap of landscapes vs. environments.</p>
-<p>This function calculates the count of samples for each combination of landscapes and environments
-and displays the information as a heatmap.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>df</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The DataFrame containing the data to be used for the heatmap.</p>
-</dd>
-<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to display the heatmap plot. Default is True.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt>pd.DataFrame</dt><dd><p>A DataFrame containing the count of samples for each landscape-environment combination.</p>
-</dd>
-<dt>plotly.graph_objs._figure.Figure</dt><dd><p>A Plotly Figure object representing the landscape vs. environment heatmap.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>The function groups the input DataFrame ‘df’ by ‘landscape’ and ‘environment’, counts the number of samples for each combination, and displays the result as a heatmap.</p></li>
-<li><p>The ‘show_plot’ parameter controls the display of the heatmap plot.</p></li>
-</ul>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">heatmap_data</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">landscape_environment_heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
 </section>
 
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="maui.eda.card_summary.html" class="btn btn-neutral float-left" title="maui.eda.card_summary" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="maui.eda.plot_landscape_histogram.html" class="btn btn-neutral float-right" title="maui.eda.plot_landscape_histogram" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>maui.io.io &mdash; maui-software 0.1.20 documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
@@ -50,6 +52,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../maui.visualizations.html">Visualizations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maui.samples.html">Samples</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../example_gallery.html">Example gallery</a></li>
+</ul>
 
         </div>
       </div>
@@ -76,88 +82,64 @@
            <div itemprop="articleBody">
              
   <h1>Source code for maui.io.io</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">audioread</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module provides functionalities for interacting with audio files and</span>
+<span class="sd">storing data efficiently. It includes utilities for extracting metadata from</span>
+<span class="sd">audio files, such as duration and timestamps, and for saving pandas DataFrames</span>
+<span class="sd">to disk in specified formats.</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="sd">The module uses external libraries like `audioread` for audio file processing</span>
+<span class="sd">and `pandas` for data manipulation, ensuring wide compatibility and ease of</span>
+<span class="sd">integration into data processing workflows.</span>
+
+<span class="sd">Functions:</span>
+<span class="sd">- get_audio_info(audio_path, format_name, date_time_func=None,</span>
+<span class="sd">  format_file_path=None, store_duration=0, perc_sample=1): Extracts information</span>
+<span class="sd">  from audio files, returning a DataFrame with details like timestamps and</span>
+<span class="sd">  duration.</span>
+<span class="sd">- store_df(df, file_type, base_dir, file_name): Saves a DataFrame to disk in a</span>
+<span class="sd">  specified format (CSV or Pickle), facilitating data persistence and sharing.</span>
+
+<span class="sd">Examples and detailed parameter information are provided within each function&#39;s</span>
+<span class="sd">docstring, guiding usage and application in various scenarios.</span>
+
+<span class="sd">Note:</span>
+<span class="sd">- This module is part of the `maui` package, focusing on audio file analysis and</span>
+<span class="sd">  data management.</span>
+
+<span class="sd">Dependencies:</span>
+<span class="sd">- pandas: For DataFrame operations.</span>
+<span class="sd">- audioread: For accessing audio file information.</span>
+<span class="sd">- glob, os, datetime, random: For file and directory operations, and handling</span>
+<span class="sd">  dates and randomness.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">random</span>
-
-
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">glob</span>
-
-<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 
-<div class="viewcode-block" id="get_file_structure_leec">
-<a class="viewcode-back" href="../../../maui.io.html#maui.io.get_file_structure_leec">[docs]</a>
-<span class="k">def</span> <span class="nf">get_file_structure_leec</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Parse a filename and extract information to create a dictionary.</span>
+<span class="kn">import</span> <span class="nn">audioread</span>
 
-<span class="sd">    This function takes a filename and extracts relevant information from it to</span>
-<span class="sd">    create a dictionary containing details like landscape, channel, date, time,</span>
-<span class="sd">    and environment.</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="sd">    The structure of the file_name should be as follows:</span>
-
-<span class="sd">    LANDSCAPE__CHANNEL__DATE_TIME_ENVIRONMENT.wav</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        filename:str</span>
-<span class="sd">            The input filename to be processed.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        audio_dict: dict</span>
-<span class="sd">            A dictionary containing the parsed information.</span>
-<span class="sd">        </span>
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">        ValueError: If the filename does not contain expected segments.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from maui import io</span>
-<span class="sd">        &gt;&gt;&gt; filename = &quot;LLEC40_0_20210911_153000_br.wav&quot;</span>
-<span class="sd">        &gt;&gt;&gt; io.get_file_structure_leec(filename)</span>
-<span class="sd">        {</span>
-<span class="sd">            &#39;landscape&#39;: &#39;LLEC40&#39;,</span>
-<span class="sd">            &#39;channel&#39;: &#39;0&#39;,</span>
-<span class="sd">            &#39;date&#39;: &#39;20210911&#39;,</span>
-<span class="sd">            &#39;time&#39;: &#39;153000&#39;,</span>
-<span class="sd">            &#39;environment&#39;: &#39;br&#39;,</span>
-<span class="sd">            &#39;timestamp_init&#39;: datetime.datetime(2021, 9, 11, 15, 30)</span>
-<span class="sd">        }</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-
-    <span class="n">file_name_segments</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">file_name_segments</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="k">pass</span>
-
-    <span class="n">dict_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;landscape&#39;</span><span class="p">,</span> <span class="s1">&#39;channel&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;environment&#39;</span><span class="p">]</span>
-    <span class="n">dt_timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">file_name_segments</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">file_name_segments</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2"> %H%M%S&quot;</span><span class="p">)</span>
-    
-    <span class="n">audio_dict</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;landscape&#39;</span><span class="p">:</span> <span class="n">file_name_segments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-        <span class="s1">&#39;environment&#39;</span><span class="p">:</span> <span class="n">file_name_segments</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
-        <span class="s1">&#39;channel&#39;</span><span class="p">:</span> <span class="n">file_name_segments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-        <span class="s1">&#39;timestamp_init&#39;</span><span class="p">:</span> <span class="n">dt_timestamp</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="n">audio_dict</span></div>
+<span class="c1"># maui imports</span>
+<span class="kn">import</span> <span class="nn">maui.files_metadata</span>
 
 
 <span class="c1"># ------------------------------------------------</span>
 
+
 <div class="viewcode-block" id="get_audio_info">
 <a class="viewcode-back" href="../../../maui.io.html#maui.io.get_audio_info">[docs]</a>
-<span class="k">def</span> <span class="nf">get_audio_info</span><span class="p">(</span><span class="n">audio_path</span><span class="p">,</span> <span class="n">store_duration</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">perc_sample</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_audio_info</span><span class="p">(</span>
+    <span class="n">audio_path</span><span class="p">,</span>
+    <span class="n">format_name</span><span class="p">,</span>
+    <span class="n">date_time_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">format_file_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">store_duration</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">perc_sample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract audio file information from a file or directory.</span>
 
@@ -181,7 +163,7 @@
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
-<span class="sd">        Exception: </span>
+<span class="sd">        Exception:</span>
 <span class="sd">            If the input is neither a file nor a directory.</span>
 
 <span class="sd">    Examples</span>
@@ -189,77 +171,80 @@
 <span class="sd">        &gt;&gt;&gt; from maui import io</span>
 <span class="sd">        &gt;&gt;&gt; audio_file = &quot;forest_channelA_20210911_153000_jungle.wav&quot;</span>
 <span class="sd">        &gt;&gt;&gt; io.get_audio_info(audio_file, store_duration=1, perc_sample=0.8)</span>
-<span class="sd">           landscape   channel      date    time environment      timestamp_init timestamp_end  duration                                   file_path</span>
-<span class="sd">        0     forest  channelA  20210911  153000      jungle 2021-09-11 15:30:00          None       NaN  forest_channelA_20210911_153000_jungle.wav</span>
-
+<span class="sd">     </span>
 <span class="sd">        &gt;&gt;&gt; audio_dir = &quot;/path/to/audio/directory&quot;</span>
 <span class="sd">        &gt;&gt;&gt; io.get_audio_info(audio_dir, store_duration=0, perc_sample=0.5)</span>
-<span class="sd">           landscape   channel      date    time environment      timestamp_init          file_path</span>
-<span class="sd">        0     forest  channelA  20210911  153000      jungle 2021-09-11 15:30:00  /path/to/audio/directory/forest_channelA_20210911_153000_jungle.wav</span>
-<span class="sd">        1   mountains  channelB  20210911  160000      forest 2021-09-11 16:00:00  /path/to/audio/directory/mountains_channelB_20210911_160000_forest.wav</span>
-<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
 
     <span class="n">file_dict</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">audio_path</span><span class="p">):</span>
         <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">audio_path</span><span class="p">)</span>
-        <span class="n">filename</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
+        <span class="n">filename</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
 
-        <span class="n">file_dict</span> <span class="o">=</span> <span class="n">get_file_structure_leec</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        
-        <span class="n">file_dict</span><span class="p">[</span><span class="s1">&#39;timestamp_end&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="kc">None</span>
-        <span class="n">file_dict</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="kc">None</span>
-        
-        <span class="k">if</span> <span class="p">(</span><span class="n">store_duration</span><span class="p">):</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">audioread</span><span class="o">.</span><span class="n">audio_open</span><span class="p">(</span><span class="n">audio_file</span><span class="p">)</span>
+        <span class="n">file_dict</span> <span class="o">=</span> <span class="n">maui</span><span class="o">.</span><span class="n">files_metadata</span><span class="o">.</span><span class="n">extract_metadata</span><span class="p">(</span>
+            <span class="n">filename</span><span class="p">,</span> <span class="n">format_name</span><span class="p">,</span> <span class="n">date_time_func</span><span class="p">,</span> <span class="n">format_file_path</span>
+        <span class="p">)</span>
+
+        <span class="n">file_dict</span><span class="p">[</span><span class="s2">&quot;timestamp_end&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">file_dict</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">store_duration</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">audioread</span><span class="o">.</span><span class="n">audio_open</span><span class="p">(</span><span class="n">audio_path</span><span class="p">)</span>
             <span class="n">duration</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">duration</span>
-            
-            <span class="n">file_dict</span><span class="p">[</span><span class="s1">&#39;timestamp_end&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">file_dict</span><span class="p">[</span><span class="s1">&#39;timestamp_init&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
-            <span class="n">file_dict</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">duration</span>
-        
-        <span class="n">file_dict</span><span class="p">[</span><span class="s1">&#39;file_path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">audio_file</span>
-        
+
+            <span class="n">file_dict</span><span class="p">[</span><span class="s2">&quot;timestamp_end&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_dict</span><span class="p">[</span>
+                <span class="s2">&quot;timestamp_init&quot;</span>
+            <span class="p">]</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
+            <span class="n">file_dict</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration</span>
+
+        <span class="n">file_dict</span><span class="p">[</span><span class="s2">&quot;file_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">audio_path</span>
+
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">file_dict</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">audio_path</span><span class="p">):</span>
         <span class="n">file_dict</span> <span class="o">=</span> <span class="p">[]</span>
-        
-        <span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">audio_path</span> <span class="o">+</span> <span class="s1">&#39;/*.wav&#39;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">audio_path</span> <span class="o">+</span> <span class="s2">&quot;/*.wav&quot;</span><span class="p">):</span>
+
             <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">perc_sample</span><span class="p">:</span>
                 <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
-                <span class="n">filename</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
+                <span class="n">filename</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
 
-                <span class="n">file_dict_temp</span> <span class="o">=</span> <span class="n">get_file_structure_leec</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-                
-                <span class="n">file_dict_temp</span><span class="p">[</span><span class="s1">&#39;timestamp_end&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="kc">None</span>
-                <span class="n">file_dict_temp</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="kc">None</span>
+                <span class="n">file_dict_temp</span> <span class="o">=</span> <span class="n">maui</span><span class="o">.</span><span class="n">files_metadata</span><span class="o">.</span><span class="n">extract_metadata</span><span class="p">(</span>
+                    <span class="n">filename</span><span class="p">,</span> <span class="n">format_name</span><span class="p">,</span> <span class="n">date_time_func</span><span class="p">,</span> <span class="n">format_file_path</span>
+                <span class="p">)</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="n">store_duration</span><span class="p">):</span>
+                <span class="n">file_dict_temp</span><span class="p">[</span><span class="s2">&quot;timestamp_end&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">file_dict_temp</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="k">if</span> <span class="n">store_duration</span><span class="p">:</span>
                     <span class="n">x</span> <span class="o">=</span> <span class="n">audioread</span><span class="o">.</span><span class="n">audio_open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
                     <span class="n">duration</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">duration</span>
 
-                    <span class="n">file_dict_temp</span><span class="p">[</span><span class="s1">&#39;timestamp_end&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">file_dict_temp</span><span class="p">[</span><span class="s1">&#39;timestamp_init&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
-                    <span class="n">file_dict_temp</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">duration</span>
-                
-                <span class="n">file_dict_temp</span><span class="p">[</span><span class="s1">&#39;file_path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_path</span>
+                    <span class="n">file_dict_temp</span><span class="p">[</span><span class="s2">&quot;timestamp_end&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_dict_temp</span><span class="p">[</span>
+                        <span class="s2">&quot;timestamp_init&quot;</span>
+                    <span class="p">]</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
+                    <span class="n">file_dict_temp</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration</span>
+
+                <span class="n">file_dict_temp</span><span class="p">[</span><span class="s2">&quot;file_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_path</span>
 
                 <span class="n">file_dict</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_dict_temp</span><span class="p">)</span>
-        
+
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">file_dict</span><span class="p">)</span>
 
-        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp_init&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">hour</span>
-        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp_init&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">time</span>
-        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp_init&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span>
-        
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;hour&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;timestamp_init&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">hour</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;timestamp_init&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">time</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;dt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;timestamp_init&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span>
+
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The input must be a file or a directory&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">df</span></div>
 
 
+
 <span class="c1"># ------------------------------------------------</span>
+
 
 <div class="viewcode-block" id="store_df">
 <a class="viewcode-back" href="../../../maui.io.html#maui.io.store_df">[docs]</a>
@@ -297,20 +282,19 @@
 <span class="sd">        # Saves the DataFrame as &#39;/path/to/directory/my_dataframe.pkl&#39;</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="n">file_type</span> <span class="o">==</span> <span class="s1">&#39;csv&#39;</span><span class="p">):</span>
-        <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;csv&quot;</span><span class="p">:</span>
+        <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span><span class="p">,</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span><span class="p">)</span>
         <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
-        
+
         <span class="k">return</span>
-    
-    <span class="k">elif</span> <span class="p">(</span><span class="n">file_type</span> <span class="o">==</span> <span class="s1">&#39;pickle&#39;</span><span class="p">):</span>
-        <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="o">+</span><span class="s1">&#39;.pkl&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;pickle&quot;</span><span class="p">:</span>
+        <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span><span class="p">,</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.pkl&quot;</span><span class="p">)</span>
         <span class="n">df</span><span class="o">.</span><span class="n">to_pickle</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
-        
+
         <span class="k">return</span></div>
 
-    
 </pre></div>
 
            </div>
