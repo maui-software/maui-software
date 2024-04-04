@@ -1,24 +1,26 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.eda.card_summary &mdash; maui-software 0.1.20 documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>maui.eda.card_summary &mdash; maui-software 0.1.21 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/documentation_options.js?v=17aaaefc"></script>
+        <script src="../_static/documentation_options.js?v=b3d22ae5"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="maui.eda.landscape_environment_heatmap" href="maui.eda.landscape_environment_heatmap.html" />
+    <link rel="next" title="maui.eda.heatmap_analysis" href="maui.eda.heatmap_analysis.html" />
     <link rel="prev" title="Exploratory data analysis" href="../maui.eda.html" /> 
 </head>
 
@@ -35,7 +37,7 @@
               <img src="../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.20
+                0.1.21
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -53,20 +55,21 @@
 <li class="toctree-l3"><a class="reference internal" href="#maui.eda.card_summary"><code class="docutils literal notranslate"><span class="pre">card_summary()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.landscape_environment_heatmap.html">maui.eda.landscape_environment_heatmap</a></li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.plot_landscape_histogram.html">maui.eda.plot_landscape_histogram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.plot_landscape_duration.html">maui.eda.plot_landscape_duration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.plot_landscape_daily_distribution.html">maui.eda.plot_landscape_daily_distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.plot_environment_histogram.html">maui.eda.plot_environment_histogram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.plot_environment_duration.html">maui.eda.plot_environment_duration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.plot_environment_daily_distribution.html">maui.eda.plot_environment_daily_distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.plot_duration_distribution.html">maui.eda.plot_duration_distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="maui.eda.export_file_names_summary_pdf.html">maui.eda.export_file_names_summary_pdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.eda.heatmap_analysis.html">maui.eda.heatmap_analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.eda.histogram_analysis.html">maui.eda.histogram_analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.eda.duration_analysis.html">maui.eda.duration_analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.eda.daily_distribution_analysis.html">maui.eda.daily_distribution_analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.eda.duration_distribution.html">maui.eda.duration_distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.eda.export_file_names_summary_pdf_leec.html">maui.eda.export_file_names_summary_pdf_leec</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.io.html">Input and Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.visualizations.html">Visualizations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.samples.html">Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../example_gallery.html">Example gallery</a></li>
 </ul>
 
         </div>
@@ -98,49 +101,68 @@
 <h1>maui.eda.card_summary<a class="headerlink" href="#maui-eda-card-summary" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="maui.eda.card_summary">
-<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">card_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/eda/eda.html#card_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.eda.card_summary" title="Link to this definition">¶</a></dt>
-<dd><p>Generate a summary card for a DataFrame.</p>
-<p>This function calculates and displays summary statistics for a DataFrame,
-including the number of samples, landscapes, environments, distinct days, total time duration,
-and mean time duration.</p>
+<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">card_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categories</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/eda/eda.html#card_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.eda.card_summary" title="Link to this definition">¶</a></dt>
+<dd><p>Generates a summary card and plots for specified categories from a
+DataFrame.
+This function processes the input DataFrame to compute various statistics, including the
+number of samples, distinct days, total and mean duration (in minutes) of some activities.
+It also dynamically incorporates additional specified categories into its computations and
+visualizations. If enabled, a plot is generated using Plotly to visually represent these
+statistics alongside the categories specified.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>df</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The DataFrame for which the summary statistics will be calculated.</p>
+<dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>The input DataFrame containing at least the following columns: ‘file_path’, ‘dt’,
+and ‘duration’. Additional columns should match the specified categories if any.</p>
 </dd>
-<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to display the summary card plot. Default is True.</p>
+<dt><strong>categories</strong><span class="classifier">list of str</span></dt><dd><p>A list of category names (column names in <cite>df</cite>) to include in the summary and plot.
+At most two categories can be specified.</p>
+</dd>
+<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>If True (default), the function will generate and show a Plotly plot representing the
+calculated statistics and specified categories. If False, no plot will be displayed.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>card_dict</strong><span class="classifier">dict</span></dt><dd><p>A dictionary containing the calculated summary statistics.</p>
+<dt>tuple</dt><dd><p>Returns a tuple containing:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>card_dict (dict): A dictionary with keys for ‘n_samples’,</dt><dd><p>‘distinct_days’, ‘total_time_duration’,
+‘mean_time_duration’, and one key per category specified.
+The values are the respective
+computed statistics.</p>
 </dd>
-<dt><strong>fig</strong><span class="classifier">plotly.graph_objs._figure.Figure</span></dt><dd><p>A Plotly Figure object representing the summary card plot.</p>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fig (plotly.graph_objs._figure.Figure): A Plotly figure object with indicators </dt><dd><p>for each of the statistics and categories specified.
+Only returned if <cite>show_plot</cite> is True.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>Exception</dt><dd><p>If more than two categories are specified, an exception is
+raised due to plotting limitations.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>The summary statistics include the number of unique values in columns ‘file_path’,
-‘landscape’, ‘environment’, and ‘dt’, as well as the mean time duration in minutes.</p></li>
-<li><p>The ‘show_plot’ parameter controls the display of the summary card plot.</p></li>
-</ul>
+<p>The function is designed to work with data pertaining to
+durations and occurrences across
+different categories. It’s particularly useful for analyzing time series or event data.
+The ‘duration’ column is expected to be in seconds.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">get_audio_info</span><span class="p">(</span><span class="n">audio_dir</span><span class="p">,</span> <span class="n">store_duration</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">perc_sample</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">summary</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">card_summary</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
-<span class="go">{</span>
-<span class="go">        &#39;n_samples&#39;: 120,</span>
-<span class="go">        &#39;n_landscapes&#39;: 6,</span>
-<span class="go">        &#39;n_environments&#39;: 3,</span>
-<span class="go">        &#39;distinct_days&#39;: 18,</span>
-<span class="go">        &#39;total_time_duration&#39;: 120.0,</span>
-<span class="go">        &#39;mean_time_duration&#39;: 1.5</span>
-<span class="go">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;landscape&#39;</span><span class="p">,</span> <span class="s1">&#39;environment&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">card_dict</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">card_summary</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">categories</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -152,7 +174,7 @@ and mean time duration.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../maui.eda.html" class="btn btn-neutral float-left" title="Exploratory data analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="maui.eda.landscape_environment_heatmap.html" class="btn btn-neutral float-right" title="maui.eda.landscape_environment_heatmap" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="maui.eda.heatmap_analysis.html" class="btn btn-neutral float-right" title="maui.eda.heatmap_analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Exploratory data analysis &mdash; maui-software 0.1.20 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Exploratory data analysis &mdash; maui-software 0.1.21 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
     <link rel="shortcut icon" href="_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/documentation_options.js?v=17aaaefc"></script>
+        <script src="_static/documentation_options.js?v=b3d22ae5"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -35,7 +37,7 @@
               <img src="_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.20
+                0.1.21
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -50,20 +52,21 @@
 <li class="toctree-l1"><a class="reference internal" href="maui.acoustic_indices.html">Acoustic Indices</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Exploratory data analysis</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.card_summary.html">maui.eda.card_summary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.landscape_environment_heatmap.html">maui.eda.landscape_environment_heatmap</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.plot_landscape_histogram.html">maui.eda.plot_landscape_histogram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.plot_landscape_duration.html">maui.eda.plot_landscape_duration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.plot_landscape_daily_distribution.html">maui.eda.plot_landscape_daily_distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.plot_environment_histogram.html">maui.eda.plot_environment_histogram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.plot_environment_duration.html">maui.eda.plot_environment_duration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.plot_environment_daily_distribution.html">maui.eda.plot_environment_daily_distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.plot_duration_distribution.html">maui.eda.plot_duration_distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.export_file_names_summary_pdf.html">maui.eda.export_file_names_summary_pdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.heatmap_analysis.html">maui.eda.heatmap_analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.histogram_analysis.html">maui.eda.histogram_analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.duration_analysis.html">maui.eda.duration_analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.daily_distribution_analysis.html">maui.eda.daily_distribution_analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.duration_distribution.html">maui.eda.duration_distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/maui.eda.export_file_names_summary_pdf_leec.html">maui.eda.export_file_names_summary_pdf_leec</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="maui.io.html">Input and Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maui.visualizations.html">Visualizations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maui.samples.html">Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_gallery.html">Example gallery</a></li>
 </ul>
 
         </div>
@@ -95,105 +98,248 @@
 <p>The module <code class="docutils literal notranslate"><span class="pre">eda</span></code> has a collection of functions to perform exploratory data analysis.</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.eda.card_summary.html#maui.eda.card_summary" title="maui.eda.card_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">card_summary</span></code></a>(df[, show_plot])</p></td>
-<td><p>Generate a summary card for a DataFrame.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.eda.card_summary.html#maui.eda.card_summary" title="maui.eda.card_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">card_summary</span></code></a>(df, categories[, show_plot])</p></td>
+<td><p>Generates a summary card and plots for specified categories from a DataFrame.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/maui.eda.landscape_environment_heatmap.html#maui.eda.landscape_environment_heatmap" title="maui.eda.landscape_environment_heatmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">landscape_environment_heatmap</span></code></a>(df[, show_plot])</p></td>
-<td><p>Generate a heatmap of landscapes vs.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/maui.eda.heatmap_analysis.html#maui.eda.heatmap_analysis" title="maui.eda.heatmap_analysis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">heatmap_analysis</span></code></a>(df, x_axis, y_axis[, ...])</p></td>
+<td><p>Generates a heatmap to analyze the relationship between two categorical variables in a DataFrame.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.eda.plot_landscape_histogram.html#maui.eda.plot_landscape_histogram" title="maui.eda.plot_landscape_histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_landscape_histogram</span></code></a>(df[, show_plot])</p></td>
-<td><p>Generate a histogram of the amount of samples by landscape.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.eda.histogram_analysis.html#maui.eda.histogram_analysis" title="maui.eda.histogram_analysis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">histogram_analysis</span></code></a>(df, x_axis, category_column)</p></td>
+<td><p>Generates a histogram plot for data distribution across a specified axis, optionally segmented by categories.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/maui.eda.plot_landscape_duration.html#maui.eda.plot_landscape_duration" title="maui.eda.plot_landscape_duration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_landscape_duration</span></code></a>(df[, show_plot])</p></td>
-<td><p>Generate a box plot of duration distribution by landscape.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/maui.eda.duration_analysis.html#maui.eda.duration_analysis" title="maui.eda.duration_analysis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">duration_analysis</span></code></a>(df, category_column, ...)</p></td>
+<td><p>Generates a box plot visualizing the distribution of durations across different categories.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.eda.plot_landscape_daily_distribution.html#maui.eda.plot_landscape_daily_distribution" title="maui.eda.plot_landscape_daily_distribution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_landscape_daily_distribution</span></code></a>(df[, ...])</p></td>
-<td><p>Generate a histogram of sample distribution by day and landscape.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.eda.daily_distribution_analysis.html#maui.eda.daily_distribution_analysis" title="maui.eda.daily_distribution_analysis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">daily_distribution_analysis</span></code></a>(df, date_column, ...)</p></td>
+<td><p>Analyzes and visualizes the daily distribution of samples by categories.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/maui.eda.plot_environment_histogram.html#maui.eda.plot_environment_histogram" title="maui.eda.plot_environment_histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_environment_histogram</span></code></a>(df[, show_plot])</p></td>
-<td><p>Generate a histogram of sample distribution by environment.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/maui.eda.duration_distribution.html#maui.eda.duration_distribution" title="maui.eda.duration_distribution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">duration_distribution</span></code></a>(df[, show_plot])</p></td>
+<td><p>Generates a distribution plot for the 'duration' column in the provided DataFrame.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.eda.plot_environment_duration.html#maui.eda.plot_environment_duration" title="maui.eda.plot_environment_duration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_environment_duration</span></code></a>(df[, show_plot])</p></td>
-<td><p>Generate a box plot of audio sample durations by environment.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/maui.eda.plot_environment_daily_distribution.html#maui.eda.plot_environment_daily_distribution" title="maui.eda.plot_environment_daily_distribution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_environment_daily_distribution</span></code></a>(df[, ...])</p></td>
-<td><p>Generate a histogram of audio sample counts by day and environment.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.eda.plot_duration_distribution.html#maui.eda.plot_duration_distribution" title="maui.eda.plot_duration_distribution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_duration_distribution</span></code></a>(df[, show_plot])</p></td>
-<td><p>Generate a distribution plot of audio sample durations.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/maui.eda.export_file_names_summary_pdf.html#maui.eda.export_file_names_summary_pdf" title="maui.eda.export_file_names_summary_pdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_file_names_summary_pdf</span></code></a>(df, file_name)</p></td>
-<td><p>Export a summary of audio file names and analysis results to a PDF.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.eda.export_file_names_summary_pdf_leec.html#maui.eda.export_file_names_summary_pdf_leec" title="maui.eda.export_file_names_summary_pdf_leec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_file_names_summary_pdf_leec</span></code></a>(df, file_name)</p></td>
+<td><p>Export a summary PDF report with analysis of file names for LEEC project.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">card_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#card_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Generate a summary card for a DataFrame.</p>
-<p>This function calculates and displays summary statistics for a DataFrame,
-including the number of samples, landscapes, environments, distinct days, total time duration,
-and mean time duration.</p>
+<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">card_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categories</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#card_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Generates a summary card and plots for specified categories from a
+DataFrame.
+This function processes the input DataFrame to compute various statistics, including the
+number of samples, distinct days, total and mean duration (in minutes) of some activities.
+It also dynamically incorporates additional specified categories into its computations and
+visualizations. If enabled, a plot is generated using Plotly to visually represent these
+statistics alongside the categories specified.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>df</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The DataFrame for which the summary statistics will be calculated.</p>
+<dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>The input DataFrame containing at least the following columns: ‘file_path’, ‘dt’,
+and ‘duration’. Additional columns should match the specified categories if any.</p>
 </dd>
-<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to display the summary card plot. Default is True.</p>
+<dt><strong>categories</strong><span class="classifier">list of str</span></dt><dd><p>A list of category names (column names in <cite>df</cite>) to include in the summary and plot.
+At most two categories can be specified.</p>
+</dd>
+<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>If True (default), the function will generate and show a Plotly plot representing the
+calculated statistics and specified categories. If False, no plot will be displayed.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>card_dict</strong><span class="classifier">dict</span></dt><dd><p>A dictionary containing the calculated summary statistics.</p>
+<dt>tuple</dt><dd><p>Returns a tuple containing:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>card_dict (dict): A dictionary with keys for ‘n_samples’,</dt><dd><p>‘distinct_days’, ‘total_time_duration’,
+‘mean_time_duration’, and one key per category specified.
+The values are the respective
+computed statistics.</p>
 </dd>
-<dt><strong>fig</strong><span class="classifier">plotly.graph_objs._figure.Figure</span></dt><dd><p>A Plotly Figure object representing the summary card plot.</p>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fig (plotly.graph_objs._figure.Figure): A Plotly figure object with indicators </dt><dd><p>for each of the statistics and categories specified.
+Only returned if <cite>show_plot</cite> is True.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>Exception</dt><dd><p>If more than two categories are specified, an exception is
+raised due to plotting limitations.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>The summary statistics include the number of unique values in columns ‘file_path’,
-‘landscape’, ‘environment’, and ‘dt’, as well as the mean time duration in minutes.</p></li>
-<li><p>The ‘show_plot’ parameter controls the display of the summary card plot.</p></li>
-</ul>
+<p>The function is designed to work with data pertaining to
+durations and occurrences across
+different categories. It’s particularly useful for analyzing time series or event data.
+The ‘duration’ column is expected to be in seconds.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">get_audio_info</span><span class="p">(</span><span class="n">audio_dir</span><span class="p">,</span> <span class="n">store_duration</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">perc_sample</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">summary</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">card_summary</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
-<span class="go">{</span>
-<span class="go">        &#39;n_samples&#39;: 120,</span>
-<span class="go">        &#39;n_landscapes&#39;: 6,</span>
-<span class="go">        &#39;n_environments&#39;: 3,</span>
-<span class="go">        &#39;distinct_days&#39;: 18,</span>
-<span class="go">        &#39;total_time_duration&#39;: 120.0,</span>
-<span class="go">        &#39;mean_time_duration&#39;: 1.5</span>
-<span class="go">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;landscape&#39;</span><span class="p">,</span> <span class="s1">&#39;environment&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">card_dict</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">card_summary</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">categories</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">export_file_names_summary_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">210</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">297</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#export_file_names_summary_pdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Export a summary of audio file names and analysis results to a PDF.</p>
-<p>This function generates a PDF report summarizing information and analysis results from audio file names, including
-sample counts, landscape, environment, duration, and distribution plots.</p>
+<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">daily_distribution_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#daily_distribution_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Analyzes and visualizes the daily distribution of samples by categories.</p>
+<p>This function generates a histogram that shows the distribution of samples over days, separated
+by a specified category. It provides insights into how the frequency of samples varies daily
+and according to the categories within the specified category column.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>df</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The DataFrame containing audio file name data.</p>
+<dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>The DataFrame containing the data to be analyzed. 
+It must include the specified <cite>date_column</cite> and <cite>category_column</cite>.</p>
 </dd>
-<dt><strong>file_name</strong><span class="classifier">str</span></dt><dd><p>The name of the PDF file to be generated.</p>
+<dt><strong>date_column</strong><span class="classifier">str</span></dt><dd><p>The name of the column in <cite>df</cite> that contains date information. The values in this column
+should be in a date or datetime format.</p>
 </dd>
-<dt><strong>analysis_title</strong><span class="classifier">str, optional</span></dt><dd><p>A custom title for the analysis section of the report. Default is None.</p>
+<dt><strong>category_column</strong><span class="classifier">str</span></dt><dd><p>The name of the column in <cite>df</cite> that contains categorical data,
+which will be used to color the bars in the histogram.</p>
 </dd>
-<dt><strong>width</strong><span class="classifier">int, optional</span></dt><dd><p>The width of the PDF page in millimeters. Default is 210 (A4 paper width).</p>
+<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>If True (default), the function will display the generated plot. If False, the plot will
+not be displayed but will still be returned.</p>
 </dd>
-<dt><strong>height</strong><span class="classifier">int, optional</span></dt><dd><p>The height of the PDF page in millimeters. Default is 297 (A4 paper height).</p>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>plotly.graph_objs._figure.Figure</dt><dd><p>A Plotly figure object representing the histogram of daily sample distribution by
+the specified category. The histogram bars are colored based on the categories
+in the <cite>category_column</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function leverages Plotly for plotting, thus ensuring interactive plots that can be further
+explored in a web browser. It’s particularly useful for time series data where understanding the
+distribution of events or samples over time and across different categories is crucial.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">daily_distribution_analysis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;dt&#39;</span><span class="p">,</span> <span class="s1">&#39;landscape&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">duration_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#duration_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Generates a box plot visualizing the distribution of durations across different categories.</p>
+<p>This function takes a DataFrame and creates a box plot to analyze
+the distribution of durations (or any numerical data) across specified
+categories. The box plot provides a visual representation of the central
+tendency, dispersion, and skewness of the data and identifies outliers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>The DataFrame containing the data to be analyzed.
+It should include at least two columns:
+one for the category and one for the duration
+(or any numerical data to be analyzed).</p>
+</dd>
+<dt><strong>category_column</strong><span class="classifier">str</span></dt><dd><p>The name of the column in <cite>df</cite> that contains the categorical data. This column will be
+used to group the numerical data into different categories for the box plot.</p>
+</dd>
+<dt><strong>duration_column</strong><span class="classifier">str</span></dt><dd><p>The name of the column in <cite>df</cite> that contains the numerical data to
+be analyzed. This data will be distributed into boxes according to
+the categories specified by <cite>category_column</cite>.</p>
+</dd>
+<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>If True (default), the function will display the generated box plot. If False, the plot
+will not be displayed, but the figure object will still be returned.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>plotly.graph_objs._figure.Figure</dt><dd><p>The generated Plotly figure object containing the box plot.
+This object can be used for further customization or to display
+the plot at a later time if <cite>show_plot</cite> is False.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The box plot generated by this function can help identify the range, interquartile range,
+median, and potential outliers within each category. This visual analysis is crucial for
+understanding the distribution characteristics of numerical data across different groups.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">duration_analysis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;landscape&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">duration_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#duration_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Generates a distribution plot for the ‘duration’ column in the provided DataFrame.</p>
+<p>This function creates a distribution plot, including a
+histogram and a kernel density estimate (KDE),
+for the ‘duration’ column in the input DataFrame. 
+It is designed to give a visual understanding of the
+distribution of duration values across the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>The DataFrame containing the data to be analyzed. 
+It must include a column named ‘duration’,
+which contains numeric data.</p>
+</dd>
+<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>If True (default), the function will display the generated plot. If False, the plot will
+not be displayed but will still be returned.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>plotly.graph_objs._figure.Figure</dt><dd><p>A Plotly figure object representing the distribution plot of
+the ‘duration’ column. The plot includes both a histogram of
+the data and a kernel density estimate (KDE) curve.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function uses Plotly’s <cite>create_distplot</cite> function from the <cite>plotly.figure_factory</cite> module,
+offering a detailed visual representation of data distribution. It’s particularly useful for
+analyzing the spread and skewness of numeric data. The KDE curve provides insight into the
+probability density of the durations, complementing the histogram’s discrete bins.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">duration_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">export_file_names_summary_pdf_leec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">210</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#export_file_names_summary_pdf_leec"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Export a summary PDF report with analysis of file names for LEEC project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>DataFrame containing the data to be analyzed.</p>
+</dd>
+<dt><strong>file_name</strong><span class="classifier">str</span></dt><dd><p>Name of the output PDF file.</p>
+</dd>
+<dt><strong>analysis_title</strong><span class="classifier">str, optional</span></dt><dd><p>Title of the analysis section in the PDF.</p>
+</dd>
+<dt><strong>width</strong><span class="classifier">int, optional</span></dt><dd><p>Width of the PDF document in millimeters.</p>
 </dd>
 </dl>
 </dd>
@@ -204,304 +350,117 @@ sample counts, landscape, environment, duration, and distribution plots.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>The function generates a PDF report containing summary statistics, heatmaps, histograms, box plots, and distribution plots
-related to audio file names and their attributes.</p></li>
-<li><p>The ‘analysis_title’ parameter allows you to customize the title of the analysis section in the report.</p></li>
-<li><p>The ‘width’ and ‘height’ parameters control the dimensions of the PDF page. The default dimensions are for A4 paper.</p></li>
-</ul>
+<p>This function exports a summary PDF report with various analyses of file
+names for the LEEC project. 
+It includes landscape analysis, environment analysis, and duration
+analysis. 
+The PDF is created using the provided DataFrame <cite>df</cite> and saved with
+the specified <cite>file_name</cite>.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">eda</span><span class="o">.</span><span class="n">export_file_names_summary_pdf</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;audio_summary.pdf&#39;</span><span class="p">,</span> <span class="s1">&#39;Audio Data Analysis&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export_file_names_summary_pdf_leec</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;summary_report.pdf&#39;</span><span class="p">,</span> <span class="n">analysis_title</span><span class="o">=</span><span class="s1">&#39;Audio Files Analysis&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">landscape_environment_heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#landscape_environment_heatmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Generate a heatmap of landscapes vs. environments.</p>
-<p>This function calculates the count of samples for each combination of landscapes and environments
-and displays the information as a heatmap.</p>
+<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">heatmap_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_continuous_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#heatmap_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Generates a heatmap to analyze the relationship between two categorical
+variables in a DataFrame.</p>
+<p>This function groups the data by the specified <cite>x_axis</cite> and <cite>y_axis</cite>
+categories, counts the occurrences of each group, and then creates a
+heatmap visualization of these counts using Plotly Express. The heatmap
+intensity is determined by the count of occurrences, with an option to
+customize the color scale.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>df</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The DataFrame containing the data to be used for the heatmap.</p>
+<dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>The input DataFrame containing the data to be analyzed.
+Must include the columns specified by <cite>x_axis</cite> and <cite>y_axis</cite>,
+as well as a ‘file_path’ column used for counting occurrences.</p>
 </dd>
-<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to display the heatmap plot. Default is True.</p>
+<dt><strong>x_axis</strong><span class="classifier">str</span></dt><dd><p>The name of the column in <cite>df</cite> to be used as the x-axis in the heatmap.</p>
+</dd>
+<dt><strong>y_axis</strong><span class="classifier">str</span></dt><dd><p>The name of the column in <cite>df</cite> to be used as the y-axis in the heatmap.</p>
+</dd>
+<dt><strong>color_continuous_scale</strong><span class="classifier">str, optional</span></dt><dd><p>The name of the color scale to use for the heatmap. 
+Defaults to ‘Viridis’. For more options, refer
+to Plotly’s documentation on color scales.</p>
+</dd>
+<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>If True (default), displays the heatmap plot. 
+If False, the plot is not displayed but is still returned.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>pd.DataFrame</dt><dd><p>A DataFrame containing the count of samples for each landscape-environment combination.</p>
-</dd>
-<dt>plotly.graph_objs._figure.Figure</dt><dd><p>A Plotly Figure object representing the landscape vs. environment heatmap.</p>
+<dt>tuple</dt><dd><p>A tuple containing:
+- df_group (pandas.DataFrame): A DataFrame with the grouped counts
+for each combination of <cite>x_axis</cite> and <cite>y_axis</cite> values.
+- fig (plotly.graph_objs._figure.Figure): A Plotly figure object containing the heatmap.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>The function groups the input DataFrame ‘df’ by ‘landscape’ and ‘environment’, counts the number of samples for each combination, and displays the result as a heatmap.</p></li>
-<li><p>The ‘show_plot’ parameter controls the display of the heatmap plot.</p></li>
-</ul>
+<p>The ‘file_path’ column in the input DataFrame is used to count occurrences
+of each group formed by the specified <cite>x_axis</cite> and <cite>y_axis</cite> values.
+This function is useful for visualizing the distribution and
+relationship between two categorical variables.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">heatmap_data</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">landscape_environment_heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_group</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">heatmap_analysis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;landscape&#39;</span><span class="p">,</span> <span class="s1">&#39;environment&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">plot_duration_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#plot_duration_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Generate a distribution plot of audio sample durations.</p>
-<p>This function creates a distribution plot (histogram and kernel density estimate) of audio sample durations.</p>
+<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">histogram_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#histogram_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Generates a histogram plot for data distribution across a specified axis,
+optionally segmented by categories.</p>
+<p>This function creates a histogram to visualize the distribution of data
+in <cite>df</cite> along the <cite>x_axis</cite>, with data optionally segmented by
+<cite>category_column</cite>. The histogram’s appearance, such as opacity and
+bar gap, is customizable. The plot is generated using Plotly Express
+and can be displayed in the notebook or IDE if <cite>show_plot</cite> is set to True.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>df</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The DataFrame containing the data to be used for generating the distribution plot.</p>
+<dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>The DataFrame containing the data to plot.
+Must include the columns specified by <cite>x_axis</cite>
+and <cite>category_column</cite>.</p>
 </dd>
-<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to display the generated distribution plot. Default is True.</p>
+<dt><strong>x_axis</strong><span class="classifier">str</span></dt><dd><p>The name of the column in <cite>df</cite> to be used for the x-axis of the histogram.</p>
+</dd>
+<dt><strong>category_column</strong><span class="classifier">str</span></dt><dd><p>The name of the column in <cite>df</cite> that contains categorical data for
+segmenting the histogram. Each category will be represented with
+a different color.</p>
+</dd>
+<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>If True (default), the generated plot will be immediately displayed.
+If False, the plot will not be displayed but will still be returned
+by the function.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>plotly.graph_objs._figure.Figure</dt><dd><p>A Plotly Figure object representing the distribution plot of audio sample durations.</p>
+<dt>plotly.graph_objs._figure.Figure</dt><dd><p>The Plotly figure object for the generated histogram.
+This object can be further customized or saved after the function returns.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>The function uses Plotly Figure Factory to create a distribution plot that displays the distribution of
-audio sample durations.</p></li>
-<li><p>The ‘show_plot’ parameter controls whether the distribution plot is displayed or not.</p></li>
-</ul>
+<p>This function is designed to offer a quick and convenient way to visualize
+the distribution of data in a DataFrame along a specified axis.
+It is particularly useful for exploratory data analysis and
+for identifying patterns or outliers in dataset segments.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">plot_duration_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">plot_environment_daily_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#plot_environment_daily_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Generate a histogram of audio sample counts by day and environment.</p>
-<p>This function creates a histogram showing the distribution of audio sample counts by day and environment.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>df</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The DataFrame containing the data to be used for generating the histogram.</p>
-</dd>
-<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to display the generated histogram. Default is True.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt>plotly.graph_objs._figure.Figure</dt><dd><p>A Plotly Figure object representing the histogram of audio sample counts by day and environment.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>The function uses Plotly Express to create a histogram that displays the distribution of audio sample
-counts by day and environment.</p></li>
-<li><p>The ‘show_plot’ parameter controls whether the histogram is displayed or not.</p></li>
-</ul>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">plot_environment_daily_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">plot_environment_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#plot_environment_duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Generate a box plot of audio sample durations by environment.</p>
-<p>This function creates a box plot showing the distribution of audio sample durations by environment.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>df</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The DataFrame containing the data to be used for generating the box plot.</p>
-</dd>
-<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to display the generated box plot. Default is True.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt>plotly.graph_objs._figure.Figure</dt><dd><p>A Plotly Figure object representing the box plot of audio sample durations by environment.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>The function uses Plotly Express to create a box plot that displays the distribution of audio sample
-durations by environment.</p></li>
-<li><p>The ‘show_plot’ parameter controls whether the box plot is displayed or not.</p></li>
-</ul>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">plot_environment_duration</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">plot_environment_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#plot_environment_histogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Generate a histogram of sample distribution by environment.</p>
-<p>This function creates a histogram showing the distribution of audio samples by environment, optionally
-differentiated by landscape.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>df</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The DataFrame containing the data to be used for generating the histogram.</p>
-</dd>
-<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to display the generated histogram. Default is True.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt>plotly.graph_objs._figure.Figure</dt><dd><p>A Plotly Figure object representing the histogram of sample distribution by environment.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>The function uses Plotly Express to create a histogram that displays the distribution of audio samples
-by environment.</p></li>
-<li><p>If the ‘landscape’ column is present in the DataFrame, the histogram will differentiate the samples
-by landscape.</p></li>
-<li><p>The ‘show_plot’ parameter controls whether the histogram is displayed or not.</p></li>
-</ul>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">plot_environment_histogram</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">plot_landscape_daily_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#plot_landscape_daily_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Generate a histogram of sample distribution by day and landscape.</p>
-<p>This function creates a histogram showing the distribution of audio samples by day and landscape.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>df</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The DataFrame containing the data to be used for generating the histogram.</p>
-</dd>
-<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to display the generated histogram. Default is True.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt>plotly.graph_objs._figure.Figure</dt><dd><p>A Plotly Figure object representing the histogram of sample distribution by day and landscape.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>The function uses Plotly Express to create a histogram that displays the distribution of audio samples
-by day and landscape.</p></li>
-<li><p>The ‘show_plot’ parameter controls whether the histogram is displayed or not.</p></li>
-</ul>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">plot_landscape_daily_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">plot_landscape_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#plot_landscape_duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Generate a box plot of duration distribution by landscape.</p>
-<p>This function creates a box plot showing the distribution of audio duration across different landscapes.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>df</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The DataFrame containing the data to be used for generating the box plot.</p>
-</dd>
-<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to display the generated box plot. Default is True.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt>plotly.graph_objs._figure.Figure</dt><dd><p>A Plotly Figure object representing the box plot of duration distribution by landscape.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>The function uses Plotly Express to create a box plot that displays the distribution of audio duration
-across different landscapes.</p></li>
-<li><p>The ‘show_plot’ parameter controls whether the box plot is displayed or not.</p></li>
-</ul>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">plot_landscape_duration</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">plot_landscape_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#plot_landscape_histogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Generate a histogram of the amount of samples by landscape.</p>
-<p>This function creates a histogram showing the distribution of samples across different landscapes,
-with color differentiation based on the environment.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>df</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The DataFrame containing the data to be used for generating the histogram.</p>
-</dd>
-<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to display the generated histogram plot. Default is True.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt>plotly.graph_objs._figure.Figure</dt><dd><p>A Plotly Figure object representing the histogram of samples by landscape.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>The function uses Plotly Express to create a histogram that displays the distribution of samples
-across different landscapes, with color coding based on the environment.</p></li>
-<li><p>The ‘show_plot’ parameter controls whether the histogram plot is displayed or not.</p></li>
-</ul>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data.csv&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">plot_landscape_histogram</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">histogram_analysis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;landscape&#39;</span><span class="p">,</span> <span class="s1">&#39;environment&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
