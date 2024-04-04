@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.acoustic_indices.acoustic_indices &mdash; maui-software 0.1.20 documentation</title>
+  <title>maui.acoustic_indices.acoustic_indices &mdash; maui-software 0.1.21 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -13,7 +13,7 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/documentation_options.js?v=17aaaefc"></script>
+        <script src="../../../_static/documentation_options.js?v=b3d22ae5"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
               <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.20
+                0.1.21
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -583,7 +583,15 @@
 <span class="sd">            The DataFrame containing audio file data with a &#39;file_path&#39;</span>
 <span class="sd">            column specifying the path to each audio file.</span>
 <span class="sd">        indices_list : List[str]</span>
-<span class="sd">            A list of acoustic indices to calculate.</span>
+<span class="sd">            A list of acoustic indices to calculate. Available indices are: </span>
+<span class="sd">            median_amplitude_envelope ,temporal_entropy ,acoustic_richness</span>
+<span class="sd">            ,temporal_activity ,temporal_events ,acoustic_complexity_index</span>
+<span class="sd">            ,frequency_entropy ,number_of_peaks ,spectral_entropy</span>
+<span class="sd">            ,spectral_activity ,spectral_events ,spectral_cover</span>
+<span class="sd">            ,soundscape_index ,acoustic_diversity_index ,acoustic_eveness_index</span>
+<span class="sd">            ,temporal_leq ,spectral_leq ,tfsd ,more_entropy</span>
+<span class="sd">            ,acoustic_gradient_index ,frequency_raoq</span>
+<span class="sd">            ,region_of_interest_index</span>
 <span class="sd">        store_df : bool, optional</span>
 <span class="sd">            Whether to store the resulting DataFrame to a file. Default is False.</span>
 <span class="sd">        base_dir : str, optional</span>
@@ -591,7 +599,7 @@
 <span class="sd">        file_name : str, optional</span>
 <span class="sd">            The name of the output file to save the DataFrame. Required if &#39;store_df&#39; is True.</span>
 <span class="sd">        file_type : str, optional</span>
-<span class="sd">            The file format for saving the DataFrame, e.g., &#39;csv&#39;, &#39;xlsx&#39;.</span>
+<span class="sd">            The file format for saving the DataFrame (&#39;csv&#39; or &#39;pickle&#39;).</span>
 <span class="sd">            Required if &#39;store_df&#39; is True.</span>
 <span class="sd">        parallel : bool, optional</span>
 <span class="sd">            Whether to use parallel processing for calculating indices. Default is True.</span>
@@ -617,13 +625,14 @@
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        - The function calculates a specified set of acoustic</span>
-<span class="sd">        indices for each audio file in the DataFrame.</span>
+<span class="sd">            indices for each audio file in the DataFrame.</span>
 <span class="sd">        - The &#39;indices_list&#39; parameter should contain a list of available</span>
-<span class="sd">        indices to be calculated.</span>
+<span class="sd">            indices to be calculated.</span>
 <span class="sd">        - The &#39;store_df&#39;, &#39;base_dir&#39;, &#39;file_name&#39;, and &#39;file_type&#39; parameters</span>
-<span class="sd">        control whether and where to save the resulting DataFrame.</span>
+<span class="sd">            control whether and where to save the resulting DataFrame.</span>
 <span class="sd">        - If parallel processing is enabled (&#39;parallel&#39; is True),</span>
-<span class="sd">        the function will use multiple CPU cores for faster calculations.</span>
+<span class="sd">            the function will use multiple CPU cores for faster calculations.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># check if the selected indices are available</span>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.acoustic_indices.calculate_acoustic_indices &mdash; maui-software 0.1.20 documentation</title>
+  <title>maui.acoustic_indices.calculate_acoustic_indices &mdash; maui-software 0.1.21 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/documentation_options.js?v=17aaaefc"></script>
+        <script src="../_static/documentation_options.js?v=b3d22ae5"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -37,7 +37,7 @@
               <img src="../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.20
+                0.1.21
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -113,7 +113,15 @@ to True, the DataFrame can be saved to a file.</p>
 <dt><strong>df_init</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The DataFrame containing audio file data with a ‘file_path’
 column specifying the path to each audio file.</p>
 </dd>
-<dt><strong>indices_list</strong><span class="classifier">List[str]</span></dt><dd><p>A list of acoustic indices to calculate.</p>
+<dt><strong>indices_list</strong><span class="classifier">List[str]</span></dt><dd><p>A list of acoustic indices to calculate. Available indices are: 
+median_amplitude_envelope ,temporal_entropy ,acoustic_richness
+,temporal_activity ,temporal_events ,acoustic_complexity_index
+,frequency_entropy ,number_of_peaks ,spectral_entropy
+,spectral_activity ,spectral_events ,spectral_cover
+,soundscape_index ,acoustic_diversity_index ,acoustic_eveness_index
+,temporal_leq ,spectral_leq ,tfsd ,more_entropy
+,acoustic_gradient_index ,frequency_raoq
+,region_of_interest_index</p>
 </dd>
 <dt><strong>store_df</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to store the resulting DataFrame to a file. Default is False.</p>
 </dd>
@@ -121,7 +129,7 @@ column specifying the path to each audio file.</p>
 </dd>
 <dt><strong>file_name</strong><span class="classifier">str, optional</span></dt><dd><p>The name of the output file to save the DataFrame. Required if ‘store_df’ is True.</p>
 </dd>
-<dt><strong>file_type</strong><span class="classifier">str, optional</span></dt><dd><p>The file format for saving the DataFrame, e.g., ‘csv’, ‘xlsx’.
+<dt><strong>file_type</strong><span class="classifier">str, optional</span></dt><dd><p>The file format for saving the DataFrame (‘csv’ or ‘pickle’).
 Required if ‘store_df’ is True.</p>
 </dd>
 <dt><strong>parallel</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to use parallel processing for calculating indices. Default is True.</p>
@@ -144,15 +152,27 @@ the DataFrame is missing the ‘file_path’ column.</p>
 </dl>
 <p class="rubric">Notes</p>
 <ul class="simple">
-<li><p>The function calculates a specified set of acoustic</p></li>
+<li><dl class="simple">
+<dt>The function calculates a specified set of acoustic</dt><dd><p>indices for each audio file in the DataFrame.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>The ‘indices_list’ parameter should contain a list of available</dt><dd><p>indices to be calculated.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>The ‘store_df’, ‘base_dir’, ‘file_name’, and ‘file_type’ parameters</dt><dd><p>control whether and where to save the resulting DataFrame.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>If parallel processing is enabled (‘parallel’ is True),</dt><dd><p>the function will use multiple CPU cores for faster calculations.</p>
+</dd>
+</dl>
+</li>
 </ul>
-<p>indices for each audio file in the DataFrame.
-- The ‘indices_list’ parameter should contain a list of available
-indices to be calculated.
-- The ‘store_df’, ‘base_dir’, ‘file_name’, and ‘file_type’ parameters
-control whether and where to save the resulting DataFrame.
-- If parallel processing is enabled (‘parallel’ is True),
-the function will use multiple CPU cores for faster calculations.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">acoustic_indices</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Exploratory data analysis &mdash; maui-software 0.1.20 documentation</title>
+  <title>Exploratory data analysis &mdash; maui-software 0.1.21 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/documentation_options.js?v=17aaaefc"></script>
+        <script src="_static/documentation_options.js?v=b3d22ae5"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -37,7 +37,7 @@
               <img src="_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.20
+                0.1.21
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -117,7 +117,7 @@
 <td><p>Generates a distribution plot for the 'duration' column in the provided DataFrame.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.eda.export_file_names_summary_pdf_leec.html#maui.eda.export_file_names_summary_pdf_leec" title="maui.eda.export_file_names_summary_pdf_leec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_file_names_summary_pdf_leec</span></code></a>(df, file_name)</p></td>
-<td><p>Exports an exploratory data analysis summary of audio files as a PDF.</p></td>
+<td><p>Export a summary PDF report with analysis of file names for LEEC project.</p></td>
 </tr>
 </tbody>
 </table>
@@ -131,7 +131,7 @@ number of samples, distinct days, total and mean duration (in minutes) of some a
 It also dynamically incorporates additional specified categories into its computations and
 visualizations. If enabled, a plot is generated using Plotly to visually represent these
 statistics alongside the categories specified.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>The input DataFrame containing at least the following columns: ‘file_path’, ‘dt’,
@@ -146,19 +146,23 @@ calculated statistics and specified categories. If False, no plot will be displa
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl>
-<dt>tuple</dt><dd><p>Returns a tuple containing:
-- card_dict (dict): A dictionary with keys for ‘n_samples’,
-‘distinct_days’, ‘total_time_duration’,</p>
-<blockquote>
-<div><p>‘mean_time_duration’, and one key per category specified.
+<dd class="field-even"><dl class="simple">
+<dt>tuple</dt><dd><p>Returns a tuple containing:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>card_dict (dict): A dictionary with keys for ‘n_samples’,</dt><dd><p>‘distinct_days’, ‘total_time_duration’,
+‘mean_time_duration’, and one key per category specified.
 The values are the respective
 computed statistics.</p>
-</div></blockquote>
-<ul class="simple">
-<li><p>fig (plotly.graph_objs._figure.Figure): A Plotly figure object with indicators 
-for each of the statistics and categories specified.
-Only returned if <cite>show_plot</cite> is True.</p></li>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fig (plotly.graph_objs._figure.Figure): A Plotly figure object with indicators </dt><dd><p>for each of the statistics and categories specified.
+Only returned if <cite>show_plot</cite> is True.</p>
+</dd>
+</dl>
+</li>
 </ul>
 </dd>
 </dl>
@@ -325,60 +329,35 @@ probability density of the durations, complementing the histogram’s discrete b
 <dl class="py function">
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">export_file_names_summary_pdf_leec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">210</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/eda/eda.html#export_file_names_summary_pdf_leec"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Exports an exploratory data analysis summary of audio files as a PDF.</p>
-<p>This function generates a series of analysis plots from a given DataFrame
-and exports them as images, which are then compiled into a PDF report.
-The report includes analyses such as card summary, heatmaps, histograms,
-box plots, and distribution plots, each focusing on different aspects of
-the data like landscapes, environments, and durations.
-The generated images are temporarily stored and then
-included in a PDF file, which is saved with the specified file name.</p>
+<dd><p>Export a summary PDF report with analysis of file names for LEEC project.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>The DataFrame containing the audio file data to be analyzed. 
-Expected to include columns corresponding to the specified
-categories and any columns required by the analysis functions
-like <cite>card_summary</cite>, <cite>heatmap_analysis</cite>, etc.</p>
+<dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>DataFrame containing the data to be analyzed.</p>
 </dd>
-<dt><strong>file_name</strong><span class="classifier">str</span></dt><dd><p>The name (and path) of the PDF file to be created.</p>
+<dt><strong>file_name</strong><span class="classifier">str</span></dt><dd><p>Name of the output PDF file.</p>
 </dd>
-<dt><strong>categories</strong><span class="classifier">list of str</span></dt><dd><p>A list of category names to be included in the card summary analysis.</p>
+<dt><strong>analysis_title</strong><span class="classifier">str, optional</span></dt><dd><p>Title of the analysis section in the PDF.</p>
 </dd>
-<dt><strong>analysis_title</strong><span class="classifier">str, optional</span></dt><dd><p>A title for the analysis report. If None, a default subtitle is used.</p>
-</dd>
-<dt><strong>width</strong><span class="classifier">int, optional</span></dt><dd><p>The width of the PDF document in millimeters. Default is set to 210 (A4 width).</p>
-</dd>
-<dt><strong>height</strong><span class="classifier">int, optional</span></dt><dd><p>The height of the PDF document in millimeters. Default is set to 297 (A4 height).</p>
+<dt><strong>width</strong><span class="classifier">int, optional</span></dt><dd><p>Width of the PDF document in millimeters.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>None</dt><dd><p>This function does not return a value.
-It generates a PDF file at the specified location.</p>
-</dd>
+<dt>None</dt><dd></dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>The function requires several dependencies to run,
-including Plotly for generating plots and a PDF library
-for creating the PDF document. It also assumes the
-existence of certain functions (<cite>card_summary</cite>,
-<cite>heatmap_analysis</cite>, <cite>histogram_analysis</cite>, <cite>duration_analysis</cite>,
-<cite>daily_distribution_analysis</cite>,
-<cite>duration_distribution</cite>) that perform the individual analyses and plotting.</p>
-<p>The generated PDF includes a cover page, a brief introductory text,
-and separate sections for landscape,
-environment, and duration analyses, each containing relevant plots.
-Temporary images are stored in a directory named
-‘images_summary_pdf_temp’ which is deleted after the PDF is created.</p>
+<p>This function exports a summary PDF report with various analyses of file
+names for the LEEC project. 
+It includes landscape analysis, environment analysis, and duration
+analysis. 
+The PDF is created using the provided DataFrame <cite>df</cite> and saved with
+the specified <cite>file_name</cite>.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;landscape&#39;</span><span class="p">,</span> <span class="s1">&#39;environment&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">eda</span><span class="o">.</span><span class="n">export_file_names_summary_pdf_LEEC</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;analysis_report.pdf&#39;</span><span class="p">,</span> <span class="n">categories</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export_file_names_summary_pdf_leec</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;summary_report.pdf&#39;</span><span class="p">,</span> <span class="n">analysis_title</span><span class="o">=</span><span class="s1">&#39;Audio Files Analysis&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>

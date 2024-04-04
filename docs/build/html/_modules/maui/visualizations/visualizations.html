@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.visualizations.visualizations &mdash; maui-software 0.1.20 documentation</title>
+  <title>maui.visualizations.visualizations &mdash; maui-software 0.1.21 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -13,7 +13,7 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/documentation_options.js?v=17aaaefc"></script>
+        <script src="../../../_static/documentation_options.js?v=b3d22ae5"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
               <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.20
+                0.1.21
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -189,8 +189,8 @@
 <span class="sd">    &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
 <span class="sd">    &gt;&gt;&gt; indices_list = [&#39;median_amplitude_envelope&#39;, &#39;temporal_entropy&#39;]</span>
 <span class="sd">    &gt;&gt;&gt; df = acoustic_indices.calculate_acoustic_indices(df, indices_list, parallel=False)</span>
-<span class="sd">    &gt;&gt;&gt; visualizations.indices_radar_plot(df, indices=[&#39;m&#39;, &#39;ht&#39;], </span>
-<span class="sd">    agg_type=&#39;mean&#39;, group_by=[&#39;environment&#39;], max_cols=3)</span>
+<span class="sd">    &gt;&gt;&gt; fig = visualizations.indices_radar_plot(df, indices=[&#39;m&#39;, &#39;ht&#39;], </span>
+<span class="sd">            agg_type=&#39;mean&#39;, group_by=[&#39;environment&#39;], max_cols=3)</span>
 <span class="sd">    # Generates a radar plot comparing &#39;Index1&#39; and &#39;Index2&#39; aggregated by &#39;Category&#39;.</span>
 
 <span class="sd">    Notes</span>

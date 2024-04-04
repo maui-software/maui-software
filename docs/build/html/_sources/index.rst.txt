@@ -3,13 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Acoustic Ecology Visualization
-=================
-
 .. image:: ../../maui/data/logo/color_logo_no_background.svg
    :width: 600
    :alt: maui-software logo
    :align: center
+
+Acoustic Ecology Visualization
+==============================
 
 **maui-software** maui-software is an open-source Python package to visualize eco-acoustic data. This work intends to help ecology specialists to perform data analysis with no need to implement visualizations, enabling faster analysis.
 
