@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>maui.files_metadata.files_metadata &mdash; maui-software 0.1.21 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/documentation_options.js?v=b3d22ae5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            maui-software
+              <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.21
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.acoustic_indices.html">Acoustic Indices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.eda.html">Exploratory data analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.io.html">Input and Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.visualizations.html">Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.samples.html">Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../example_gallery.html">Example gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">maui-software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">maui.files_metadata.files_metadata</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for maui.files_metadata.files_metadata</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This module provides utilities for managing and extracting metadata from</span>
+<span class="sd">    strings according to specified formats. It leverages YAML files to define</span>
+<span class="sd">    and verify the formats, enabling dynamic configuration of metadata extraction</span>
+<span class="sd">    procedures. Functions within this module allow for verification of YAML format</span>
+<span class="sd">    configurations, retrieval of format-specific configurations, and extraction of</span>
+<span class="sd">    metadata based on the defined formats.</span>
+
+<span class="sd">    Capabilities include:</span>
+<span class="sd">    - Verifying the structure and validity of YAML configuration files.</span>
+<span class="sd">    - Retrieving configuration data for specified formats from YAML files.</span>
+<span class="sd">    - Extracting metadata from strings based on configurable format definitions.</span>
+
+<span class="sd">    The module is designed to be flexible and extensible, supporting various</span>
+<span class="sd">    metadata tag configurations and formats, including custom date and time</span>
+<span class="sd">    processing functions for specialized needs.</span>
+
+<span class="sd">    Main Functions:</span>
+<span class="sd">    - verify_yaml_format(data): Checks if YAML data follows the expected structure.</span>
+<span class="sd">    - get_format_config(format_name, format_file_path): Retrieves the configuration</span>
+<span class="sd">      for a specific format from a YAML file.</span>
+<span class="sd">    - extract_metadata(string, format_name, date_time_func, format_file_path):</span>
+<span class="sd">      Extracts metadata from strings according to the specified format.</span>
+
+<span class="sd">    These functions support a wide range of applications in data processing and</span>
+<span class="sd">    analysis tasks, particularly where metadata extraction and validation against</span>
+<span class="sd">    pre-defined formats are required.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">    - The module depends on `re` for regex operations, `datetime` for handling date</span>
+<span class="sd">      and time data, `importlib.resources` for resource management, and `yaml` for</span>
+<span class="sd">      parsing YAML files.</span>
+
+<span class="sd">    Examples and detailed descriptions of parameters, return types, and exceptions</span>
+<span class="sd">    are provided in each function&#39;s docstring, guiding their use in specific</span>
+<span class="sd">    scenarios.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">resources</span>
+
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<div class="viewcode-block" id="verify_yaml_format">
+<a class="viewcode-back" href="../../../generated/maui.files_metadata.verify_yaml_format.html#maui.files_metadata.verify_yaml_format">[docs]</a>
+<span class="k">def</span> <span class="nf">verify_yaml_format</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Verify if the provided YAML data follows a specific format.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : dict</span>
+<span class="sd">        A dictionary representing YAML data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if the YAML data follows the expected format, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s2">&quot;formats&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;formats&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="c1"># If &#39;formats&#39; key is missing or its value is not a list, return False</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">format_data</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;formats&quot;</span><span class="p">]:</span>
+        <span class="c1"># Iterate through each format data in the &#39;formats&#39; list</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">&quot;format_name&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">format_data</span>
+            <span class="ow">or</span> <span class="s2">&quot;file_name_format&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">format_data</span>
+            <span class="ow">or</span> <span class="s2">&quot;file_extension&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">format_data</span>
+            <span class="ow">or</span> <span class="s2">&quot;metadata_tag_info&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">format_data</span>
+        <span class="p">):</span>
+
+            <span class="c1"># If any of the required keys are missing in format data, return False</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">metadata_tag_info</span> <span class="o">=</span> <span class="n">format_data</span><span class="p">[</span><span class="s2">&quot;metadata_tag_info&quot;</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">tag_info</span> <span class="ow">in</span> <span class="n">metadata_tag_info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Iterate through each metadata tag info in the &#39;metadata_tag_info&#39; dictionary</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="s2">&quot;description&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tag_info</span>
+                <span class="ow">or</span> <span class="s2">&quot;type&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tag_info</span>
+                <span class="ow">or</span> <span class="s2">&quot;format&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tag_info</span>
+            <span class="p">):</span>
+                <span class="c1"># If any of the required keys are missing in tag info, return False</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># If all checks pass, return True indicating the YAML data follows the expected format</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="get_format_config">
+<a class="viewcode-back" href="../../../generated/maui.files_metadata.get_format_config.html#maui.files_metadata.get_format_config">[docs]</a>
+<span class="k">def</span> <span class="nf">get_format_config</span><span class="p">(</span><span class="n">format_name</span><span class="p">,</span> <span class="n">format_file_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve configuration for a specific format from a YAML file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    format_name : str</span>
+<span class="sd">        Name of the format to retrieve configuration for.</span>
+<span class="sd">    format_file_path : str</span>
+<span class="sd">        Path to the YAML file containing format configurations.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        A dictionary containing configuration information for the specified format.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the provided YAML file is not properly formatted or if the specified format is not found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Load data from .yaml</span>
+    <span class="k">if</span> <span class="n">format_file_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span>
+                    <span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">&quot;maui.files_metadata&quot;</span><span class="p">)</span>
+                    <span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;files_formats.yaml&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">format_file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="c1"># Verify if YAML data follows the expected format</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">verify_yaml_format</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The provided YAML is not properly formatted&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Search for the format with provided name</span>
+    <span class="k">for</span> <span class="n">format_data</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;formats&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">format_data</span><span class="p">[</span><span class="s2">&quot;format_name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">format_name</span><span class="p">:</span>
+            <span class="n">selected_format</span> <span class="o">=</span> <span class="n">format_data</span>
+            <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">format_name</span><span class="si">}</span><span class="s2"> not found in the YAML data&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">selected_format</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="extract_metadata">
+<a class="viewcode-back" href="../../../generated/maui.files_metadata.extract_metadata.html#maui.files_metadata.extract_metadata">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_metadata</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">format_name</span><span class="p">,</span> <span class="n">date_time_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">format_file_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract metadata from a string based on a specified format.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    string : str</span>
+<span class="sd">        The string from which metadata will be extracted.</span>
+<span class="sd">    format_name : str</span>
+<span class="sd">        Name of the format to use for metadata extraction.</span>
+<span class="sd">    date_time_func : function, optional</span>
+<span class="sd">        A function to handle date and time processing for extracted metadata.</span>
+<span class="sd">        Default is None.</span>
+<span class="sd">    format_file_path : str, optional</span>
+<span class="sd">        Path to the YAML file containing format configurations.</span>
+<span class="sd">        Default is &#39;files_formats.yaml&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict or None</span>
+<span class="sd">        A dictionary containing extracted metadata if successful, None otherwise.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the specified format is not found in the format file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Retrieve format configuration from YAML file</span>
+    <span class="n">file_format_config</span> <span class="o">=</span> <span class="n">get_format_config</span><span class="p">(</span><span class="n">format_name</span><span class="p">,</span> <span class="n">format_file_path</span><span class="p">)</span>
+
+    <span class="c1"># Extract pattern and metadata dictionary from format configuration</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">file_format_config</span><span class="p">[</span><span class="s2">&quot;file_name_format&quot;</span><span class="p">]</span>
+    <span class="n">metadata_dict</span> <span class="o">=</span> <span class="n">file_format_config</span><span class="p">[</span><span class="s2">&quot;metadata_tag_info&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Fill pattern with metadata format placeholders</span>
+    <span class="n">pattern_filled</span> <span class="o">=</span> <span class="n">pattern</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">metadata_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">pattern_filled</span> <span class="o">=</span> <span class="n">pattern_filled</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">metadata_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;format&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Compile regex pattern and match against input string</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pattern_filled</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+    <span class="c1"># If match is found, extract metadata values and return as a dictionary</span>
+    <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">metadata_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">values</span><span class="p">))</span>
+
+        <span class="c1"># If the format is &quot;LEEC_FILE_FORMAT&quot;, handle specific date and time format</span>
+        <span class="k">if</span> <span class="n">format_name</span> <span class="o">==</span> <span class="s2">&quot;LEEC_FILE_FORMAT&quot;</span><span class="p">:</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;timestamp_init&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">],</span> <span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2"> %H%M%S&quot;</span>
+            <span class="p">)</span>
+        <span class="c1"># If a date_time_func is provided, apply it to the metadata values</span>
+        <span class="k">elif</span> <span class="n">date_time_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">date_time_func</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">values</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Caio Ferreira Bernardo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>
