@@ -3,6 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+Acoustic Ecology Visualization
+=================
 
 .. image:: ../../maui/data/logo/color_logo_no_background.svg
    :width: 600
@@ -21,6 +23,12 @@
    maui.io
    maui.visualizations
    maui.samples
+
+.. toctree::
+   :caption: Example Gallery
+   :maxdepth: 1
+   
+   example_gallery
 
 Operating Systems
 =================

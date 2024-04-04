@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Input and Output &mdash; maui-software 0.1.20 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
     <link rel="shortcut icon" href="_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -18,8 +20,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="maui.io.get_file_structure_leec" href="generated/maui.io.get_file_structure_leec.html" />
-    <link rel="prev" title="maui.eda.export_file_names_summary_pdf" href="generated/maui.eda.export_file_names_summary_pdf.html" /> 
+    <link rel="next" title="maui.io.get_audio_info" href="generated/maui.io.get_audio_info.html" />
+    <link rel="prev" title="maui.eda.export_file_names_summary_pdf_leec" href="generated/maui.eda.export_file_names_summary_pdf_leec.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -50,13 +52,16 @@
 <li class="toctree-l1"><a class="reference internal" href="maui.acoustic_indices.html">Acoustic Indices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maui.eda.html">Exploratory data analysis</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Input and Output</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="generated/maui.io.get_file_structure_leec.html">maui.io.get_file_structure_leec</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generated/maui.io.get_audio_info.html">maui.io.get_audio_info</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generated/maui.io.store_df.html">maui.io.store_df</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="maui.visualizations.html">Visualizations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maui.samples.html">Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_gallery.html">Example gallery</a></li>
 </ul>
 
         </div>
@@ -88,20 +93,17 @@
 <p>The module <code class="docutils literal notranslate"><span class="pre">io</span></code> has a collection of functions to perform input and output operations.</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.io.get_file_structure_leec.html#maui.io.get_file_structure_leec" title="maui.io.get_file_structure_leec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_file_structure_leec</span></code></a>(filename)</p></td>
-<td><p>Parse a filename and extract information to create a dictionary.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/maui.io.get_audio_info.html#maui.io.get_audio_info" title="maui.io.get_audio_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_audio_info</span></code></a>(audio_path[, store_duration, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.io.get_audio_info.html#maui.io.get_audio_info" title="maui.io.get_audio_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_audio_info</span></code></a>(audio_path, format_name[, ...])</p></td>
 <td><p>Extract audio file information from a file or directory.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.io.store_df.html#maui.io.store_df" title="maui.io.store_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">store_df</span></code></a>(df, file_type, base_dir, file_name)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/maui.io.store_df.html#maui.io.store_df" title="maui.io.store_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">store_df</span></code></a>(df, file_type, base_dir, file_name)</p></td>
 <td><p>Store a DataFrame to a file in a specified format.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">maui.io.</span></span><span class="sig-name descname"><span class="pre">get_audio_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perc_sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/io/io.html#get_audio_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<span class="sig-prename descclassname"><span class="pre">maui.io.</span></span><span class="sig-name descname"><span class="pre">get_audio_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_time_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_file_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perc_sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/io/io.html#get_audio_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Extract audio file information from a file or directory.</p>
 <p>This function processes audio files specified by the ‘audio_path’ argument,
 extracting information such as filename structure, timestamps, and duration.
@@ -134,59 +136,10 @@ It can handle both single audio files and entire directories of audio files.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">io</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">audio_file</span> <span class="o">=</span> <span class="s2">&quot;forest_channelA_20210911_153000_jungle.wav&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">io</span><span class="o">.</span><span class="n">get_audio_info</span><span class="p">(</span><span class="n">audio_file</span><span class="p">,</span> <span class="n">store_duration</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">perc_sample</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
-<span class="go">   landscape   channel      date    time environment      timestamp_init timestamp_end  duration                                   file_path</span>
-<span class="go">0     forest  channelA  20210911  153000      jungle 2021-09-11 15:30:00          None       NaN  forest_channelA_20210911_153000_jungle.wav</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">audio_dir</span> <span class="o">=</span> <span class="s2">&quot;/path/to/audio/directory&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">io</span><span class="o">.</span><span class="n">get_audio_info</span><span class="p">(</span><span class="n">audio_dir</span><span class="p">,</span> <span class="n">store_duration</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">perc_sample</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="go">   landscape   channel      date    time environment      timestamp_init          file_path</span>
-<span class="go">0     forest  channelA  20210911  153000      jungle 2021-09-11 15:30:00  /path/to/audio/directory/forest_channelA_20210911_153000_jungle.wav</span>
-<span class="go">1   mountains  channelB  20210911  160000      forest 2021-09-11 16:00:00  /path/to/audio/directory/mountains_channelB_20210911_160000_forest.wav</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">maui.io.</span></span><span class="sig-name descname"><span class="pre">get_file_structure_leec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/io/io.html#get_file_structure_leec"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Parse a filename and extract information to create a dictionary.</p>
-<p>This function takes a filename and extracts relevant information from it to
-create a dictionary containing details like landscape, channel, date, time,
-and environment.</p>
-<p>The structure of the file_name should be as follows:</p>
-<p>LANDSCAPE__CHANNEL__DATE_TIME_ENVIRONMENT.wav</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>filename:str</strong></dt><dd><p>The input filename to be processed.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt>audio_dict: dict</dt><dd><p>A dictionary containing the parsed information.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>ValueError: If the filename does not contain expected segments.</dt><dd></dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">io</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;LLEC40_0_20210911_153000_br.wav&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">io</span><span class="o">.</span><span class="n">get_file_structure_leec</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-<span class="go">{</span>
-<span class="go">    &#39;landscape&#39;: &#39;LLEC40&#39;,</span>
-<span class="go">    &#39;channel&#39;: &#39;0&#39;,</span>
-<span class="go">    &#39;date&#39;: &#39;20210911&#39;,</span>
-<span class="go">    &#39;time&#39;: &#39;153000&#39;,</span>
-<span class="go">    &#39;environment&#39;: &#39;br&#39;,</span>
-<span class="go">    &#39;timestamp_init&#39;: datetime.datetime(2021, 9, 11, 15, 30)</span>
-<span class="go">}</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -236,8 +189,8 @@ and environment.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="generated/maui.eda.export_file_names_summary_pdf.html" class="btn btn-neutral float-left" title="maui.eda.export_file_names_summary_pdf" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="generated/maui.io.get_file_structure_leec.html" class="btn btn-neutral float-right" title="maui.io.get_file_structure_leec" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="generated/maui.eda.export_file_names_summary_pdf_leec.html" class="btn btn-neutral float-left" title="maui.eda.export_file_names_summary_pdf_leec" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="generated/maui.io.get_audio_info.html" class="btn btn-neutral float-right" title="maui.io.get_audio_info" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

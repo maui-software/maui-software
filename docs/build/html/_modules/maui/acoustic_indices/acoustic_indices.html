@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>maui.acoustic_indices.acoustic_indices &mdash; maui-software 0.1.20 documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
@@ -50,6 +52,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../maui.visualizations.html">Visualizations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maui.samples.html">Samples</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../example_gallery.html">Example gallery</a></li>
+</ul>
 
         </div>
       </div>
@@ -76,486 +82,608 @@
            <div itemprop="articleBody">
              
   <h1>Source code for maui.acoustic_indices.acoustic_indices</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">math</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This module is designed to calculate various acoustic indices from audio files,</span>
+<span class="sd">    providing insights into the characteristics of soundscapes. Utilizing the MAAD</span>
+<span class="sd">    library for the extraction of acoustic features, it supports a wide range of</span>
+<span class="sd">    indices, including but not limited to median amplitude envelope, temporal</span>
+<span class="sd">    entropy, acoustic richness, and spectral entropy. These indices are essential</span>
+<span class="sd">    for analyzing environmental sounds, bioacoustics data, and general acoustic</span>
+<span class="sd">    properties of audio recordings.</span>
+
+<span class="sd">    The core functionality is facilitated through a high-level function that</span>
+<span class="sd">    accepts a pandas DataFrame containing paths to audio files, a list of indices</span>
+<span class="sd">    to calculate, and options for parallel processing to expedite calculations</span>
+<span class="sd">    across multiple audio files. Additional utility functions support parallel</span>
+<span class="sd">    dataframe processing and interaction with filesystem for result storage.</span>
+
+<span class="sd">    Features include:</span>
+<span class="sd">    - Calculation of a comprehensive set of acoustic indices.</span>
+<span class="sd">    - Parallel processing capabilities for efficiency.</span>
+<span class="sd">    - Integration with the MAAD library for acoustic feature extraction.</span>
+<span class="sd">    - Options to save calculated indices to various file formats.</span>
+
+<span class="sd">    Functions:</span>
+<span class="sd">    - calculate_acoustic_indices: Main function to calculate specified acoustic</span>
+<span class="sd">      indices for a collection of audio files.</span>
+<span class="sd">    - get_acoustic_indices: Calculates acoustic indices for individual audio files.</span>
+<span class="sd">    - parallelize_dataframe: Splits DataFrame for parallel processing of audio</span>
+<span class="sd">      files.</span>
+<span class="sd">    - calculate_acoustic_indices_par_aux: Auxiliary function for parallel</span>
+<span class="sd">      processing.</span>
+
+<span class="sd">    Usage of this module is intended for researchers, ecologists, and sound</span>
+<span class="sd">    designers interested in quantifying the acoustic properties of soundscapes</span>
+<span class="sd">    or audio collections for analysis, monitoring, and other scientific studies.</span>
+
+<span class="sd">    Dependencies:</span>
+<span class="sd">    - numpy and pandas for data manipulation.</span>
+<span class="sd">    - tqdm for progress tracking during calculations.</span>
+<span class="sd">    - maad for acoustic feature extraction.</span>
+<span class="sd">    - multiprocessing for parallel computation.</span>
+
+<span class="sd">    Example usage and additional parameter descriptions are provided within each</span>
+<span class="sd">    function&#39;s docstring, offering guidance on applying these tools to your audio</span>
+<span class="sd">    analysis workflows.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">gc</span>
-
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
-<span class="kn">import</span> <span class="nn">sys</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">import</span> <span class="nn">maad</span>
 
 <span class="kn">import</span> <span class="nn">maui.io</span>
 
 
+<span class="k">def</span> <span class="nf">get_acoustic_indices</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 
+    <span class="n">indices_list</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;indices_list&quot;</span><span class="p">]</span>
 
-<span class="k">def</span> <span class="nf">get_acoustic_indices</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-
-    
-    <span class="n">indices_list</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;indices_list&#39;</span><span class="p">]</span>
-    
     <span class="c1"># create temp lit of indices to keep appending for each row</span>
     <span class="n">indices_temp</span> <span class="o">=</span> <span class="p">{}</span>
-    
-    <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;median_amplitude_envelope&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;M&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;temporal_entropy&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Ht&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;temporal_activity&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACTfract&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACTcount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACTmean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;temporal_events&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EVNtFract&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EVNmean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EVNcount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;frequency_entropy&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Hf&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Ht_per_bin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;number_of_peaks&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;NBPeaks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;spectral_entropy&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EAS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ECU&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ECV&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EPS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EPS_KURT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EPS_SKEW&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;spectral_activity&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACTspfract_per_bin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACTspcount_per_bin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACTspmean_per_bin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;MeanACTspfract_per_bin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;MeanACTspcount_per_bin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;spectral_events&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;MeanEVNspFract_per_bin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EVNspFract_per_bin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EVNspMean_per_bin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EVNspCount_per_bin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EVNsp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;spectral_cover&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;LFC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;MFC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;HFC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;soundscape_index&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;NDSI&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ratioBA&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;antroPh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;bioPh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;acoustic_diversity_index&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ADI&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;acoustic_eveness_index&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;AEI&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;temporal_leq&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Leq&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;spectral_leq&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Leqf&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Leqf_per_bin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;tfsd&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;tfsd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;more_entropy&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Ht_Havrda&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Ht_Renyi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Ht_pairedShannon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Ht_gamma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Ht_GiniSimpson&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Hf_Havrda&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Hf_Renyi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Hf_pairedShannon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Hf_gamma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Hf_GiniSimpson&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;acoustic_gradient_index&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;AGI_xx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;AGI_per_bin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;AGI_mean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;AGI_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;frequency_raoq&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;RAOQ&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;region_of_interest_index&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ROItotal&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ROIcover&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span>  <span class="s1">&#39;acoustic_complexity_index&#39;</span><span class="p">:</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACI_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACI_xx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACI_per_bin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        
 
-            
-    
-    <span class="c1"># for each row of the dataframe, a list of acoustic indices (given by indices_list parameter) is calculated </span>
-    <span class="n">iterator_df</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;parallel&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;median_amplitude_envelope&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;m&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;temporal_entropy&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ht&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;temporal_activity&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;act_fract&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;act_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;act_mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;temporal_events&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;evnt_fract&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;evn_mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;evn_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;frequency_entropy&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;hf&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ht_per_bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;number_of_peaks&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;nb_peaks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;spectral_entropy&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;eas&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ecu&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ecv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;eps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;eps_kurt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;eps_skew&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;spectral_activity&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;act_sp_fract_per_bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;act_sp_count_per_bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;act_sp_mean_per_bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;Meanact_sp_fract_per_bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;Meanact_sp_count_per_bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;spectral_events&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;mean_evn_sp_fract_per_bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;evn_sp_fract_per_bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;evn_sp_mean_per_bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;evn_sp_count_per_bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;evn_sp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;spectral_cover&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;lfc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;mfc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;hfc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;soundscape_index&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ndsi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ratio_ba&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;antro_ph&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;bio_ph&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;acoustic_diversity_index&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;adi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;acoustic_eveness_index&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;aei&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;temporal_leq&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;leq&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;spectral_leq&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;leqf&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;leqf_per_bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;tfsd&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;tfsd&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;more_entropy&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ht_havrda&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ht_renyi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ht_paired_shannon&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ht_gamma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ht_gini_simpson&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;hf_havrda&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;hf_renyi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;hf_paired_shannon&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;hf_gamma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;hf_gini_simpson&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;acoustic_gradient_index&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;agi_xx&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;agi_per_bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;agi_mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;agi_sum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;frequency_raoq&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;raoq&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;region_of_interest_index&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;roi_total&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;roi_cover&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="s2">&quot;acoustic_complexity_index&quot;</span><span class="p">:</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;aci_sum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;aci_xx&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;aci_per_bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># for each row of the dataframe, a list of acoustic indices</span>
+    <span class="c1"># (given by indices_list parameter) is calculated</span>
+    <span class="n">iterator_df</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
 
     <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">iterator_df</span><span class="p">:</span>
-<span class="c1">#     for index, row in df.iterrows(): </span>
         <span class="n">row</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-        
+
         <span class="c1"># load audio file</span>
-        <span class="n">s</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;file_path&#39;</span><span class="p">])</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">indices_temp</span><span class="p">:</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-                
+        <span class="n">s</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;file_path&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">indices_temp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
         <span class="k">else</span><span class="p">:</span>
-            
-        
+
             <span class="c1"># Amplitude Envelope (M)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;median_amplitude_envelope&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span> <span class="ow">or</span> <span class="s1">&#39;acoustic_richness&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="s2">&quot;median_amplitude_envelope&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span>
+                <span class="ow">or</span> <span class="s2">&quot;acoustic_richness&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span>
+            <span class="p">):</span>
 
-                <span class="n">M_temp</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">temporal_median</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;M&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">M_temp</span><span class="p">)</span>
+                <span class="n">m_temp</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">temporal_median</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;m&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_temp</span><span class="p">)</span>
 
-            <span class="c1"># Temporal Entropy (Ht)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;temporal_entropy&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span> <span class="ow">or</span> <span class="s1">&#39;acoustic_richness&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span>
+            <span class="c1"># Temporal Entropy (ht)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="s2">&quot;temporal_entropy&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span>
+                <span class="ow">or</span> <span class="s2">&quot;acoustic_richness&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span>
+            <span class="p">):</span>
 
-                <span class="n">Ht_temp</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">temporal_entropy</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Ht&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Ht_temp</span><span class="p">)</span>
+                <span class="n">ht_temp</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">temporal_entropy</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ht&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ht_temp</span><span class="p">)</span>
 
+            <span class="k">if</span> <span class="s2">&quot;temporal_leq&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;temporal_leq&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span>
-
-                <span class="n">Leq</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">temporal_leq</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Leq&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Leq</span><span class="p">)</span>
+                <span class="n">leq</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">temporal_leq</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;leq&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">leq</span><span class="p">)</span>
 
             <span class="c1"># Temporal Activity (ACT)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;temporal_activity&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;temporal_activity&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
-                <span class="n">ACTfract</span><span class="p">,</span> <span class="n">ACTcount</span><span class="p">,</span> <span class="n">ACTmean</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">temporal_activity</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+                <span class="n">act_fract</span><span class="p">,</span> <span class="n">act_count</span><span class="p">,</span> <span class="n">act_mean</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">temporal_activity</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
 
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;act_fract&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act_fract</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;act_count&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act_count</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;act_mean&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act_mean</span><span class="p">)</span>
 
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACTfract&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ACTfract</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACTcount&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ACTcount</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACTmean&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ACTmean</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;more_entropy&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;more_entropy&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
                 <span class="n">env</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">envelope</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-                <span class="n">Ht_Havrda</span><span class="p">,</span> <span class="n">Ht_Renyi</span><span class="p">,</span> <span class="n">Ht_pairedShannon</span><span class="p">,</span> <span class="n">Ht_gamma</span><span class="p">,</span> <span class="n">Ht_GiniSimpson</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">more_entropy</span><span class="p">(</span><span class="n">env</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+                <span class="n">ht_havrda</span><span class="p">,</span> <span class="n">ht_renyi</span><span class="p">,</span> <span class="n">ht_paired_shannon</span><span class="p">,</span> <span class="n">ht_gamma</span><span class="p">,</span> <span class="n">ht_gini_simpson</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">more_entropy</span><span class="p">(</span><span class="n">env</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+                <span class="p">)</span>
 
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ht_havrda&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ht_havrda</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ht_renyi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ht_renyi</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ht_paired_shannon&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ht_paired_shannon</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ht_gamma&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ht_gamma</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ht_gini_simpson&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ht_gini_simpson</span><span class="p">)</span>
 
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Ht_Havrda&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Ht_Havrda</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Ht_Renyi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Ht_Renyi</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Ht_pairedShannon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Ht_pairedShannon</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Ht_gamma&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Ht_gamma</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Ht_GiniSimpson&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Ht_GiniSimpson</span><span class="p">)</span>
+            <span class="c1"># Temporal Events (evn)</span>
+            <span class="k">if</span> <span class="s2">&quot;temporal_events&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
+                <span class="n">evnt_fract</span><span class="p">,</span> <span class="n">evn_mean</span><span class="p">,</span> <span class="n">evn_count</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">temporal_events</span><span class="p">(</span>
+                    <span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="mi">6</span>
+                <span class="p">)</span>
 
-            <span class="c1"># Temporal Events (EVN)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;temporal_events&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span>
-
-                <span class="n">EVNtFract</span><span class="p">,</span> <span class="n">EVNmean</span><span class="p">,</span> <span class="n">EVNcount</span><span class="p">,</span> <span class="n">EVN</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">temporal_events</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
-
-
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EVNtFract&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EVNtFract</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EVNmean&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EVNmean</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EVNcount&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EVNcount</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;evnt_fract&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evnt_fract</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;evn_mean&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evn_mean</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;evn_count&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evn_count</span><span class="p">)</span>
 
             <span class="c1"># Acoustic Complexity Index (ACI)</span>
-            <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;acoustic_complexity_index&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;acoustic_diversity_index&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;acoustic_eveness_index&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)):</span>
-                <span class="n">Sxx</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">spectrogram</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;amplitude&#39;</span><span class="p">)</span> 
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="p">(</span><span class="s2">&quot;acoustic_complexity_index&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;acoustic_diversity_index&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;acoustic_eveness_index&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">sxx</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">spectrogram</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;amplitude&quot;</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;acoustic_complexity_index&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s2">&quot;acoustic_complexity_index&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
+                    <span class="n">aci_xx</span><span class="p">,</span> <span class="n">aci_per_bin</span><span class="p">,</span> <span class="n">aci_sum</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">acoustic_complexity_index</span><span class="p">(</span><span class="n">sxx</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;aci_sum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aci_sum</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;aci_xx&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aci_xx</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;aci_per_bin&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aci_per_bin</span><span class="p">)</span>
 
-                    <span class="n">ACI_xx</span><span class="p">,</span> <span class="n">ACI_per_bin</span><span class="p">,</span> <span class="n">ACI_sum</span>  <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">acoustic_complexity_index</span><span class="p">(</span><span class="n">Sxx</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACI_sum&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ACI_sum</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACI_xx&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ACI_xx</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACI_per_bin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ACI_per_bin</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">&quot;acoustic_diversity_index&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;acoustic_diversity_index&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span>
+                    <span class="n">adi</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">acoustic_diversity_index</span><span class="p">(</span><span class="n">sxx</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;adi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">adi</span><span class="p">)</span>
 
-                    <span class="n">ADI</span>  <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">acoustic_diversity_index</span><span class="p">(</span><span class="n">Sxx</span><span class="p">,</span><span class="n">fn</span><span class="p">)</span>        
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ADI&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ADI</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">&quot;acoustic_eveness_index&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
+                    <span class="n">aei</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">acoustic_eveness_index</span><span class="p">(</span><span class="n">sxx</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;aei&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aei</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;acoustic_eveness_index&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="p">(</span><span class="s2">&quot;frequency_entropy&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;number_of_peaks&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;spectral_activity&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;spectral_events&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;spectral_cover&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;soundscape_index&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;spectral_leq&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;tfsd&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;more_entropy&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;acoustic_gradient_index&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;frequency_raoq&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;region_of_interest_index&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+            <span class="p">):</span>
 
-                    <span class="n">AEI</span>  <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">acoustic_eveness_index</span><span class="p">(</span><span class="n">Sxx</span><span class="p">,</span><span class="n">fn</span><span class="p">)</span>        
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;AEI&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AEI</span><span class="p">)</span>
+                <span class="n">sxx_power</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">spectrogram</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span>
 
+                <span class="c1"># Frequency Entropy (hf)</span>
+                <span class="k">if</span> <span class="s2">&quot;frequency_entropy&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
+                    <span class="n">hf</span><span class="p">,</span> <span class="n">ht_per_bin</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">frequency_entropy</span><span class="p">(</span><span class="n">sxx_power</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;hf&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hf</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ht_per_bin&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ht_per_bin</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;frequency_entropy&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;number_of_peaks&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;spectral_activity&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span> <span class="ow">or</span> 
-                <span class="p">(</span><span class="s1">&#39;spectral_events&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;spectral_cover&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;soundscape_index&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span> <span class="ow">or</span> 
-                <span class="p">(</span><span class="s1">&#39;spectral_leq&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>  <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;tfsd&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>  <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;more_entropy&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>  <span class="ow">or</span> 
-                <span class="p">(</span><span class="s1">&#39;acoustic_gradient_index&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>  <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;frequency_raoq&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>  <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;region_of_interest_index&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>  <span class="p">):</span>
+                <span class="c1"># Number of Peaks (nb_peaks)</span>
+                <span class="k">if</span> <span class="s2">&quot;number_of_peaks&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
-                <span class="n">Sxx_power</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">spectrogram</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span> 
+                    <span class="n">nb_peaks</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">number_of_peaks</span><span class="p">(</span>
+                        <span class="n">sxx_power</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">slopes</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">min_freq_dist</span><span class="o">=</span><span class="mi">100</span>
+                    <span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;nb_peaks&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nb_peaks</span><span class="p">)</span>
 
-                <span class="c1"># Frequency Entropy (Hf)</span>
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;frequency_entropy&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s2">&quot;tfsd&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
-                    <span class="n">Hf</span><span class="p">,</span> <span class="n">Ht_per_bin</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">frequency_entropy</span><span class="p">(</span><span class="n">Sxx_power</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Hf&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Hf</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Ht_per_bin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Ht_per_bin</span><span class="p">)</span>
+                    <span class="n">tfsd</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">tfsd</span><span class="p">(</span><span class="n">sxx_power</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tn</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;tfsd&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tfsd</span><span class="p">)</span>
 
+                <span class="k">if</span> <span class="s2">&quot;frequency_raoq&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
-                <span class="c1"># Number of Peaks (NBPeaks)</span>
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number_of_peaks&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span> 
+                    <span class="n">s_power</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">avg_power_spectro</span><span class="p">(</span><span class="n">sxx_power</span><span class="p">)</span>
+                    <span class="n">raoq</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">frequency_raoq</span><span class="p">(</span><span class="n">s_power</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;raoq&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">raoq</span><span class="p">)</span>
 
-                    <span class="n">NBPeaks</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">number_of_peaks</span><span class="p">(</span><span class="n">Sxx_power</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">slopes</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">min_freq_dist</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> 
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;NBPeaks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NBPeaks</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">&quot;soundscape_index&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;tfsd&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span> 
+                    <span class="n">ndsi</span><span class="p">,</span> <span class="n">ratio_ba</span><span class="p">,</span> <span class="n">antro_ph</span><span class="p">,</span> <span class="n">bio_ph</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">soundscape_index</span><span class="p">(</span>
+                        <span class="n">sxx_power</span><span class="p">,</span> <span class="n">fn</span>
+                    <span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ndsi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ndsi</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ratio_ba&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratio_ba</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;antro_ph&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">antro_ph</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;bio_ph&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bio_ph</span><span class="p">)</span>
 
-                    <span class="n">tfsd</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">tfsd</span><span class="p">(</span><span class="n">Sxx_power</span><span class="p">,</span><span class="n">fn</span><span class="p">,</span> <span class="n">tn</span><span class="p">)</span> 
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;tfsd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tfsd</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">&quot;acoustic_gradient_index&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;frequency_raoq&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span> 
+                    <span class="n">agi_xx</span><span class="p">,</span> <span class="n">agi_per_bin</span><span class="p">,</span> <span class="n">agi_mean</span><span class="p">,</span> <span class="n">agi_sum</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">acoustic_gradient_index</span><span class="p">(</span><span class="n">sxx_power</span><span class="p">,</span> <span class="n">tn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">tn</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="p">)</span>
 
-                    <span class="n">S_power</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">avg_power_spectro</span><span class="p">(</span><span class="n">Sxx_power</span><span class="p">)</span> 
-                    <span class="n">RAOQ</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">frequency_raoq</span><span class="p">(</span><span class="n">S_power</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;RAOQ&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RAOQ</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;agi_xx&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agi_xx</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;agi_per_bin&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agi_per_bin</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;agi_mean&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agi_mean</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;agi_sum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agi_sum</span><span class="p">)</span>
 
+                <span class="k">if</span> <span class="s2">&quot;spectral_leq&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;soundscape_index&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span> 
+                    <span class="n">leqf</span><span class="p">,</span> <span class="n">leqf_per_bin</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_leq</span><span class="p">(</span><span class="n">sxx_power</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;leqf&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">leqf</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;leqf_per_bin&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">leqf_per_bin</span><span class="p">)</span>
 
-                    <span class="n">NDSI</span><span class="p">,</span> <span class="n">ratioBA</span><span class="p">,</span> <span class="n">antroPh</span><span class="p">,</span> <span class="n">bioPh</span>  <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">soundscape_index</span><span class="p">(</span><span class="n">Sxx_power</span><span class="p">,</span><span class="n">fn</span><span class="p">)</span> 
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;NDSI&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NDSI</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ratioBA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratioBA</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;antroPh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">antroPh</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;bioPh&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bioPh</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">&quot;more_entropy&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;acoustic_gradient_index&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span> 
+                    <span class="n">s_power</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">avg_power_spectro</span><span class="p">(</span><span class="n">sxx_power</span><span class="p">)</span>
+                    <span class="n">hf_havrda</span><span class="p">,</span> <span class="n">hf_renyi</span><span class="p">,</span> <span class="n">hf_paired_shannon</span><span class="p">,</span> <span class="n">hf_gamma</span><span class="p">,</span> <span class="n">hf_gini_simpson</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">more_entropy</span><span class="p">(</span><span class="n">s_power</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+                    <span class="p">)</span>
 
-                    <span class="n">AGI_xx</span><span class="p">,</span> <span class="n">AGI_per_bin</span><span class="p">,</span> <span class="n">AGI_mean</span><span class="p">,</span> <span class="n">AGI_sum</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">acoustic_gradient_index</span><span class="p">(</span><span class="n">Sxx_power</span><span class="p">,</span><span class="n">tn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">tn</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;hf_havrda&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hf_havrda</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;hf_renyi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hf_renyi</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;hf_paired_shannon&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hf_paired_shannon</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;hf_gamma&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hf_gamma</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;hf_gini_simpson&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hf_gini_simpson</span><span class="p">)</span>
 
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;AGI_xx&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AGI_xx</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;AGI_per_bin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AGI_per_bin</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;AGI_mean&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AGI_mean</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;AGI_sum&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AGI_sum</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">&quot;region_of_interest_index&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;spectral_leq&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span> 
+                    <span class="n">sxx_no_noise</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">median_equalizer</span><span class="p">(</span><span class="n">sxx_power</span><span class="p">)</span>
+                    <span class="n">sxx_db_no_noise</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">power2dB</span><span class="p">(</span><span class="n">sxx_no_noise</span><span class="p">)</span>
+                    <span class="n">roi_total</span><span class="p">,</span> <span class="n">roi_cover</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">region_of_interest_index</span><span class="p">(</span>
+                        <span class="n">sxx_db_no_noise</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span>
+                    <span class="p">)</span>
 
-                    <span class="n">Leqf</span><span class="p">,</span> <span class="n">Leqf_per_bin</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_leq</span><span class="p">(</span><span class="n">Sxx_power</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Leqf&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Leqf</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Leqf_per_bin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Leqf_per_bin</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;roi_total&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">roi_total</span><span class="p">)</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;roi_cover&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">roi_cover</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;more_entropy&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span> 
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="s2">&quot;spectral_activity&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                    <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;spectral_events&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                    <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;spectral_cover&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>
+                <span class="p">):</span>
 
-                    <span class="n">S_power</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">avg_power_spectro</span><span class="p">(</span><span class="n">Sxx_power</span><span class="p">)</span>
-                    <span class="n">Hf_Havrda</span><span class="p">,</span> <span class="n">Hf_Renyi</span><span class="p">,</span> <span class="n">Hf_pairedShannon</span><span class="p">,</span> <span class="n">Hf_gamma</span><span class="p">,</span> <span class="n">Hf_GiniSimpson</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">more_entropy</span><span class="p">(</span><span class="n">S_power</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+                    <span class="n">sxx_no_noise</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">median_equalizer</span><span class="p">(</span><span class="n">sxx_power</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">ext</span><span class="p">)</span>
+                    <span class="n">sxx_db_no_noise</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">power2dB</span><span class="p">(</span><span class="n">sxx_no_noise</span><span class="p">)</span>
 
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Hf_Havrda&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Hf_Havrda</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Hf_Renyi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Hf_Renyi</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Hf_pairedShannon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Hf_pairedShannon</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Hf_gamma&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Hf_gamma</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;Hf_GiniSimpson&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Hf_GiniSimpson</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="s2">&quot;spectral_activity&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;region_of_interest_index&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span> 
+                        <span class="n">act_sp_fract_per_bin</span><span class="p">,</span> <span class="n">act_sp_count_per_bin</span><span class="p">,</span> <span class="n">act_sp_mean_per_bin</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_activity</span><span class="p">(</span><span class="n">sxx_db_no_noise</span><span class="p">)</span>
+                        <span class="p">)</span>
 
-                    <span class="n">Sxx_noNoise</span><span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">median_equalizer</span><span class="p">(</span><span class="n">Sxx_power</span><span class="p">)</span> 
-                    <span class="n">Sxx_dB_noNoise</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">power2dB</span><span class="p">(</span><span class="n">Sxx_noNoise</span><span class="p">)</span>
-                    <span class="n">ROItotal</span><span class="p">,</span> <span class="n">ROIcover</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">region_of_interest_index</span><span class="p">(</span><span class="n">Sxx_dB_noNoise</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+                        <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;Meanact_sp_fract_per_bin&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">act_sp_fract_per_bin</span><span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;Meanact_sp_count_per_bin&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">act_sp_count_per_bin</span><span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;act_sp_fract_per_bin&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act_sp_fract_per_bin</span><span class="p">)</span>
+                        <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;act_sp_count_per_bin&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act_sp_count_per_bin</span><span class="p">)</span>
+                        <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;act_sp_mean_per_bin&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act_sp_mean_per_bin</span><span class="p">)</span>
 
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ROItotal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ROItotal</span><span class="p">)</span>
-                    <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ROIcover&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ROIcover</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="s2">&quot;spectral_events&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
+                        <span class="p">(</span>
+                            <span class="n">evn_sp_fract_per_bin</span><span class="p">,</span>
+                            <span class="n">evn_sp_mean_per_bin</span><span class="p">,</span>
+                            <span class="n">evn_sp_count_per_bin</span><span class="p">,</span>
+                            <span class="n">evn_sp</span><span class="p">,</span>
+                        <span class="p">)</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_events</span><span class="p">(</span>
+                            <span class="n">sxx_db_no_noise</span><span class="p">,</span>
+                            <span class="n">dt</span><span class="o">=</span><span class="n">tn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">tn</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="n">dB_threshold</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+                            <span class="n">rejectDuration</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                            <span class="n">extent</span><span class="o">=</span><span class="n">ext</span><span class="p">,</span>
+                        <span class="p">)</span>
 
+                        <span class="n">mean_evn_sp_fract_per_bin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">evn_sp_fract_per_bin</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;spectral_activity&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;spectral_events&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;spectral_cover&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)</span>  <span class="p">):</span>
-    <span class="c1">#                 print(&#39;entrou&#39;)</span>
+                        <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;mean_evn_sp_fract_per_bin&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">mean_evn_sp_fract_per_bin</span>
+                        <span class="p">)</span>
+                        <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;evn_sp_fract_per_bin&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evn_sp_fract_per_bin</span><span class="p">)</span>
+                        <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;evn_sp_mean_per_bin&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evn_sp_mean_per_bin</span><span class="p">)</span>
+                        <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;evn_sp_count_per_bin&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evn_sp_count_per_bin</span><span class="p">)</span>
+                        <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;evn_sp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evn_sp</span><span class="p">)</span>
 
-                    <span class="n">Sxx_noNoise</span><span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">median_equalizer</span><span class="p">(</span><span class="n">Sxx_power</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">ext</span><span class="p">)</span> 
-                    <span class="n">Sxx_dB_noNoise</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">power2dB</span><span class="p">(</span><span class="n">Sxx_noNoise</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="s2">&quot;spectral_cover&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
-                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;spectral_activity&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span>
+                        <span class="n">lfc</span><span class="p">,</span> <span class="n">mfc</span><span class="p">,</span> <span class="n">hfc</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_cover</span><span class="p">(</span><span class="n">sxx_db_no_noise</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
 
-
-                        <span class="n">ACTspfract_per_bin</span><span class="p">,</span> <span class="n">ACTspcount_per_bin</span><span class="p">,</span> <span class="n">ACTspmean_per_bin</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_activity</span><span class="p">(</span><span class="n">Sxx_dB_noNoise</span><span class="p">)</span>  
-
-                        <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;MeanACTspfract_per_bin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ACTspfract_per_bin</span><span class="p">))</span>
-                        <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;MeanACTspcount_per_bin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ACTspcount_per_bin</span><span class="p">))</span>
-                        <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACTspfract_per_bin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ACTspfract_per_bin</span><span class="p">)</span>
-                        <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACTspcount_per_bin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ACTspcount_per_bin</span><span class="p">)</span>
-                        <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ACTspmean_per_bin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ACTspmean_per_bin</span><span class="p">)</span>
-
-                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;spectral_events&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span>
-
-                        <span class="n">EVNspFract_per_bin</span><span class="p">,</span> <span class="n">EVNspMean_per_bin</span><span class="p">,</span> <span class="n">EVNspCount_per_bin</span><span class="p">,</span> <span class="n">EVNsp</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_events</span><span class="p">(</span><span class="n">Sxx_dB_noNoise</span><span class="p">,</span> 
-                                                                                                                         <span class="n">dt</span><span class="o">=</span><span class="n">tn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">tn</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dB_threshold</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> 
-                                                                                                                         <span class="n">rejectDuration</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">ext</span><span class="p">)</span>  
-
-                        <span class="n">MeanEVNspFract_per_bin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">EVNspFract_per_bin</span><span class="p">)</span>
-
-                        <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;MeanEVNspFract_per_bin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MeanEVNspFract_per_bin</span><span class="p">)</span>
-                        <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EVNspFract_per_bin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EVNspFract_per_bin</span><span class="p">)</span>
-                        <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EVNspMean_per_bin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EVNspMean_per_bin</span><span class="p">)</span>
-                        <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EVNspCount_per_bin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EVNspCount_per_bin</span><span class="p">)</span>
-                        <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EVNsp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EVNsp</span><span class="p">)</span>
-
-                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;spectral_cover&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span>
-
-
-                        <span class="n">LFC</span><span class="p">,</span> <span class="n">MFC</span><span class="p">,</span> <span class="n">HFC</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_cover</span><span class="p">(</span><span class="n">Sxx_dB_noNoise</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>  
-
-                        <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;LFC&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LFC</span><span class="p">)</span>
-                        <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;MFC&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MFC</span><span class="p">)</span>
-                        <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;HFC&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HFC</span><span class="p">)</span>
-
-
-
+                        <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;lfc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lfc</span><span class="p">)</span>
+                        <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;mfc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mfc</span><span class="p">)</span>
+                        <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;hfc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hfc</span><span class="p">)</span>
 
             <span class="c1"># Spectral Entropy (ACI)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;spectral_entropy&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;spectral_entropy&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
 
-                <span class="n">EAS</span><span class="p">,</span> <span class="n">ECU</span><span class="p">,</span> <span class="n">ECV</span><span class="p">,</span> <span class="n">EPS</span><span class="p">,</span> <span class="n">EPS_KURT</span><span class="p">,</span> <span class="n">EPS_SKEW</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_entropy</span><span class="p">(</span><span class="n">Sxx_power</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span> 
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EAS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EAS</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ECU&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ECU</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;ECV&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ECV</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EPS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EPS</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EPS_KURT&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EPS_KURT</span><span class="p">)</span>
-                <span class="n">indices_temp</span><span class="p">[</span><span class="s1">&#39;EPS_SKEW&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EPS_SKEW</span><span class="p">)</span>
-        
-        <span class="k">del</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-        <span class="k">del</span><span class="p">(</span><span class="n">fs</span><span class="p">)</span>
+                <span class="n">eas</span><span class="p">,</span> <span class="n">ecu</span><span class="p">,</span> <span class="n">ecv</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="n">eps_kurt</span><span class="p">,</span> <span class="n">eps_skew</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_entropy</span><span class="p">(</span>
+                    <span class="n">sxx_power</span><span class="p">,</span> <span class="n">fn</span>
+                <span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;eas&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eas</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ecu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ecu</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;ecv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ecv</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;eps&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;eps_kurt&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eps_kurt</span><span class="p">)</span>
+                <span class="n">indices_temp</span><span class="p">[</span><span class="s2">&quot;eps_skew&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eps_skew</span><span class="p">)</span>
+
+        <span class="k">del</span> <span class="n">s</span>
+        <span class="k">del</span> <span class="n">fs</span>
+
         <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 
-
-    
     <span class="c1"># insert calculated indices into the original dataframe</span>
-    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">indices_temp</span><span class="p">:</span>
-        <span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">indices_temp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-    
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">indices_temp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
     <span class="c1"># Acoustic Richness (AR)</span>
-    <span class="c1"># This index uses the median of amplitude envelope andteporal entropy to be calculated, and it is calculated out of the main loop</span>
-    <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;acoustic_richness&#39;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">)):</span>
-        <span class="n">AR_list</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">acoustic_richness_index</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Ht&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;M&#39;</span><span class="p">])</span>
-        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;AR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">AR_list</span>
-    
+    <span class="c1"># This index uses the median of amplitude envelope andteporal entropy</span>
+    <span class="c1"># to be calculated, and it is calculated out of the main loop</span>
+    <span class="k">if</span> <span class="s2">&quot;acoustic_richness&quot;</span> <span class="ow">in</span> <span class="n">indices_list</span><span class="p">:</span>
+        <span class="n">ar_list</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">acoustic_richness_index</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;ht&quot;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;m&quot;</span><span class="p">])</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;ar&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ar_list</span>
+
     <span class="c1"># print(df.info())</span>
     <span class="c1"># print(sys.getsizeof(df)/1024)</span>
-    
-    
+
     <span class="k">return</span> <span class="n">df</span>
-    
-<span class="c1">#-----------------------------------------------------------------------------------------------------------------------------------</span>
+
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
 
 
 <span class="k">def</span> <span class="nf">calculate_acoustic_indices_par_aux</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">get_acoustic_indices</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
 
-<span class="c1">#-----------------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># ----------------------------------------------------------------------------</span>
 
 
-<span class="k">def</span> <span class="nf">parallelize_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">num_cores</span><span class="p">):</span>
-    
+<span class="k">def</span> <span class="nf">parallelize_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">num_cores</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
     <span class="c1"># slices = math.floor(round(df.shape[0]/num_cores)/num_cores)*num_cores</span>
-    <span class="n">slices</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span><span class="o">/</span><span class="mi">8</span><span class="p">)</span>
-    
+    <span class="n">num_cores</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+    <span class="n">slices</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num_cores</span><span class="p">))</span>
+
     <span class="c1"># split the dataframe into num_cores parts</span>
     <span class="n">df_split_temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">slices</span><span class="p">)</span>
-    
+
     <span class="n">df_split</span> <span class="o">=</span> <span class="p">[]</span>
-    
+
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">slices</span><span class="p">):</span>
         <span class="n">df_split</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">df_split_temp</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">args</span><span class="p">])</span>
-    
+
     <span class="c1"># create a pool of processes</span>
     <span class="k">with</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">num_cores</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-    
+
         <span class="c1"># apply the function on each part of the dataframe</span>
         <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">imap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">df_split</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">df_split</span><span class="p">)))</span>
 
         <span class="c1"># close the pool and join the processes</span>
         <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-        
-    
-    
+
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-    
+
     <span class="k">return</span> <span class="n">df</span>
 
-<span class="c1">#-----------------------------------------------------------------------------------------------------------------------------------</span>
 
+<span class="c1"># ----------------------------------------------------------------------------</span>
 
 
 <div class="viewcode-block" id="calculate_acoustic_indices">
 <a class="viewcode-back" href="../../../maui.acoustic_indices.html#maui.acoustic_indices.calculate_acoustic_indices">[docs]</a>
-<span class="k">def</span> <span class="nf">calculate_acoustic_indices</span><span class="p">(</span><span class="n">df_init</span><span class="p">,</span> <span class="n">indices_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">store_df</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">base_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">calculate_acoustic_indices</span><span class="p">(</span>
+    <span class="n">df_init</span><span class="p">,</span>
+    <span class="n">indices_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="n">store_df</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">base_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">file_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate a set of acoustic indices for audio files and optionally store the results.</span>
+<span class="sd">        Calculate a set of acoustic indices for audio files and optionally</span>
+<span class="sd">        store the results.</span>
 
-<span class="sd">    This function calculates a set of specified acoustic indices for audio files in the input DataFrame. The supported</span>
-<span class="sd">    indices include median_amplitude_envelope, temporal_entropy, acoustic_richness, and others. The calculated indices</span>
-<span class="sd">    are added as columns to the DataFrame, and the resulting DataFrame is returned. If the &#39;store_df&#39; parameter is set</span>
-<span class="sd">    to True, the DataFrame can be saved to a file.</span>
+<span class="sd">        This function calculates a set of specified acoustic indices for audio</span>
+<span class="sd">        files in the input DataFrame. The supported indices include</span>
+<span class="sd">        median_amplitude_envelope, temporal_entropy, acoustic_richness, and others.</span>
+<span class="sd">        The calculated indices are added as columns to the DataFrame, and the</span>
+<span class="sd">        resulting DataFrame is returned. If the &#39;store_df&#39; parameter is set</span>
+<span class="sd">        to True, the DataFrame can be saved to a file.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    df_init : pd.DataFrame</span>
-<span class="sd">        The DataFrame containing audio file data with a &#39;file_path&#39; column specifying the path to each audio file.</span>
-<span class="sd">    indices_list : List[str]</span>
-<span class="sd">        A list of acoustic indices to calculate.</span>
-<span class="sd">    store_df : bool, optional</span>
-<span class="sd">        Whether to store the resulting DataFrame to a file. Default is False.</span>
-<span class="sd">    base_dir : str, optional</span>
-<span class="sd">        The base directory where the output file will be saved. Required if &#39;store_df&#39; is True.</span>
-<span class="sd">    file_name : str, optional</span>
-<span class="sd">        The name of the output file to save the DataFrame. Required if &#39;store_df&#39; is True.</span>
-<span class="sd">    file_type : str, optional</span>
-<span class="sd">        The file format for saving the DataFrame, e.g., &#39;csv&#39;, &#39;xlsx&#39;. Required if &#39;store_df&#39; is True.</span>
-<span class="sd">    parallel : bool, optional</span>
-<span class="sd">        Whether to use parallel processing for calculating indices. Default is True.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df_init : pd.DataFrame</span>
+<span class="sd">            The DataFrame containing audio file data with a &#39;file_path&#39;</span>
+<span class="sd">            column specifying the path to each audio file.</span>
+<span class="sd">        indices_list : List[str]</span>
+<span class="sd">            A list of acoustic indices to calculate.</span>
+<span class="sd">        store_df : bool, optional</span>
+<span class="sd">            Whether to store the resulting DataFrame to a file. Default is False.</span>
+<span class="sd">        base_dir : str, optional</span>
+<span class="sd">            The base directory where the output file will be saved. Required if &#39;store_df&#39; is True.</span>
+<span class="sd">        file_name : str, optional</span>
+<span class="sd">            The name of the output file to save the DataFrame. Required if &#39;store_df&#39; is True.</span>
+<span class="sd">        file_type : str, optional</span>
+<span class="sd">            The file format for saving the DataFrame, e.g., &#39;csv&#39;, &#39;xlsx&#39;.</span>
+<span class="sd">            Required if &#39;store_df&#39; is True.</span>
+<span class="sd">        parallel : bool, optional</span>
+<span class="sd">            Whether to use parallel processing for calculating indices. Default is True.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    pd.DataFrame</span>
-<span class="sd">        The DataFrame containing the calculated acoustic indices.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pd.DataFrame</span>
+<span class="sd">            The DataFrame containing the calculated acoustic indices.</span>
 
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">    Exception</span>
-<span class="sd">        If the selected indices are not available or if the DataFrame is missing the &#39;file_path&#39; column.</span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        Exception</span>
+<span class="sd">            If the selected indices are not available or if</span>
+<span class="sd">            the DataFrame is missing the &#39;file_path&#39; column.</span>
 
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from maui import samples, acoustic_indices</span>
-<span class="sd">    &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
-<span class="sd">    &gt;&gt;&gt; indices_list = [&#39;median_amplitude_envelope&#39;, &#39;temporal_entropy&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; df = acoustic_indices.calculate_acoustic_indices(df, indices_list, parallel=False)</span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from maui import samples, acoustic_indices</span>
+<span class="sd">        &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
+<span class="sd">        &gt;&gt;&gt; indices_list = [&#39;median_amplitude_envelope&#39;, &#39;temporal_entropy&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; df = acoustic_indices.calculate_acoustic_indices(df, indices_list, parallel=False)</span>
 
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    - The function calculates a specified set of acoustic indices for each audio file in the DataFrame.</span>
-<span class="sd">    - The &#39;indices_list&#39; parameter should contain a list of available indices to be calculated.</span>
-<span class="sd">    - The &#39;store_df&#39;, &#39;base_dir&#39;, &#39;file_name&#39;, and &#39;file_type&#39; parameters control whether and where to save the resulting DataFrame.</span>
-<span class="sd">    - If parallel processing is enabled (&#39;parallel&#39; is True), the function will use multiple CPU cores for faster calculations.</span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        - The function calculates a specified set of acoustic</span>
+<span class="sd">        indices for each audio file in the DataFrame.</span>
+<span class="sd">        - The &#39;indices_list&#39; parameter should contain a list of available</span>
+<span class="sd">        indices to be calculated.</span>
+<span class="sd">        - The &#39;store_df&#39;, &#39;base_dir&#39;, &#39;file_name&#39;, and &#39;file_type&#39; parameters</span>
+<span class="sd">        control whether and where to save the resulting DataFrame.</span>
+<span class="sd">        - If parallel processing is enabled (&#39;parallel&#39; is True),</span>
+<span class="sd">        the function will use multiple CPU cores for faster calculations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-
     <span class="c1"># check if the selected indices are available</span>
-    <span class="n">available_indices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;median_amplitude_envelope&#39;</span><span class="p">,</span> <span class="s1">&#39;temporal_entropy&#39;</span><span class="p">,</span> <span class="s1">&#39;acoustic_richness&#39;</span><span class="p">,</span> <span class="s1">&#39;temporal_activity&#39;</span><span class="p">,</span> <span class="s1">&#39;temporal_events&#39;</span><span class="p">,</span> <span class="s1">&#39;acoustic_complexity_index&#39;</span><span class="p">,</span> 
-                         <span class="s1">&#39;frequency_entropy&#39;</span><span class="p">,</span> <span class="s1">&#39;number_of_peaks&#39;</span><span class="p">,</span> <span class="s1">&#39;spectral_entropy&#39;</span><span class="p">,</span> <span class="s1">&#39;spectral_activity&#39;</span><span class="p">,</span> <span class="s1">&#39;spectral_events&#39;</span><span class="p">,</span> <span class="s1">&#39;spectral_cover&#39;</span><span class="p">,</span> <span class="s1">&#39;soundscape_index&#39;</span><span class="p">,</span>
-                         <span class="s1">&#39;acoustic_diversity_index&#39;</span><span class="p">,</span> <span class="s1">&#39;acoustic_eveness_index&#39;</span><span class="p">,</span> <span class="s1">&#39;temporal_leq&#39;</span><span class="p">,</span> <span class="s1">&#39;spectral_leq&#39;</span><span class="p">,</span> <span class="s1">&#39;tfsd&#39;</span><span class="p">,</span> <span class="s1">&#39;more_entropy&#39;</span><span class="p">,</span> <span class="s1">&#39;acoustic_gradient_index&#39;</span><span class="p">,</span>
-                         <span class="s1">&#39;frequency_raoq&#39;</span><span class="p">,</span> <span class="s1">&#39;region_of_interest_index&#39;</span><span class="p">]</span>
-    
+    <span class="n">available_indices</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;median_amplitude_envelope&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;temporal_entropy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;acoustic_richness&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;temporal_activity&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;temporal_events&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;acoustic_complexity_index&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;frequency_entropy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;number_of_peaks&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;spectral_entropy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;spectral_activity&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;spectral_events&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;spectral_cover&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;soundscape_index&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;acoustic_diversity_index&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;acoustic_eveness_index&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;temporal_leq&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;spectral_leq&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tfsd&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;more_entropy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;acoustic_gradient_index&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;frequency_raoq&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;region_of_interest_index&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
     <span class="n">diff</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">indices_list</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">available_indices</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">indices_list</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">available_indices</span><span class="p">)):</span> <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;The indices </span><span class="si">{</span><span class="n">diff</span><span class="si">}</span><span class="s1"> are not available. The list of available indices is: </span><span class="si">{</span><span class="n">available_indices</span><span class="si">}</span><span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
-        
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">indices_list</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">available_indices</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;The indices </span><span class="si">{</span><span class="n">diff</span><span class="si">}</span><span class="s2"> are not available. &quot;&quot;&quot;</span>\
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;The list of available indices is: </span><span class="si">{</span><span class="n">available_indices</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
     <span class="c1"># check if the dataframe contains the correct columns</span>
-    <span class="n">necessary_colums</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;file_path&#39;</span><span class="p">]</span>
-    
-    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">necessary_colums</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">df_init</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Your dataset must contain a column named &#39;file_path&#39;, which shows the path for each audio file.&quot;</span><span class="p">)</span>
-    
-    <span class="n">args</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;indices_list&#39;</span><span class="p">:</span><span class="n">indices_list</span><span class="p">,</span> <span class="s1">&#39;total_iterations&#39;</span><span class="p">:</span> <span class="n">df_init</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;parallel&#39;</span><span class="p">:</span><span class="n">parallel</span><span class="p">}</span>
+    <span class="n">necessary_colums</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;file_path&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">necessary_colums</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">df_init</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="s2">&quot;Your dataset must contain a column named &#39;file_path&#39;, &quot;</span>\
+            <span class="s2">&quot;which shows the path for each audio file.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;indices_list&quot;</span><span class="p">:</span> <span class="n">indices_list</span><span class="p">,</span>
+        <span class="s2">&quot;total_iterations&quot;</span><span class="p">:</span> <span class="n">df_init</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">&quot;parallel&quot;</span><span class="p">:</span> <span class="n">parallel</span><span class="p">,</span>
+    <span class="p">}</span>
 
     <span class="k">if</span> <span class="n">parallel</span><span class="p">:</span>
-        <span class="n">df_processed</span> <span class="o">=</span> <span class="n">parallelize_dataframe</span><span class="p">(</span><span class="n">df_init</span><span class="p">,</span> <span class="n">calculate_acoustic_indices_par_aux</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">())</span>
-    <span class="k">else</span><span class="p">:</span> 
+        <span class="n">df_processed</span> <span class="o">=</span> <span class="n">parallelize_dataframe</span><span class="p">(</span>
+            <span class="n">df_init</span><span class="p">,</span> <span class="n">calculate_acoustic_indices_par_aux</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
         <span class="n">df_processed</span> <span class="o">=</span> <span class="n">get_acoustic_indices</span><span class="p">(</span><span class="n">df_init</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
 
-
-    <span class="k">if</span> <span class="p">(</span><span class="n">store_df</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">store_df</span><span class="p">:</span>
         <span class="n">maui</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">store_df</span><span class="p">(</span><span class="n">df_processed</span><span class="p">,</span> <span class="n">file_type</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
-    
+
     <span class="k">return</span> <span class="n">df_processed</span></div>
 
 </pre></div>
