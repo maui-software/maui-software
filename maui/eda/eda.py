@@ -602,7 +602,6 @@ def write_subtitle(pdf, words):
 
 def export_file_names_summary_pdf_leec(
     df, file_name: str, analysis_title=None, width=210):
-    
     """
     Export a summary PDF report with analysis of file names for LEEC project.
 
