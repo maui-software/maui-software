@@ -27,18 +27,21 @@
 """
 
 import os
+import zipfile
 
 import pandas as pd
 
 import maui.io
 
-def get_leec_audio_sample() -> pd.DataFrame:
+
+def get_audio_sample(dataset: str) -> pd.DataFrame:
     """
     Get Leec Audio Samples available in maui.
 
     Parameters
     ----------
-    None
+    dataset : str
+        Dataset to be loaded. The available datasets are: leec
 
     Returns
     -------
@@ -51,16 +54,35 @@ def get_leec_audio_sample() -> pd.DataFrame:
     you can call this function as follows:
 
     >>> from maui import samples
-    >>> df = samples.get_leec_audio_sample()
+    >>> df = samples.get_audio_sample(dataset="leec")
 
 
     """
+    available_datasets = ["leec"]
+    if dataset not in available_datasets:
+        raise Exception("Dataset not available")
+
+    format_name = "unknwown"
+    if dataset == "leec":
+        format_name = "LEEC_FILE_FORMAT"
 
     absolute_path = os.path.dirname(__file__)
-    relative_path = "../data/audio_samples/"
+    relative_path = f"""../data/audio_samples/{dataset}_data.zip"""
     full_path = os.path.join(absolute_path, relative_path)
 
-    df = maui.io.get_audio_info(full_path, format_name='LEEC_FILE_FORMAT',
-    							store_duration=1, perc_sample=1)
+    # Create a directory to store the extracted files
+    os.makedirs(f"""maui_samples_{dataset}""", exist_ok=True)
+
+    # Open the zip file
+    with zipfile.ZipFile(full_path, "r") as zip_ref:
+        # Extract all files to the specified directory
+        zip_ref.extractall(f"""maui_samples_{dataset}""")
+
+    df = maui.io.get_audio_info(
+        f"""./maui_samples_{dataset}""",
+        format_name=format_name,
+        store_duration=1,
+        perc_sample=1,
+    )
 
     return df
