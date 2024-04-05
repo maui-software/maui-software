@@ -62,9 +62,9 @@ def get_audio_sample(dataset: str) -> pd.DataFrame:
     if dataset not in available_datasets:
         raise Exception("Dataset not available")
 
-    format_name = "unknwown"
+    dataset_format_name = "unknwown"
     if dataset == "leec":
-        format_name = "LEEC_FILE_FORMAT"
+        dataset_format_name = "LEEC_FILE_FORMAT"
 
     absolute_path = os.path.dirname(__file__)
     relative_path = f"""../data/audio_samples/{dataset}_data.zip"""
@@ -80,7 +80,7 @@ def get_audio_sample(dataset: str) -> pd.DataFrame:
 
     df = maui.io.get_audio_info(
         f"""./maui_samples_{dataset}""",
-        format_name=format_name,
+        format_name=dataset_format_name,
         store_duration=1,
         perc_sample=1,
     )

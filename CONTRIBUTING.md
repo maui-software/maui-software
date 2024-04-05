@@ -4,6 +4,7 @@ contribute to maui-software. Thank you so much!
 
 Here you can find some steps to contributing with maui.
 
+
 ## Development installation
 
 1. Clone repository.
@@ -36,6 +37,17 @@ Here you can find some steps to contributing with maui.
 	```bash
 	poetry install
 	poetry install --all-extras
+	```
+
+5. Install git lfs
+	Due to the presence of large files within the samples module, we utilize
+	Git LFS to manage them effectively. To install Git LFS, please use the
+	following commands:
+
+
+	```bash
+	sudo apt update
+	sudo apt install git-lfs
 	```
 
 
@@ -127,7 +139,7 @@ following commands:
 
 ```bash
 cd docs
-make clean html
+make clean-generated-rst clean html
 ```
 
 This will update the documentation and store it locally under 
