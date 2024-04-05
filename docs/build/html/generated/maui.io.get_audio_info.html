@@ -1,25 +1,27 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.io.get_audio_info &mdash; maui-software 0.1.20 documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>maui.io.get_audio_info &mdash; maui-software 0.1.21 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/documentation_options.js?v=17aaaefc"></script>
+        <script src="../_static/documentation_options.js?v=b3d22ae5"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="maui.io.store_df" href="maui.io.store_df.html" />
-    <link rel="prev" title="maui.io.get_file_structure_leec" href="maui.io.get_file_structure_leec.html" /> 
+    <link rel="prev" title="Input and Output" href="../maui.io.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -35,7 +37,7 @@
               <img src="../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.20
+                0.1.21
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -50,7 +52,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../maui.acoustic_indices.html">Acoustic Indices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.eda.html">Exploratory data analysis</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../maui.io.html">Input and Output</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="maui.io.get_file_structure_leec.html">maui.io.get_file_structure_leec</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">maui.io.get_audio_info</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#maui.io.get_audio_info"><code class="docutils literal notranslate"><span class="pre">get_audio_info()</span></code></a></li>
 </ul>
@@ -60,6 +61,10 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.visualizations.html">Visualizations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.samples.html">Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../example_gallery.html">Example gallery</a></li>
 </ul>
 
         </div>
@@ -91,7 +96,7 @@
 <h1>maui.io.get_audio_info<a class="headerlink" href="#maui-io-get-audio-info" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="maui.io.get_audio_info">
-<span class="sig-prename descclassname"><span class="pre">maui.io.</span></span><span class="sig-name descname"><span class="pre">get_audio_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perc_sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/io/io.html#get_audio_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.io.get_audio_info" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">maui.io.</span></span><span class="sig-name descname"><span class="pre">get_audio_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_time_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_file_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perc_sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/io/io.html#get_audio_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.io.get_audio_info" title="Link to this definition">¶</a></dt>
 <dd><p>Extract audio file information from a file or directory.</p>
 <p>This function processes audio files specified by the ‘audio_path’ argument,
 extracting information such as filename structure, timestamps, and duration.
@@ -124,15 +129,10 @@ It can handle both single audio files and entire directories of audio files.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">io</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">audio_file</span> <span class="o">=</span> <span class="s2">&quot;forest_channelA_20210911_153000_jungle.wav&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">io</span><span class="o">.</span><span class="n">get_audio_info</span><span class="p">(</span><span class="n">audio_file</span><span class="p">,</span> <span class="n">store_duration</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">perc_sample</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
-<span class="go">   landscape   channel      date    time environment      timestamp_init timestamp_end  duration                                   file_path</span>
-<span class="go">0     forest  channelA  20210911  153000      jungle 2021-09-11 15:30:00          None       NaN  forest_channelA_20210911_153000_jungle.wav</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">audio_dir</span> <span class="o">=</span> <span class="s2">&quot;/path/to/audio/directory&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">io</span><span class="o">.</span><span class="n">get_audio_info</span><span class="p">(</span><span class="n">audio_dir</span><span class="p">,</span> <span class="n">store_duration</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">perc_sample</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="go">   landscape   channel      date    time environment      timestamp_init          file_path</span>
-<span class="go">0     forest  channelA  20210911  153000      jungle 2021-09-11 15:30:00  /path/to/audio/directory/forest_channelA_20210911_153000_jungle.wav</span>
-<span class="go">1   mountains  channelB  20210911  160000      forest 2021-09-11 16:00:00  /path/to/audio/directory/mountains_channelB_20210911_160000_forest.wav</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -143,7 +143,7 @@ It can handle both single audio files and entire directories of audio files.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="maui.io.get_file_structure_leec.html" class="btn btn-neutral float-left" title="maui.io.get_file_structure_leec" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../maui.io.html" class="btn btn-neutral float-left" title="Input and Output" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="maui.io.store_df.html" class="btn btn-neutral float-right" title="maui.io.store_df" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.visualizations.spectrogram_plot &mdash; maui-software 0.1.20 documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>maui.visualizations.spectrogram_plot &mdash; maui-software 0.1.21 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/documentation_options.js?v=17aaaefc"></script>
+        <script src="../_static/documentation_options.js?v=b3d22ae5"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -35,7 +37,7 @@
               <img src="../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.20
+                0.1.21
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -61,6 +63,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.samples.html">Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../example_gallery.html">Example gallery</a></li>
 </ul>
 
         </div>
@@ -134,8 +140,9 @@ heatmap plot to visualize the frequency content over time.</p>
 </dl>
 <p class="rubric">Notes</p>
 <ul class="simple">
-<li><p>The ‘mode’ parameter specifies the type of spectrogram to be computed: Power Spectral Density (‘psd’),
-Amplitude Spectrogram (‘amplitude’), or Complex Spectrogram (‘complex’).</p></li>
+<li><p>The ‘mode’ parameter specifies the type of spectrogram to be computed:
+Power Spectral Density (‘psd’), Amplitude Spectrogram (‘amplitude’),
+or Complex Spectrogram (‘complex’).</p></li>
 <li><p>‘fig_size’ should be a dictionary with ‘height’ and ‘width’ keys.</p></li>
 </ul>
 <p class="rubric">Examples</p>
@@ -143,7 +150,7 @@ Amplitude Spectrogram (‘amplitude’), or Complex Spectrogram (‘complex’).
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">file_path</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;file_path&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;psd&#39;</span>
-<span class="go">&gt;&gt;&gt;fig = visualizations.spectrogram_plot(file_path, mode=mode)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">visualizations</span><span class="o">.</span><span class="n">spectrogram_plot</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>

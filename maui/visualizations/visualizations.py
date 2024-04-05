@@ -103,8 +103,8 @@ def indices_radar_plot(
     >>> df = samples.get_leec_audio_sample()
     >>> indices_list = ['median_amplitude_envelope', 'temporal_entropy']
     >>> df = acoustic_indices.calculate_acoustic_indices(df, indices_list, parallel=False)
-    >>> visualizations.indices_radar_plot(df, indices=['m', 'ht'], 
-    agg_type='mean', group_by=['environment'], max_cols=3)
+    >>> fig = visualizations.indices_radar_plot(df, indices=['m', 'ht'], 
+            agg_type='mean', group_by=['environment'], max_cols=3)
     # Generates a radar plot comparing 'Index1' and 'Index2' aggregated by 'Category'.
 
     Notes

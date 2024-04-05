@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.eda.eda &mdash; maui-software 0.1.20 documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>maui.eda.eda &mdash; maui-software 0.1.21 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/documentation_options.js?v=17aaaefc"></script>
+        <script src="../../../_static/documentation_options.js?v=b3d22ae5"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -32,7 +34,7 @@
               <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.20
+                0.1.21
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -49,6 +51,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../maui.io.html">Input and Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maui.visualizations.html">Visualizations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maui.samples.html">Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../example_gallery.html">Example gallery</a></li>
 </ul>
 
         </div>
@@ -76,722 +82,768 @@
            <div itemprop="articleBody">
              
   <h1>Source code for maui.eda.eda</h1><div class="highlight"><pre>
-<span></span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module provides utilities for Exploratory Data Analysis (EDA) with an</span>
+<span class="sd">emphasis on visual and summary outputs for categorical data within a DataFrame.</span>
+<span class="sd">Utilizing Plotly for dynamic visualizations and FPDF for PDF report generation,</span>
+<span class="sd">it supports the creation of summary cards and plots, enhancing data</span>
+<span class="sd">understanding and presentation.</span>
 
+<span class="sd">Features include:</span>
+<span class="sd">- Generation of summary cards for data overview.</span>
+<span class="sd">- Creation of various plots (scatter, bar, etc.) for data comparison and trend</span>
+<span class="sd">  analysis.</span>
+<span class="sd">- PDF report generation for easy sharing and presentation.</span>
 
-<span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
-<span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
-<span class="kn">from</span> <span class="nn">plotly.subplots</span> <span class="kn">import</span> <span class="n">make_subplots</span>
-<span class="kn">import</span> <span class="nn">plotly.figure_factory</span> <span class="k">as</span> <span class="nn">ff</span>
+<span class="sd">Exceptions:</span>
+<span class="sd">- CategoryLimitError: Raised when an attempt is made to process more than the</span>
+<span class="sd">  allowed number of categories.</span>
 
-<span class="kn">import</span> <span class="nn">fpdf</span>
-<span class="kn">from</span> <span class="nn">fpdf</span> <span class="kn">import</span> <span class="n">FPDF</span>
+<span class="sd">Dependencies:</span>
+<span class="sd">- plotly: For creating interactive plots.</span>
+<span class="sd">- fpdf: For generating PDF reports.</span>
+<span class="sd">- pandas: Assumed for DataFrame manipulation and input.</span>
+
+<span class="sd">Functions:</span>
+<span class="sd">- card_summary(df, categories, show_plot=True): Generates a summary card and</span>
+<span class="sd">  plots for specified categories.</span>
+
+<span class="sd">Note:</span>
+<span class="sd">- This module is designed to work with pandas DataFrames and expects a specific</span>
+<span class="sd">  structure/format for input data.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">pkg_resources</span>  
+<span class="kn">import</span> <span class="nn">pkg_resources</span>
+<span class="kn">from</span> <span class="nn">fpdf</span> <span class="kn">import</span> <span class="n">FPDF</span>
+<span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
+<span class="kn">import</span> <span class="nn">plotly.figure_factory</span> <span class="k">as</span> <span class="nn">ff</span>
+<span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
+<span class="kn">from</span> <span class="nn">plotly.subplots</span> <span class="kn">import</span> <span class="n">make_subplots</span>
+
+
+<span class="k">class</span> <span class="nc">CategoryLimitError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised when more than two categories are selected.&quot;&quot;&quot;</span>
+
 
 <div class="viewcode-block" id="card_summary">
 <a class="viewcode-back" href="../../../maui.eda.html#maui.eda.card_summary">[docs]</a>
-<span class="k">def</span> <span class="nf">card_summary</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Generate a summary card for a DataFrame.</span>
-
-<span class="sd">	This function calculates and displays summary statistics for a DataFrame,</span>
-<span class="sd">	including the number of samples, landscapes, environments, distinct days, total time duration,</span>
-<span class="sd">	and mean time duration.</span>
-
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
-<span class="sd">	df : pd.DataFrame</span>
-<span class="sd">		The DataFrame for which the summary statistics will be calculated.</span>
-<span class="sd">	show_plot : bool, optional</span>
-<span class="sd">		Whether to display the summary card plot. Default is True.</span>
-
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	card_dict : dict</span>
-<span class="sd">		A dictionary containing the calculated summary statistics.</span>
-<span class="sd">	fig : plotly.graph_objs._figure.Figure</span>
-<span class="sd">		A Plotly Figure object representing the summary card plot.</span>
-
-<span class="sd">	Examples</span>
-<span class="sd">	--------</span>
-<span class="sd">	&gt;&gt;&gt; from maui import samples, eda</span>
-<span class="sd">	&gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
-<span class="sd">	&gt;&gt;&gt; df = io.get_audio_info(audio_dir, store_duration=1, perc_sample=0.01)</span>
-<span class="sd">	&gt;&gt;&gt; summary, fig = eda.card_summary(df)</span>
-<span class="sd">	&gt;&gt;&gt; print(summary)</span>
-<span class="sd">	{</span>
-<span class="sd">		&#39;n_samples&#39;: 120,</span>
-<span class="sd">		&#39;n_landscapes&#39;: 6,</span>
-<span class="sd">		&#39;n_environments&#39;: 3,</span>
-<span class="sd">		&#39;distinct_days&#39;: 18,</span>
-<span class="sd">		&#39;total_time_duration&#39;: 120.0,</span>
-<span class="sd">		&#39;mean_time_duration&#39;: 1.5</span>
-<span class="sd">	}</span>
-
-<span class="sd">	Notes</span>
-<span class="sd">	-----</span>
-<span class="sd">	- The summary statistics include the number of unique values in columns &#39;file_path&#39;,</span>
-<span class="sd">	  &#39;landscape&#39;, &#39;environment&#39;, and &#39;dt&#39;, as well as the mean time duration in minutes.</span>
-<span class="sd">	- The &#39;show_plot&#39; parameter controls the display of the summary card plot.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-
-	<span class="n">df_count</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">nunique</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-	<span class="n">duration_mean</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="mi">60</span>
-	<span class="n">duration_total</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="mi">60</span>
-	
-	<span class="n">card_dict</span> <span class="o">=</span> <span class="p">{</span>
-		<span class="s1">&#39;n_samples&#39;</span><span class="p">:</span> <span class="n">df_count</span><span class="p">[</span><span class="s1">&#39;file_path&#39;</span><span class="p">],</span>
-		<span class="s1">&#39;n_landscapes&#39;</span><span class="p">:</span> <span class="n">df_count</span><span class="p">[</span><span class="s1">&#39;landscape&#39;</span><span class="p">],</span>
-		<span class="s1">&#39;n_environments&#39;</span><span class="p">:</span> <span class="n">df_count</span><span class="p">[</span><span class="s1">&#39;environment&#39;</span><span class="p">],</span>
-		<span class="s1">&#39;distinct_days&#39;</span><span class="p">:</span> <span class="n">df_count</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">],</span>
-		<span class="s1">&#39;total_time_duration&#39;</span><span class="p">:</span> <span class="n">duration_total</span><span class="p">,</span>
-		<span class="s1">&#39;mean_time_duration&#39;</span><span class="p">:</span> <span class="n">duration_mean</span>
-	<span class="p">}</span>
-	
-
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">make_subplots</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">subplot_titles</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Samples&quot;</span><span class="p">,</span> <span class="s2">&quot;Landscapes&quot;</span><span class="p">,</span> <span class="s2">&quot;Environments&quot;</span><span class="p">,</span> <span class="s2">&quot;Distinct Days&quot;</span><span class="p">,</span> <span class="s2">&quot;Total Duration&quot;</span><span class="p">,</span> <span class="s2">&quot;Mean Duration&quot;</span><span class="p">),</span> 
-						<span class="n">specs</span><span class="o">=</span><span class="p">[[{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;indicator&#39;</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;indicator&#39;</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;indicator&#39;</span><span class="p">}],</span> <span class="p">[{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;indicator&#39;</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;indicator&#39;</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;indicator&#39;</span><span class="p">}]])</span>
-	<span class="c1"># specs=[[{&#39;type&#39;: &#39;indicator&#39;}, {}], [{‘colspan’: 2}, None]]</span>
-
-	<span class="n">trace0</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Indicator</span><span class="p">(</span>
-		<span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
-		<span class="n">value</span> <span class="o">=</span> <span class="n">card_dict</span><span class="p">[</span><span class="s1">&#39;n_samples&#39;</span><span class="p">],</span>
-		<span class="n">number</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
-		<span class="n">delta</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s1">&#39;reference&#39;</span><span class="p">:</span> <span class="mi">320</span><span class="p">},</span>
-		<span class="n">domain</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-
-	<span class="n">trace1</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Indicator</span><span class="p">(</span>
-		<span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
-		<span class="n">value</span> <span class="o">=</span> <span class="n">card_dict</span><span class="p">[</span><span class="s1">&#39;n_landscapes&#39;</span><span class="p">],</span>
-		<span class="n">number</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
-		<span class="n">delta</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s1">&#39;reference&#39;</span><span class="p">:</span> <span class="mi">320</span><span class="p">},</span>
-		<span class="n">domain</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-
-	<span class="n">trace2</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Indicator</span><span class="p">(</span>
-		<span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
-		<span class="n">value</span> <span class="o">=</span> <span class="n">card_dict</span><span class="p">[</span><span class="s1">&#39;n_environments&#39;</span><span class="p">],</span>
-		<span class="n">number</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
-		<span class="n">delta</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s1">&#39;reference&#39;</span><span class="p">:</span> <span class="mi">320</span><span class="p">},</span>
-		<span class="n">domain</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-
-	<span class="n">trace3</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Indicator</span><span class="p">(</span>
-		<span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
-		<span class="n">value</span> <span class="o">=</span> <span class="n">card_dict</span><span class="p">[</span><span class="s1">&#39;distinct_days&#39;</span><span class="p">],</span>
-		<span class="n">number</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;suffix&#39;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
-		<span class="n">delta</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s1">&#39;reference&#39;</span><span class="p">:</span> <span class="mi">320</span><span class="p">},</span>
-		<span class="n">domain</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-
-	<span class="n">trace4</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Indicator</span><span class="p">(</span>
-		<span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
-		<span class="n">value</span> <span class="o">=</span> <span class="n">card_dict</span><span class="p">[</span><span class="s1">&#39;total_time_duration&#39;</span><span class="p">],</span>
-		<span class="n">number</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;suffix&#39;</span><span class="p">:</span> <span class="s2">&quot; min&quot;</span><span class="p">},</span>
-		<span class="n">delta</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s1">&#39;reference&#39;</span><span class="p">:</span> <span class="mi">320</span><span class="p">},</span>
-		<span class="n">domain</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-
-	<span class="n">trace5</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Indicator</span><span class="p">(</span>
-		<span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
-		<span class="n">value</span> <span class="o">=</span> <span class="n">card_dict</span><span class="p">[</span><span class="s1">&#39;mean_time_duration&#39;</span><span class="p">],</span>
-		<span class="n">number</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;suffix&#39;</span><span class="p">:</span> <span class="s2">&quot; min&quot;</span><span class="p">},</span>
-		<span class="n">delta</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s1">&#39;reference&#39;</span><span class="p">:</span> <span class="mi">320</span><span class="p">},</span>
-		<span class="n">domain</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-
-	<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">trace0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">append_trace</span><span class="p">(</span><span class="n">trace1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">append_trace</span><span class="p">(</span><span class="n">trace2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">append_trace</span><span class="p">(</span><span class="n">trace3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">append_trace</span><span class="p">(</span><span class="n">trace4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">append_trace</span><span class="p">(</span><span class="n">trace5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-
-	<span class="c1"># fig.update_layout(paper_bgcolor = &quot;lightgray&quot;)</span>
-	<span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
-		<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-	
-	<span class="k">return</span> <span class="n">card_dict</span><span class="p">,</span> <span class="n">fig</span></div>
-
-
-<span class="c1">#-----------------------------------------------------------------------------------------------------------------------------------</span>
-
-<div class="viewcode-block" id="landscape_environment_heatmap">
-<a class="viewcode-back" href="../../../maui.eda.html#maui.eda.landscape_environment_heatmap">[docs]</a>
-<span class="k">def</span> <span class="nf">landscape_environment_heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Generate a heatmap of landscapes vs. environments.</span>
-
-<span class="sd">	This function calculates the count of samples for each combination of landscapes and environments</span>
-<span class="sd">	and displays the information as a heatmap.</span>
-
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
-<span class="sd">	df : pd.DataFrame</span>
-<span class="sd">		The DataFrame containing the data to be used for the heatmap.</span>
-<span class="sd">	show_plot : bool, optional</span>
-<span class="sd">		Whether to display the heatmap plot. Default is True.</span>
-
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	pd.DataFrame</span>
-<span class="sd">		A DataFrame containing the count of samples for each landscape-environment combination.</span>
-<span class="sd">	plotly.graph_objs._figure.Figure</span>
-<span class="sd">		A Plotly Figure object representing the landscape vs. environment heatmap.</span>
-
-<span class="sd">	Examples</span>
-<span class="sd">	--------</span>
-<span class="sd">	&gt;&gt;&gt; from maui import samples, eda</span>
-<span class="sd">	&gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
-<span class="sd">	&gt;&gt;&gt; heatmap_data, fig = eda.landscape_environment_heatmap(df)</span>
-
-
-<span class="sd">	Notes</span>
-<span class="sd">	-----</span>
-<span class="sd">	- The function groups the input DataFrame &#39;df&#39; by &#39;landscape&#39; and &#39;environment&#39;, counts the number of samples for each combination, and displays the result as a heatmap.</span>
-<span class="sd">	- The &#39;show_plot&#39; parameter controls the display of the heatmap plot.</span>
-
-
-<span class="sd">	&quot;&quot;&quot;</span>
-	
-
-	<span class="n">df_group</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;landscape&#39;</span><span class="p">,</span> <span class="s1">&#39;environment&#39;</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s1">&#39;file_path&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-	<span class="n">df_group</span> <span class="o">=</span> <span class="n">df_group</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;file_path&quot;</span><span class="p">:</span> <span class="s2">&quot;count&quot;</span><span class="p">})</span>
-	
-	
-	<span class="n">df_group_temp</span> <span class="o">=</span> <span class="n">df_group</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;landscape&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;environment&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
-
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">df_group_temp</span><span class="p">,</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Viridis&#39;</span><span class="p">,</span> <span class="n">text_auto</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Landscape vs Environment Heatmap&#39;</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-
-	<span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
-		<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-	
-	<span class="k">return</span> <span class="n">df_group</span><span class="p">,</span> <span class="n">fig</span></div>
-
-
-<span class="c1">#-----------------------------------------------------------------------------------------------------------------------------------</span>
-
-<div class="viewcode-block" id="plot_landscape_histogram">
-<a class="viewcode-back" href="../../../maui.eda.html#maui.eda.plot_landscape_histogram">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_landscape_histogram</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Generate a histogram of the amount of samples by landscape.</span>
-
-<span class="sd">	This function creates a histogram showing the distribution of samples across different landscapes,</span>
-<span class="sd">	with color differentiation based on the environment.</span>
-
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
-<span class="sd">	df : pd.DataFrame</span>
-<span class="sd">		The DataFrame containing the data to be used for generating the histogram.</span>
-<span class="sd">	show_plot : bool, optional</span>
-<span class="sd">		Whether to display the generated histogram plot. Default is True.</span>
-
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	plotly.graph_objs._figure.Figure</span>
-<span class="sd">		A Plotly Figure object representing the histogram of samples by landscape.</span>
-
-<span class="sd">	Examples</span>
-<span class="sd">	--------</span>
-<span class="sd">	&gt;&gt;&gt; import pandas as pd</span>
-<span class="sd">	&gt;&gt;&gt; df = pd.read_csv(&#39;data.csv&#39;)</span>
-<span class="sd">	&gt;&gt;&gt; fig = eda.plot_landscape_histogram(df)</span>
-
-<span class="sd">	Notes</span>
-<span class="sd">	-----</span>
-<span class="sd">	- The function uses Plotly Express to create a histogram that displays the distribution of samples</span>
-<span class="sd">	  across different landscapes, with color coding based on the environment.</span>
-<span class="sd">	- The &#39;show_plot&#39; parameter controls whether the histogram plot is displayed or not.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;landscape&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;environment&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Ammount of samples by Landscape&#39;</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">bargap</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-
-	<span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
-		<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-	
-	<span class="k">return</span> <span class="n">fig</span></div>
-
-
-<span class="c1">#-----------------------------------------------------------------------------------------------------------------------------------</span>
-
-<div class="viewcode-block" id="plot_landscape_duration">
-<a class="viewcode-back" href="../../../maui.eda.html#maui.eda.plot_landscape_duration">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_landscape_duration</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Generate a box plot of duration distribution by landscape.</span>
-
-<span class="sd">	This function creates a box plot showing the distribution of audio duration across different landscapes.</span>
-
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
-<span class="sd">	df : pd.DataFrame</span>
-<span class="sd">		The DataFrame containing the data to be used for generating the box plot.</span>
-<span class="sd">	show_plot : bool, optional</span>
-<span class="sd">		Whether to display the generated box plot. Default is True.</span>
-
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	plotly.graph_objs._figure.Figure</span>
-<span class="sd">		A Plotly Figure object representing the box plot of duration distribution by landscape.</span>
-
-<span class="sd">	Examples</span>
-<span class="sd">	--------</span>
-<span class="sd">	&gt;&gt;&gt; from maui import samples, eda</span>
-<span class="sd">	&gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
-<span class="sd">	&gt;&gt;&gt; fig = eda.plot_landscape_duration(df)</span>
-
-<span class="sd">	Notes</span>
-<span class="sd">	-----</span>
-<span class="sd">	- The function uses Plotly Express to create a box plot that displays the distribution of audio duration</span>
-<span class="sd">	  across different landscapes.</span>
-<span class="sd">	- The &#39;show_plot&#39; parameter controls whether the box plot is displayed or not.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-
-
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;landscape&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;duration&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Duration distribution by Landscape&#39;</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-
-	<span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
-		<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-	
-	<span class="k">return</span> <span class="n">fig</span></div>
-
-
-<span class="c1">#-----------------------------------------------------------------------------------------------------------------------------------</span>
-
-<div class="viewcode-block" id="plot_landscape_daily_distribution">
-<a class="viewcode-back" href="../../../maui.eda.html#maui.eda.plot_landscape_daily_distribution">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_landscape_daily_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Generate a histogram of sample distribution by day and landscape.</span>
-
-<span class="sd">	This function creates a histogram showing the distribution of audio samples by day and landscape.</span>
-
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
-<span class="sd">	df : pd.DataFrame</span>
-<span class="sd">		The DataFrame containing the data to be used for generating the histogram.</span>
-<span class="sd">	show_plot : bool, optional</span>
-<span class="sd">		Whether to display the generated histogram. Default is True.</span>
-
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	plotly.graph_objs._figure.Figure</span>
-<span class="sd">		A Plotly Figure object representing the histogram of sample distribution by day and landscape.</span>
-
-<span class="sd">	Examples</span>
-<span class="sd">	--------</span>
-<span class="sd">	&gt;&gt;&gt; from maui import samples, eda</span>
-<span class="sd">	&gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
-<span class="sd">	&gt;&gt;&gt; fig = eda.plot_landscape_daily_distribution(df)</span>
-
-<span class="sd">	Notes</span>
-<span class="sd">	-----</span>
-<span class="sd">	- The function uses Plotly Express to create a histogram that displays the distribution of audio samples</span>
-<span class="sd">	  by day and landscape.</span>
-<span class="sd">	- The &#39;show_plot&#39; parameter controls whether the histogram is displayed or not.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-
-
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;landscape&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Ammount of samples by Day and Landscape&#39;</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">bargap</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-
-	<span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
-		<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-	
-	<span class="k">return</span> <span class="n">fig</span></div>
-
-
-<span class="c1">#-----------------------------------------------------------------------------------------------------------------------------------</span>
-
-<div class="viewcode-block" id="plot_environment_histogram">
-<a class="viewcode-back" href="../../../maui.eda.html#maui.eda.plot_environment_histogram">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_environment_histogram</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Generate a histogram of sample distribution by environment.</span>
-
-<span class="sd">	This function creates a histogram showing the distribution of audio samples by environment, optionally</span>
-<span class="sd">	differentiated by landscape.</span>
-
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
-<span class="sd">	df : pd.DataFrame</span>
-<span class="sd">		The DataFrame containing the data to be used for generating the histogram.</span>
-<span class="sd">	show_plot : bool, optional</span>
-<span class="sd">		Whether to display the generated histogram. Default is True.</span>
-
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	plotly.graph_objs._figure.Figure</span>
-<span class="sd">		A Plotly Figure object representing the histogram of sample distribution by environment.</span>
-
-<span class="sd">	Examples</span>
-<span class="sd">	--------</span>
-<span class="sd">	&gt;&gt;&gt; from maui import samples, eda</span>
-<span class="sd">	&gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
-<span class="sd">	&gt;&gt;&gt; fig = eda.plot_environment_histogram(df)</span>
-
-<span class="sd">	Notes</span>
-<span class="sd">	-----</span>
-<span class="sd">	- The function uses Plotly Express to create a histogram that displays the distribution of audio samples</span>
-<span class="sd">	  by environment.</span>
-<span class="sd">	- If the &#39;landscape&#39; column is present in the DataFrame, the histogram will differentiate the samples</span>
-<span class="sd">	  by landscape.</span>
-<span class="sd">	- The &#39;show_plot&#39; parameter controls whether the histogram is displayed or not.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	
-
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;environment&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;landscape&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Ammount of samples by Environment&#39;</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">bargap</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-
-	<span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
-		<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-	<span class="k">return</span> <span class="n">fig</span></div>
-
-
-<span class="c1">#-----------------------------------------------------------------------------------------------------------------------------------</span>
-
-<div class="viewcode-block" id="plot_environment_duration">
-<a class="viewcode-back" href="../../../maui.eda.html#maui.eda.plot_environment_duration">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_environment_duration</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Generate a box plot of audio sample durations by environment.</span>
-
-<span class="sd">	This function creates a box plot showing the distribution of audio sample durations by environment.</span>
-
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
-<span class="sd">	df : pd.DataFrame</span>
-<span class="sd">		The DataFrame containing the data to be used for generating the box plot.</span>
-<span class="sd">	show_plot : bool, optional</span>
-<span class="sd">		Whether to display the generated box plot. Default is True.</span>
-
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	plotly.graph_objs._figure.Figure</span>
-<span class="sd">		A Plotly Figure object representing the box plot of audio sample durations by environment.</span>
-
-<span class="sd">	Examples</span>
-<span class="sd">	--------</span>
-<span class="sd">	&gt;&gt;&gt; from maui import samples, eda</span>
-<span class="sd">	&gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
-<span class="sd">	&gt;&gt;&gt; fig = eda.plot_environment_duration(df)</span>
-
-<span class="sd">	Notes</span>
-<span class="sd">	-----</span>
-<span class="sd">	- The function uses Plotly Express to create a box plot that displays the distribution of audio sample</span>
-<span class="sd">	  durations by environment.</span>
-<span class="sd">	- The &#39;show_plot&#39; parameter controls whether the box plot is displayed or not.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;environment&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;duration&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Duration distribution by Environment&#39;</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-
-	<span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
-		<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-	
-	<span class="k">return</span> <span class="n">fig</span></div>
-
-
-<span class="c1">#-----------------------------------------------------------------------------------------------------------------------------------</span>
-
-<div class="viewcode-block" id="plot_environment_daily_distribution">
-<a class="viewcode-back" href="../../../maui.eda.html#maui.eda.plot_environment_daily_distribution">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_environment_daily_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Generate a histogram of audio sample counts by day and environment.</span>
-
-<span class="sd">	This function creates a histogram showing the distribution of audio sample counts by day and environment.</span>
-
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
-<span class="sd">	df : pd.DataFrame</span>
-<span class="sd">		The DataFrame containing the data to be used for generating the histogram.</span>
-<span class="sd">	show_plot : bool, optional</span>
-<span class="sd">		Whether to display the generated histogram. Default is True.</span>
-
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	plotly.graph_objs._figure.Figure</span>
-<span class="sd">		A Plotly Figure object representing the histogram of audio sample counts by day and environment.</span>
-
-<span class="sd">	Examples</span>
-<span class="sd">	--------</span>
-<span class="sd">	&gt;&gt;&gt; from maui import samples, eda</span>
-<span class="sd">	&gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
-<span class="sd">	&gt;&gt;&gt; fig = eda.plot_environment_daily_distribution(df)</span>
-<span class="sd">	&gt;&gt;&gt; fig.show()</span>
-
-<span class="sd">	Notes</span>
-<span class="sd">	-----</span>
-<span class="sd">	- The function uses Plotly Express to create a histogram that displays the distribution of audio sample</span>
-<span class="sd">	  counts by day and environment.</span>
-<span class="sd">	- The &#39;show_plot&#39; parameter controls whether the histogram is displayed or not.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;environment&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Ammount of samples by Day and Environment&#39;</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">bargap</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-
-	<span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
-		<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-	
-	<span class="k">return</span> <span class="n">fig</span></div>
-
-
-<span class="c1">#-----------------------------------------------------------------------------------------------------------------------------------</span>
-
-<div class="viewcode-block" id="plot_duration_distribution">
-<a class="viewcode-back" href="../../../maui.eda.html#maui.eda.plot_duration_distribution">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_duration_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Generate a distribution plot of audio sample durations.</span>
-
-<span class="sd">	This function creates a distribution plot (histogram and kernel density estimate) of audio sample durations.</span>
-
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
-<span class="sd">	df : pd.DataFrame</span>
-<span class="sd">		The DataFrame containing the data to be used for generating the distribution plot.</span>
-<span class="sd">	show_plot : bool, optional</span>
-<span class="sd">		Whether to display the generated distribution plot. Default is True.</span>
-
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	plotly.graph_objs._figure.Figure</span>
-<span class="sd">		A Plotly Figure object representing the distribution plot of audio sample durations.</span>
-
-<span class="sd">	Examples</span>
-<span class="sd">	--------</span>
-<span class="sd">	&gt;&gt;&gt; from maui import samples, eda</span>
-<span class="sd">	&gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
-<span class="sd">	&gt;&gt;&gt; fig = eda.plot_duration_distribution(df)</span>
-<span class="sd">	&gt;&gt;&gt; fig.show()</span>
-
-<span class="sd">	Notes</span>
-<span class="sd">	-----</span>
-<span class="sd">	- The function uses Plotly Figure Factory to create a distribution plot that displays the distribution of</span>
-<span class="sd">	  audio sample durations.</span>
-<span class="sd">	- The &#39;show_plot&#39; parameter controls whether the distribution plot is displayed or not.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	
-
-	<span class="n">group_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span> <span class="c1"># name of the dataset</span>
-
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">create_distplot</span><span class="p">([</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">],</span> <span class="n">group_labels</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">bargap</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">title_text</span><span class="o">=</span><span class="s1">&#39;Duration distribution&#39;</span><span class="p">,</span> <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-
-	<span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
-		<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-	<span class="k">return</span> <span class="n">fig</span></div>
-
-
-<span class="c1">#-----------------------------------------------------------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">card_summary</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">categories</span><span class="p">,</span> <span class="n">show_plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a summary card and plots for specified categories from a</span>
+<span class="sd">    DataFrame.</span>
+<span class="sd">    This function processes the input DataFrame to compute various statistics, including the</span>
+<span class="sd">    number of samples, distinct days, total and mean duration (in minutes) of some activities.</span>
+<span class="sd">    It also dynamically incorporates additional specified categories into its computations and</span>
+<span class="sd">    visualizations. If enabled, a plot is generated using Plotly to visually represent these</span>
+<span class="sd">    statistics alongside the categories specified.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">            The input DataFrame containing at least the following columns: &#39;file_path&#39;, &#39;dt&#39;,</span>
+<span class="sd">            and &#39;duration&#39;. Additional columns should match the specified categories if any.</span>
+<span class="sd">    categories : list of str</span>
+<span class="sd">            A list of category names (column names in `df`) to include in the summary and plot.</span>
+<span class="sd">            At most two categories can be specified.</span>
+<span class="sd">    show_plot : bool, optional</span>
+<span class="sd">            If True (default), the function will generate and show a Plotly plot representing the</span>
+<span class="sd">            calculated statistics and specified categories. If False, no plot will be displayed.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    Exception</span>
+<span class="sd">            If more than two categories are specified, an exception is</span>
+<span class="sd">            raised due to plotting limitations.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">            Returns a tuple containing:</span>
+<span class="sd">            </span>
+<span class="sd">            - card_dict (dict): A dictionary with keys for &#39;n_samples&#39;,</span>
+<span class="sd">                &#39;distinct_days&#39;, &#39;total_time_duration&#39;,</span>
+<span class="sd">                &#39;mean_time_duration&#39;, and one key per category specified.</span>
+<span class="sd">                The values are the respective</span>
+<span class="sd">                computed statistics.</span>
+
+<span class="sd">            - fig (plotly.graph_objs._figure.Figure): A Plotly figure object with indicators </span>
+<span class="sd">                for each of the statistics and categories specified.</span>
+<span class="sd">                Only returned if `show_plot` is True.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The function is designed to work with data pertaining to</span>
+<span class="sd">    durations and occurrences across</span>
+<span class="sd">    different categories. It&#39;s particularly useful for analyzing time series or event data.</span>
+<span class="sd">    The &#39;duration&#39; column is expected to be in seconds.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples, eda</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
+<span class="sd">    &gt;&gt;&gt; categories = [&#39;landscape&#39;, &#39;environment&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; card_dict, fig = eda.card_summary(df, categories)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CategoryLimitError</span><span class="p">(</span><span class="s2">&quot;At most two categories should be selected.&quot;</span><span class="p">)</span>
+
+    <span class="n">df_count</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">nunique</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">duration_mean</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="mi">60</span>
+    <span class="n">duration_total</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="mi">60</span>
+
+    <span class="n">card_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="n">df_count</span><span class="p">[</span><span class="s2">&quot;file_path&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;distinct_days&quot;</span><span class="p">:</span> <span class="n">df_count</span><span class="p">[</span><span class="s2">&quot;dt&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;total_time_duration&quot;</span><span class="p">:</span> <span class="n">duration_total</span><span class="p">,</span>
+        <span class="s2">&quot;mean_time_duration&quot;</span><span class="p">:</span> <span class="n">duration_mean</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">subplot_titles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Distinct Days&quot;</span><span class="p">,</span> <span class="s2">&quot;Total Duration&quot;</span><span class="p">,</span> <span class="s2">&quot;Mean Duration&quot;</span><span class="p">,</span> <span class="s2">&quot;Samples&quot;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">categories</span><span class="p">:</span>
+        <span class="n">card_dict</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_count</span><span class="p">[</span><span class="n">category</span><span class="p">]</span>
+        <span class="n">subplot_titles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
+
+    <span class="n">specs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;indicator&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;indicator&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;indicator&quot;</span><span class="p">}],</span>
+        <span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;indicator&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;indicator&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;indicator&quot;</span><span class="p">}],</span>
+    <span class="p">]</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">make_subplots</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">subplot_titles</span><span class="o">=</span><span class="n">subplot_titles</span><span class="p">,</span> <span class="n">specs</span><span class="o">=</span><span class="n">specs</span><span class="p">)</span>
+
+    <span class="n">trace0</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Indicator</span><span class="p">(</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">card_dict</span><span class="p">[</span><span class="s2">&quot;distinct_days&quot;</span><span class="p">],</span>
+        <span class="n">number</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;suffix&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
+        <span class="n">delta</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s2">&quot;reference&quot;</span><span class="p">:</span> <span class="mi">320</span><span class="p">},</span>
+        <span class="n">domain</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]},</span>
+    <span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">trace0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">trace1</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Indicator</span><span class="p">(</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">card_dict</span><span class="p">[</span><span class="s2">&quot;total_time_duration&quot;</span><span class="p">],</span>
+        <span class="n">number</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;suffix&quot;</span><span class="p">:</span> <span class="s2">&quot; min&quot;</span><span class="p">},</span>
+        <span class="n">delta</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s2">&quot;reference&quot;</span><span class="p">:</span> <span class="mi">320</span><span class="p">},</span>
+        <span class="n">domain</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]},</span>
+    <span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">append_trace</span><span class="p">(</span><span class="n">trace1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">trace2</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Indicator</span><span class="p">(</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">card_dict</span><span class="p">[</span><span class="s2">&quot;mean_time_duration&quot;</span><span class="p">],</span>
+        <span class="n">number</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;suffix&quot;</span><span class="p">:</span> <span class="s2">&quot; min&quot;</span><span class="p">},</span>
+        <span class="n">delta</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s2">&quot;reference&quot;</span><span class="p">:</span> <span class="mi">320</span><span class="p">},</span>
+        <span class="n">domain</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]},</span>
+    <span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">append_trace</span><span class="p">(</span><span class="n">trace2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">trace3</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Indicator</span><span class="p">(</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">card_dict</span><span class="p">[</span><span class="s2">&quot;n_samples&quot;</span><span class="p">],</span>
+        <span class="n">number</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;prefix&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
+        <span class="n">delta</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s2">&quot;reference&quot;</span><span class="p">:</span> <span class="mi">320</span><span class="p">},</span>
+        <span class="n">domain</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]},</span>
+    <span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">append_trace</span><span class="p">(</span><span class="n">trace3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">categories</span><span class="p">:</span>
+
+        <span class="n">trace_tmp</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Indicator</span><span class="p">(</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;number&quot;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">card_dict</span><span class="p">[</span><span class="n">category</span><span class="p">],</span>
+            <span class="n">number</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;prefix&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
+            <span class="n">delta</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s2">&quot;reference&quot;</span><span class="p">:</span> <span class="mi">320</span><span class="p">},</span>
+            <span class="n">domain</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]},</span>
+        <span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">append_trace</span><span class="p">(</span><span class="n">trace_tmp</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+
+        <span class="n">j</span> <span class="o">=</span> <span class="p">(</span><span class="n">j</span> <span class="o">%</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="c1"># fig.update_layout(paper_bgcolor = &quot;lightgray&quot;)</span>
+    <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">card_dict</span><span class="p">,</span> <span class="n">fig</span></div>
+
+
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="heatmap_analysis">
+<a class="viewcode-back" href="../../../maui.eda.html#maui.eda.heatmap_analysis">[docs]</a>
+<span class="k">def</span> <span class="nf">heatmap_analysis</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">x_axis</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">y_axis</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s2">&quot;Viridis&quot;</span><span class="p">,</span>
+    <span class="n">show_plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a heatmap to analyze the relationship between two categorical</span>
+<span class="sd">    variables in a DataFrame.</span>
+
+<span class="sd">    This function groups the data by the specified `x_axis` and `y_axis`</span>
+<span class="sd">    categories, counts the occurrences of each group, and then creates a</span>
+<span class="sd">    heatmap visualization of these counts using Plotly Express. The heatmap</span>
+<span class="sd">    intensity is determined by the count of occurrences, with an option to</span>
+<span class="sd">    customize the color scale.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">            The input DataFrame containing the data to be analyzed.</span>
+<span class="sd">            Must include the columns specified by `x_axis` and `y_axis`,</span>
+<span class="sd">            as well as a &#39;file_path&#39; column used for counting occurrences.</span>
+<span class="sd">    x_axis : str</span>
+<span class="sd">            The name of the column in `df` to be used as the x-axis in the heatmap.</span>
+<span class="sd">    y_axis : str</span>
+<span class="sd">            The name of the column in `df` to be used as the y-axis in the heatmap.</span>
+<span class="sd">    color_continuous_scale : str, optional</span>
+<span class="sd">            The name of the color scale to use for the heatmap. </span>
+<span class="sd">            Defaults to &#39;Viridis&#39;. For more options, refer</span>
+<span class="sd">            to Plotly&#39;s documentation on color scales.</span>
+<span class="sd">    show_plot : bool, optional</span>
+<span class="sd">            If True (default), displays the heatmap plot. </span>
+<span class="sd">            If False, the plot is not displayed but is still returned.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">            A tuple containing:</span>
+<span class="sd">            - df_group (pandas.DataFrame): A DataFrame with the grouped counts</span>
+<span class="sd">            for each combination of `x_axis` and `y_axis` values.</span>
+<span class="sd">            - fig (plotly.graph_objs._figure.Figure): A Plotly figure object containing the heatmap.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The &#39;file_path&#39; column in the input DataFrame is used to count occurrences</span>
+<span class="sd">    of each group formed by the specified `x_axis` and `y_axis` values.</span>
+<span class="sd">    This function is useful for visualizing the distribution and</span>
+<span class="sd">    relationship between two categorical variables.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples, eda</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
+<span class="sd">    &gt;&gt;&gt; df_group, fig = eda.heatmap_analysis(df, &#39;landscape&#39;, &#39;environment&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">df_group</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">y_axis</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s2">&quot;file_path&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="n">df_group</span> <span class="o">=</span> <span class="n">df_group</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;file_path&quot;</span><span class="p">:</span> <span class="s2">&quot;count&quot;</span><span class="p">})</span>
+
+    <span class="n">df_group_temp</span> <span class="o">=</span> <span class="n">df_group</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">y_axis</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s2">&quot;count&quot;</span><span class="p">)</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+        <span class="n">df_group_temp</span><span class="p">,</span>
+        <span class="n">color_continuous_scale</span><span class="o">=</span><span class="n">color_continuous_scale</span><span class="p">,</span>
+        <span class="n">text_auto</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">x_axis</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">y_axis</span><span class="si">}</span><span class="s2"> Heatmap&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">df_group</span><span class="p">,</span> <span class="n">fig</span></div>
+
+
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="histogram_analysis">
+<a class="viewcode-back" href="../../../maui.eda.html#maui.eda.histogram_analysis">[docs]</a>
+<span class="k">def</span> <span class="nf">histogram_analysis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x_axis</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">category_column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">show_plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a histogram plot for data distribution across a specified axis,</span>
+<span class="sd">    optionally segmented by categories.</span>
+
+<span class="sd">    This function creates a histogram to visualize the distribution of data</span>
+<span class="sd">    in `df` along the `x_axis`, with data optionally segmented by</span>
+<span class="sd">    `category_column`. The histogram&#39;s appearance, such as opacity and</span>
+<span class="sd">    bar gap, is customizable. The plot is generated using Plotly Express</span>
+<span class="sd">    and can be displayed in the notebook or IDE if `show_plot` is set to True.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">            The DataFrame containing the data to plot.</span>
+<span class="sd">            Must include the columns specified by `x_axis`</span>
+<span class="sd">            and `category_column`.</span>
+<span class="sd">    x_axis : str</span>
+<span class="sd">            The name of the column in `df` to be used for the x-axis of the histogram.</span>
+<span class="sd">    category_column : str</span>
+<span class="sd">            The name of the column in `df` that contains categorical data for</span>
+<span class="sd">            segmenting the histogram. Each category will be represented with</span>
+<span class="sd">            a different color.</span>
+<span class="sd">    show_plot : bool, optional</span>
+<span class="sd">            If True (default), the generated plot will be immediately displayed.</span>
+<span class="sd">            If False, the plot will not be displayed but will still be returned</span>
+<span class="sd">            by the function.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    plotly.graph_objs._figure.Figure</span>
+<span class="sd">            The Plotly figure object for the generated histogram.</span>
+<span class="sd">            This object can be further customized or saved after the function returns.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function is designed to offer a quick and convenient way to visualize</span>
+<span class="sd">    the distribution of data in a DataFrame along a specified axis.</span>
+<span class="sd">    It is particularly useful for exploratory data analysis and</span>
+<span class="sd">    for identifying patterns or outliers in dataset segments.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples, eda</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
+<span class="sd">    &gt;&gt;&gt; fig = eda.histogram_analysis(df, &#39;landscape&#39;, &#39;environment&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">x_axis</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">category_column</span><span class="p">,</span>
+        <span class="n">opacity</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;Amount of samples by </span><span class="si">{</span><span class="n">x_axis</span><span class="si">}</span><span class="s2"> and segmented by </span><span class="si">{</span><span class="n">category_column</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">bargap</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="duration_analysis">
+<a class="viewcode-back" href="../../../maui.eda.html#maui.eda.duration_analysis">[docs]</a>
+<span class="k">def</span> <span class="nf">duration_analysis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">category_column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">duration_column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a box plot visualizing the distribution of durations across different categories.</span>
+
+<span class="sd">    This function takes a DataFrame and creates a box plot to analyze</span>
+<span class="sd">    the distribution of durations (or any numerical data) across specified</span>
+<span class="sd">    categories. The box plot provides a visual representation of the central</span>
+<span class="sd">    tendency, dispersion, and skewness of the data and identifies outliers.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">            The DataFrame containing the data to be analyzed.</span>
+<span class="sd">            It should include at least two columns:</span>
+<span class="sd">            one for the category and one for the duration</span>
+<span class="sd">            (or any numerical data to be analyzed).</span>
+<span class="sd">    category_column : str</span>
+<span class="sd">            The name of the column in `df` that contains the categorical data. This column will be</span>
+<span class="sd">            used to group the numerical data into different categories for the box plot.</span>
+<span class="sd">    duration_column : str</span>
+<span class="sd">            The name of the column in `df` that contains the numerical data to</span>
+<span class="sd">            be analyzed. This data will be distributed into boxes according to</span>
+<span class="sd">            the categories specified by `category_column`.</span>
+<span class="sd">    show_plot : bool, optional</span>
+<span class="sd">            If True (default), the function will display the generated box plot. If False, the plot</span>
+<span class="sd">            will not be displayed, but the figure object will still be returned.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    plotly.graph_objs._figure.Figure</span>
+<span class="sd">            The generated Plotly figure object containing the box plot.</span>
+<span class="sd">            This object can be used for further customization or to display</span>
+<span class="sd">            the plot at a later time if `show_plot` is False.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The box plot generated by this function can help identify the range, interquartile range,</span>
+<span class="sd">    median, and potential outliers within each category. This visual analysis is crucial for</span>
+<span class="sd">    understanding the distribution characteristics of numerical data across different groups.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples, eda</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
+<span class="sd">    &gt;&gt;&gt; fig = eda.duration_analysis(df, &#39;landscape&#39;, &#39;duration&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">box</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">category_column</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">duration_column</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;Duration distribution by </span><span class="si">{</span><span class="n">category_column</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="daily_distribution_analysis">
+<a class="viewcode-back" href="../../../maui.eda.html#maui.eda.daily_distribution_analysis">[docs]</a>
+<span class="k">def</span> <span class="nf">daily_distribution_analysis</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span> <span class="n">date_column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">category_column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Analyzes and visualizes the daily distribution of samples by categories.</span>
+
+<span class="sd">    This function generates a histogram that shows the distribution of samples over days, separated</span>
+<span class="sd">    by a specified category. It provides insights into how the frequency of samples varies daily</span>
+<span class="sd">    and according to the categories within the specified category column.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">            The DataFrame containing the data to be analyzed. </span>
+<span class="sd">            It must include the specified `date_column` and `category_column`.</span>
+<span class="sd">    date_column : str</span>
+<span class="sd">            The name of the column in `df` that contains date information. The values in this column</span>
+<span class="sd">            should be in a date or datetime format.</span>
+<span class="sd">    category_column : str</span>
+<span class="sd">            The name of the column in `df` that contains categorical data,</span>
+<span class="sd">            which will be used to color the bars in the histogram.</span>
+<span class="sd">    show_plot : bool, optional</span>
+<span class="sd">            If True (default), the function will display the generated plot. If False, the plot will</span>
+<span class="sd">            not be displayed but will still be returned.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    plotly.graph_objs._figure.Figure</span>
+<span class="sd">            A Plotly figure object representing the histogram of daily sample distribution by</span>
+<span class="sd">            the specified category. The histogram bars are colored based on the categories</span>
+<span class="sd">            in the `category_column`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The function leverages Plotly for plotting, thus ensuring interactive plots that can be further</span>
+<span class="sd">    explored in a web browser. It&#39;s particularly useful for time series data where understanding the</span>
+<span class="sd">    distribution of events or samples over time and across different categories is crucial.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples, eda</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
+<span class="sd">    &gt;&gt;&gt; fig = eda.daily_distribution_analysis(df, &#39;dt&#39;, &#39;landscape&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">date_column</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">category_column</span><span class="p">,</span>
+        <span class="n">opacity</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;Ammount of samples by Day and </span><span class="si">{</span><span class="n">category_column</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">bargap</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="duration_distribution">
+<a class="viewcode-back" href="../../../maui.eda.html#maui.eda.duration_distribution">[docs]</a>
+<span class="k">def</span> <span class="nf">duration_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a distribution plot for the &#39;duration&#39; column in the provided DataFrame.</span>
+
+<span class="sd">    This function creates a distribution plot, including a</span>
+<span class="sd">    histogram and a kernel density estimate (KDE),</span>
+<span class="sd">    for the &#39;duration&#39; column in the input DataFrame. </span>
+<span class="sd">    It is designed to give a visual understanding of the</span>
+<span class="sd">    distribution of duration values across the dataset.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">            The DataFrame containing the data to be analyzed. </span>
+<span class="sd">            It must include a column named &#39;duration&#39;,</span>
+<span class="sd">            which contains numeric data.</span>
+<span class="sd">    show_plot : bool, optional</span>
+<span class="sd">            If True (default), the function will display the generated plot. If False, the plot will</span>
+<span class="sd">            not be displayed but will still be returned.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    plotly.graph_objs._figure.Figure</span>
+<span class="sd">            A Plotly figure object representing the distribution plot of</span>
+<span class="sd">            the &#39;duration&#39; column. The plot includes both a histogram of</span>
+<span class="sd">            the data and a kernel density estimate (KDE) curve.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The function uses Plotly&#39;s `create_distplot` function from the `plotly.figure_factory` module,</span>
+<span class="sd">    offering a detailed visual representation of data distribution. It&#39;s particularly useful for</span>
+<span class="sd">    analyzing the spread and skewness of numeric data. The KDE curve provides insight into the</span>
+<span class="sd">    probability density of the durations, complementing the histogram&#39;s discrete bins.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples, eda</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
+<span class="sd">    &gt;&gt;&gt; fig = eda.duration_distribution(df)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">group_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span>  <span class="c1"># name of the dataset</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">create_distplot</span><span class="p">([</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">],</span> <span class="n">group_labels</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">bargap</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">title_text</span><span class="o">=</span><span class="s2">&quot;Duration distribution&quot;</span><span class="p">,</span> <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
 
 <span class="k">class</span> <span class="nc">PDF</span><span class="p">(</span><span class="n">FPDF</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Internal class to organize the PDF generation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-	<span class="k">def</span> <span class="nf">footer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">set_y</span><span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">)</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">set_text_color</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;Generated with &lt;3 by Maui Software - Page &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">page_no</span><span class="p">()),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">footer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate footer of the PDF.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_y</span><span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="s2">&quot;Helvetica&quot;</span><span class="p">,</span> <span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_text_color</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="mi">10</span><span class="p">,</span>
+            <span class="s2">&quot;Generated with &lt;3 by Maui Software - Page &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">page_no</span><span class="p">()),</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;C&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
 
+<span class="k">def</span> <span class="nf">create_letterhead</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate title of the PDF.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">create_letterhead</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">WIDTH</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">WIDTH</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">create_title</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">subtitle</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-	
-	<span class="c1"># Add main title</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>  
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
-	
-	<span class="k">if</span> <span class="n">subtitle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-		<span class="c1"># Add subtitle</span>
-		<span class="n">pdf</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>  
-		<span class="n">pdf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">subtitle</span><span class="p">)</span>
-		<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-	
-	<span class="c1"># Add date of report</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">set_text_color</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
-	<span class="n">today</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">today</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-	
-	<span class="c1"># Add line break</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate title of the PDF.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Add main title</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="s2">&quot;Helvetica&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">subtitle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Add subtitle</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="s2">&quot;Helvetica&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">subtitle</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="c1"># Add date of report</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="s2">&quot;Helvetica&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">set_text_color</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+    <span class="n">today</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">today</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Add line break</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+
 
 <span class="k">def</span> <span class="nf">write_to_pdf</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">words</span><span class="p">):</span>
-	
-	<span class="c1"># Set text colour, font size, and font type</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">set_text_color</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
-	
-	<span class="n">pdf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">words</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Set text colour, font size, and font type</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">set_text_color</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="s2">&quot;Helvetica&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+
+    <span class="n">pdf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">words</span><span class="p">)</span>
+
 
 <span class="k">def</span> <span class="nf">write_subtitle</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">words</span><span class="p">):</span>
-	
-	<span class="c1"># Set text colour, font size, and font type</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">set_text_color</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
-	
-	<span class="n">pdf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">words</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write subtitle.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="export_file_names_summary_pdf">
-<a class="viewcode-back" href="../../../maui.eda.html#maui.eda.export_file_names_summary_pdf">[docs]</a>
-<span class="k">def</span> <span class="nf">export_file_names_summary_pdf</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">analysis_title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">210</span><span class="p">,</span> <span class="n">hight</span><span class="o">=</span><span class="mi">297</span><span class="p">):</span>
-<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Export a summary of audio file names and analysis results to a PDF.</span>
+    <span class="c1"># Set text colour, font size, and font type</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">set_text_color</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="s2">&quot;Helvetica&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
 
-<span class="sd">	This function generates a PDF report summarizing information and analysis results from audio file names, including</span>
-<span class="sd">	sample counts, landscape, environment, duration, and distribution plots.</span>
-
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
-<span class="sd">	df : pd.DataFrame</span>
-<span class="sd">		The DataFrame containing audio file name data.</span>
-<span class="sd">	file_name : str</span>
-<span class="sd">		The name of the PDF file to be generated.</span>
-<span class="sd">	analysis_title : str, optional</span>
-<span class="sd">		A custom title for the analysis section of the report. Default is None.</span>
-<span class="sd">	width : int, optional</span>
-<span class="sd">		The width of the PDF page in millimeters. Default is 210 (A4 paper width).</span>
-<span class="sd">	height : int, optional</span>
-<span class="sd">		The height of the PDF page in millimeters. Default is 297 (A4 paper height).</span>
-
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	None</span>
-
-<span class="sd">	Examples</span>
-<span class="sd">	--------</span>
-<span class="sd">	&gt;&gt;&gt; from maui import samples, eda</span>
-<span class="sd">	&gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
-<span class="sd">	&gt;&gt;&gt; eda.export_file_names_summary_pdf(df, &#39;audio_summary.pdf&#39;, &#39;Audio Data Analysis&#39;)</span>
-
-<span class="sd">	Notes</span>
-<span class="sd">	-----</span>
-<span class="sd">	- The function generates a PDF report containing summary statistics, heatmaps, histograms, box plots, and distribution plots</span>
-<span class="sd">	  related to audio file names and their attributes.</span>
-<span class="sd">	- The &#39;analysis_title&#39; parameter allows you to customize the title of the analysis section in the report.</span>
-<span class="sd">	- The &#39;width&#39; and &#39;height&#39; parameters control the dimensions of the PDF page. The default dimensions are for A4 paper.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	
-	
-	<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp&quot;</span><span class="p">):</span>
-		<span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp&quot;</span><span class="p">)</span>
-	
-	<span class="n">card_dict</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">card_summary</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/summary1.png&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
-	<span class="n">df_group</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">landscape_environment_heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/summary2.png&quot;</span><span class="p">)</span>
-
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_landscape_histogram</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/landscape1.png&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_landscape_duration</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/landscape2.png&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_landscape_daily_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/landscape3.png&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
-
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_environment_histogram</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/environment1.png&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_environment_duration</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/environment2.png&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_environment_daily_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/environment3.png&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
-
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_duration_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-	<span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/duration1.png&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
-
-	<span class="c1"># Global Variables</span>
-	<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">&quot;Audio Files Exploratory Data Analysis&quot;</span>
-	<span class="n">SUBTITLE</span> <span class="o">=</span> <span class="n">analysis_title</span>
-	<span class="n">WIDTH</span> <span class="o">=</span> <span class="n">width</span>
-	<span class="n">HEIGHT</span> <span class="o">=</span> <span class="n">hight</span>
-
-	<span class="c1"># Create PDF</span>
-	<span class="n">pdf</span> <span class="o">=</span> <span class="n">PDF</span><span class="p">()</span> <span class="c1"># A4 (210 by 297 mm)</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">words</span><span class="p">)</span>
 
 
-<span class="w">	</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">	First Page of PDF</span>
-<span class="sd">	&#39;&#39;&#39;</span>
-	<span class="c1"># Add Page</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">add_page</span><span class="p">()</span>
+<div class="viewcode-block" id="export_file_names_summary_pdf_leec">
+<a class="viewcode-back" href="../../../maui.eda.html#maui.eda.export_file_names_summary_pdf_leec">[docs]</a>
+<span class="k">def</span> <span class="nf">export_file_names_summary_pdf_leec</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">analysis_title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">210</span><span class="p">):</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export a summary PDF report with analysis of file names for LEEC project.</span>
 
-	<span class="n">letterhead_cover</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;maui&#39;</span><span class="p">,</span> <span class="s1">&#39;data/letterhead_cover.png&#39;</span><span class="p">)</span>
-	<span class="n">letterhead</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;maui&#39;</span><span class="p">,</span> <span class="s1">&#39;data/letterhead.png&#39;</span><span class="p">)</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        DataFrame containing the data to be analyzed.</span>
+<span class="sd">    file_name : str</span>
+<span class="sd">        Name of the output PDF file.</span>
+<span class="sd">    analysis_title : str, optional</span>
+<span class="sd">        Title of the analysis section in the PDF.</span>
+<span class="sd">    width : int, optional</span>
+<span class="sd">        Width of the PDF document in millimeters.</span>
 
-	<span class="c1"># with pkg_resources.resource_filename(&#39;tempfile&#39;, &#39;data/letterhead_cover.png&#39;) as f:</span>
-	<span class="c1"># 	letterhead_cover = f</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
 
-	<span class="c1"># with pkg_resources.resource_filename(&#39;tempfile&#39;, &#39;data/letterhead.png&#39;) as f:</span>
-	<span class="c1"># 	letterhead = f</span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function exports a summary PDF report with various analyses of file</span>
+<span class="sd">    names for the LEEC project. </span>
+<span class="sd">    It includes landscape analysis, environment analysis, and duration</span>
+<span class="sd">    analysis. </span>
+<span class="sd">    The PDF is created using the provided DataFrame `df` and saved with</span>
+<span class="sd">    the specified `file_name`.</span>
 
-	<span class="c1"># Add lettterhead and title</span>
-	<span class="n">create_letterhead</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">WIDTH</span><span class="p">,</span> <span class="n">letterhead_cover</span><span class="p">)</span>
-	<span class="n">create_title</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">SUBTITLE</span><span class="p">)</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; export_file_names_summary_pdf_leec(df, &#39;summary_report.pdf&#39;, analysis_title=&#39;Audio Files Analysis&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;landscape&#39;</span><span class="p">,</span> <span class="s1">&#39;environment&#39;</span><span class="p">]</span>
 
-	<span class="c1"># Add table</span>
-	<span class="n">w</span> <span class="o">=</span> <span class="mi">200</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/summary1.png&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">WIDTH</span><span class="o">-</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp_dir</span><span class="p">:</span>
 
-	<span class="n">intro_text</span> <span class="o">=</span> <span class="s2">&quot;This report contains a brief exploratory data analysis comprehending the data obtained by audio file names. The objective is to present an overview of the acoustic landscapes and environments of the recordings, as well as their duration. Further analysis such as false color spectrograms and acoustic indices summarization can be performed with Maui Sotware analysis and visualization tools.&quot;</span>
-	<span class="n">write_to_pdf</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">intro_text</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">card_summary</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">categories</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/summary1.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">heatmap_analysis</span><span class="p">(</span>
+            <span class="n">df</span><span class="p">,</span>
+            <span class="s2">&quot;landscape&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;environment&quot;</span><span class="p">,</span>
+            <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s2">&quot;Viridis&quot;</span><span class="p">,</span>
+            <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/summary2.png&quot;&quot;&quot;</span><span class="p">)</span>
 
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">histogram_analysis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;landscape&quot;</span><span class="p">,</span> <span class="s2">&quot;environment&quot;</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/landscape1.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">duration_analysis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;landscape&quot;</span><span class="p">,</span> <span class="s2">&quot;duration&quot;</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/landscape2.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">daily_distribution_analysis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="s2">&quot;landscape&quot;</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/landscape3.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
 
-	<span class="n">pdf</span><span class="o">.</span><span class="n">add_page</span><span class="p">()</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">histogram_analysis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;environment&quot;</span><span class="p">,</span> <span class="s2">&quot;landscape&quot;</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/environment1.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">duration_analysis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;environment&quot;</span><span class="p">,</span> <span class="s2">&quot;duration&quot;</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/environment2.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">daily_distribution_analysis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="s2">&quot;environment&quot;</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/environment3.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
 
-	<span class="n">create_letterhead</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">WIDTH</span><span class="p">,</span> <span class="n">letterhead</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">duration_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/duration1.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">)</span>
 
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-	<span class="n">write_subtitle</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="s2">&quot;1. Landscape Analysis&quot;</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/landscape1.png&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">WIDTH</span><span class="o">-</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/landscape2.png&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">WIDTH</span><span class="o">-</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/landscape3.png&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">WIDTH</span><span class="o">-</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="c1"># Global Variables</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Audio Files Exploratory Data Analysis&quot;</span>
+        <span class="n">subtitle</span> <span class="o">=</span> <span class="n">analysis_title</span>
 
+        <span class="c1"># Create PDF</span>
+        <span class="n">pdf</span> <span class="o">=</span> <span class="n">PDF</span><span class="p">()</span>  <span class="c1"># A4 (210 by 297 mm)</span>
 
-	<span class="n">pdf</span><span class="o">.</span><span class="n">add_page</span><span class="p">()</span>
-	<span class="n">create_letterhead</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">WIDTH</span><span class="p">,</span> <span class="n">letterhead</span><span class="p">)</span>
+        <span class="c1"># First Page of PDF</span>
 
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-	<span class="n">write_subtitle</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="s2">&quot;2. Environment Analysis&quot;</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/environment1.png&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">WIDTH</span><span class="o">-</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/environment2.png&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">WIDTH</span><span class="o">-</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/environment3.png&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">WIDTH</span><span class="o">-</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="c1"># Add Page</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">add_page</span><span class="p">()</span>
 
-	<span class="n">pdf</span><span class="o">.</span><span class="n">add_page</span><span class="p">()</span>
-	<span class="n">create_letterhead</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">WIDTH</span><span class="p">,</span> <span class="n">letterhead</span><span class="p">)</span>
+        <span class="n">letterhead_cover</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span>
+            <span class="s2">&quot;maui&quot;</span><span class="p">,</span> <span class="s2">&quot;data/letterhead_cover.png&quot;</span>
+        <span class="p">)</span>
+        <span class="n">letterhead</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="s2">&quot;maui&quot;</span><span class="p">,</span> <span class="s2">&quot;data/letterhead.png&quot;</span><span class="p">)</span>
 
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-	<span class="n">write_subtitle</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="s2">&quot;3. Duration Analysis&quot;</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-	<span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="s2">&quot;images_summary_pdf_temp/duration1.png&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">WIDTH</span><span class="o">-</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># Add lettterhead and title</span>
+        <span class="n">create_letterhead</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">letterhead_cover</span><span class="p">)</span>
+        <span class="n">create_title</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">subtitle</span><span class="p">)</span>
 
+        <span class="c1"># Add table</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="mi">200</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/summary1.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">width</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
-	<span class="n">pdf</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">)</span>
-	
-	<span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;images_summary_pdf_temp&#39;</span><span class="p">)</span></div>
+        <span class="n">intro_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        This report contains a brief exploratory data analysis &quot;&quot;&quot;</span>\
+        <span class="s2">&quot;comprehending the data obtained by audio file names. &quot;</span>\
+        <span class="s2">&quot;The objective is to present an overview of the acoustic &quot;&quot;&quot;</span>\
+        <span class="s2">&quot;landscapes and environments of the recordings, as well as their duration. &quot;</span>\
+        <span class="s2">&quot;Further analysis such as false color spectrograms and acoustic indices &quot;</span>\
+        <span class="s2">&quot;summarization can be performed with Maui Sotware analysis and &quot;</span>\
+        <span class="s2">&quot;visualization tools.&quot;</span>
+        <span class="n">write_to_pdf</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">intro_text</span><span class="p">)</span>
 
-	
-	
+        <span class="n">pdf</span><span class="o">.</span><span class="n">add_page</span><span class="p">()</span>
+
+        <span class="n">create_letterhead</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">letterhead</span><span class="p">)</span>
+
+        <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">write_subtitle</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="s2">&quot;1. Landscape Analysis&quot;</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/landscape1.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">width</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/landscape2.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">width</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/landscape3.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">width</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="n">pdf</span><span class="o">.</span><span class="n">add_page</span><span class="p">()</span>
+        <span class="n">create_letterhead</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">letterhead</span><span class="p">)</span>
+
+        <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">write_subtitle</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="s2">&quot;2. Environment Analysis&quot;</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/environment1.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">width</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/environment2.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">width</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/environment3.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">width</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="n">pdf</span><span class="o">.</span><span class="n">add_page</span><span class="p">()</span>
+        <span class="n">create_letterhead</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">letterhead</span><span class="p">)</span>
+
+        <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">write_subtitle</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="s2">&quot;3. Duration Analysis&quot;</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">pdf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/duration1.png&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">width</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">pdf</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>

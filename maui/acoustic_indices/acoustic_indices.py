@@ -497,7 +497,15 @@ def calculate_acoustic_indices(
             The DataFrame containing audio file data with a 'file_path'
             column specifying the path to each audio file.
         indices_list : List[str]
-            A list of acoustic indices to calculate.
+            A list of acoustic indices to calculate. Available indices are: 
+            median_amplitude_envelope ,temporal_entropy ,acoustic_richness
+            ,temporal_activity ,temporal_events ,acoustic_complexity_index
+            ,frequency_entropy ,number_of_peaks ,spectral_entropy
+            ,spectral_activity ,spectral_events ,spectral_cover
+            ,soundscape_index ,acoustic_diversity_index ,acoustic_eveness_index
+            ,temporal_leq ,spectral_leq ,tfsd ,more_entropy
+            ,acoustic_gradient_index ,frequency_raoq
+            ,region_of_interest_index
         store_df : bool, optional
             Whether to store the resulting DataFrame to a file. Default is False.
         base_dir : str, optional
@@ -505,7 +513,7 @@ def calculate_acoustic_indices(
         file_name : str, optional
             The name of the output file to save the DataFrame. Required if 'store_df' is True.
         file_type : str, optional
-            The file format for saving the DataFrame, e.g., 'csv', 'xlsx'.
+            The file format for saving the DataFrame ('csv' or 'pickle').
             Required if 'store_df' is True.
         parallel : bool, optional
             Whether to use parallel processing for calculating indices. Default is True.
@@ -531,13 +539,14 @@ def calculate_acoustic_indices(
         Notes
         -----
         - The function calculates a specified set of acoustic
-        indices for each audio file in the DataFrame.
+            indices for each audio file in the DataFrame.
         - The 'indices_list' parameter should contain a list of available
-        indices to be calculated.
+            indices to be calculated.
         - The 'store_df', 'base_dir', 'file_name', and 'file_type' parameters
-        control whether and where to save the resulting DataFrame.
+            control whether and where to save the resulting DataFrame.
         - If parallel processing is enabled ('parallel' is True),
-        the function will use multiple CPU cores for faster calculations.
+            the function will use multiple CPU cores for faster calculations.
+
     """
 
     # check if the selected indices are available

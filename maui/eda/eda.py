@@ -76,14 +76,16 @@ def card_summary(df, categories, show_plot: bool = True):
     -------
     tuple
             Returns a tuple containing:
+            
             - card_dict (dict): A dictionary with keys for 'n_samples',
-            'distinct_days', 'total_time_duration',
-              'mean_time_duration', and one key per category specified.
-              The values are the respective
-              computed statistics.
+                'distinct_days', 'total_time_duration',
+                'mean_time_duration', and one key per category specified.
+                The values are the respective
+                computed statistics.
+
             - fig (plotly.graph_objs._figure.Figure): A Plotly figure object with indicators 
-              for each of the statistics and categories specified.
-              Only returned if `show_plot` is True.
+                for each of the statistics and categories specified.
+                Only returned if `show_plot` is True.
 
     Notes
     -----
@@ -601,62 +603,35 @@ def write_subtitle(pdf, words):
 def export_file_names_summary_pdf_leec(
     df, file_name: str, analysis_title=None, width=210):
     """
-    Exports an exploratory data analysis summary of audio files as a PDF.
-
-    This function generates a series of analysis plots from a given DataFrame
-    and exports them as images, which are then compiled into a PDF report.
-    The report includes analyses such as card summary, heatmaps, histograms,
-    box plots, and distribution plots, each focusing on different aspects of
-    the data like landscapes, environments, and durations.
-    The generated images are temporarily stored and then
-    included in a PDF file, which is saved with the specified file name.
+    Export a summary PDF report with analysis of file names for LEEC project.
 
     Parameters
     ----------
     df : pandas.DataFrame
-            The DataFrame containing the audio file data to be analyzed. 
-            Expected to include columns corresponding to the specified
-            categories and any columns required by the analysis functions
-            like `card_summary`, `heatmap_analysis`, etc.
+        DataFrame containing the data to be analyzed.
     file_name : str
-            The name (and path) of the PDF file to be created.
-    categories : list of str
-            A list of category names to be included in the card summary analysis.
+        Name of the output PDF file.
     analysis_title : str, optional
-            A title for the analysis report. If None, a default subtitle is used.
+        Title of the analysis section in the PDF.
     width : int, optional
-            The width of the PDF document in millimeters. Default is set to 210 (A4 width).
-    height : int, optional
-            The height of the PDF document in millimeters. Default is set to 297 (A4 height).
+        Width of the PDF document in millimeters.
 
     Returns
     -------
     None
-            This function does not return a value.
-            It generates a PDF file at the specified location.
 
     Notes
     -----
-    The function requires several dependencies to run,
-    including Plotly for generating plots and a PDF library
-    for creating the PDF document. It also assumes the
-    existence of certain functions (`card_summary`,
-    `heatmap_analysis`, `histogram_analysis`, `duration_analysis`,
-    `daily_distribution_analysis`,
-    `duration_distribution`) that perform the individual analyses and plotting.
-
-    The generated PDF includes a cover page, a brief introductory text,
-    and separate sections for landscape,
-    environment, and duration analyses, each containing relevant plots.
-    Temporary images are stored in a directory named
-    'images_summary_pdf_temp' which is deleted after the PDF is created.
+    This function exports a summary PDF report with various analyses of file
+    names for the LEEC project. 
+    It includes landscape analysis, environment analysis, and duration
+    analysis. 
+    The PDF is created using the provided DataFrame `df` and saved with
+    the specified `file_name`.
 
     Examples
     --------
-    >>> from maui import samples, eda
-    >>> df = samples.get_leec_audio_sample()
-    >>> categories = ['landscape', 'environment']
-    >>> eda.export_file_names_summary_pdf_LEEC(df, 'analysis_report.pdf', categories)
+    >>> export_file_names_summary_pdf_leec(df, 'summary_report.pdf', analysis_title='Audio Files Analysis')
     """
 
     categories = ['landscape', 'environment']

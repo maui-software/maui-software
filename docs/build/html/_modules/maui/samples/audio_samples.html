@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.samples.audio_samples &mdash; maui-software 0.1.20 documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>maui.samples.audio_samples &mdash; maui-software 0.1.21 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/documentation_options.js?v=17aaaefc"></script>
+        <script src="../../../_static/documentation_options.js?v=b3d22ae5"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -32,7 +34,7 @@
               <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.20
+                0.1.21
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -49,6 +51,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../maui.io.html">Input and Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maui.visualizations.html">Visualizations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maui.samples.html">Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../example_gallery.html">Example gallery</a></li>
 </ul>
 
         </div>
@@ -76,45 +82,74 @@
            <div itemprop="articleBody">
              
   <h1>Source code for maui.samples.audio_samples</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This module offers a streamlined approach to retrieving information on</span>
+<span class="sd">	audio samples within the Maui project framework. It serves to abstract the</span>
+<span class="sd">	complexities of accessing and parsing audio file metadata, providing a simple</span>
+<span class="sd">	method for users to obtain a structured and comprehensive overview of available</span>
+<span class="sd">	audio samples. The methods returns a pandas DataFrame detailing</span>
+<span class="sd">	the samples, including aspects such as file paths, durations, and other</span>
+<span class="sd">	pertinent metadata.</span>
+
+<span class="sd">	The functionality leverages the `maui.io` module for the extraction of audio</span>
+<span class="sd">	information, ensuring consistency and reliability in the data presented.</span>
+
+<span class="sd">	Functionality:</span>
+<span class="sd">	- Simplifies the retrieval of audio sample metadata within the Maui</span>
+<span class="sd">	  framework.</span>
+
+<span class="sd">	Usage:</span>
+<span class="sd">	- Intended for use in data analysis workflows requiring access to structured</span>
+<span class="sd">	  information about specific sets of audio samples.</span>
+
+<span class="sd">	Dependencies:</span>
+<span class="sd">	- os: For handling file and directory paths.</span>
+<span class="sd">	- maui.io: For underlying audio information extraction processes.</span>
+
+<span class="sd">	Examples and additional details are provided in the function docstring,</span>
+<span class="sd">	guiding users in applying the module to their specific needs.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">import</span> <span class="nn">maui.io</span>
 
-
-
 <div class="viewcode-block" id="get_leec_audio_sample">
 <a class="viewcode-back" href="../../../maui.samples.html#maui.samples.get_leec_audio_sample">[docs]</a>
-<span class="k">def</span> <span class="nf">get_leec_audio_sample</span><span class="p">():</span>
-<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Get Leec Audio Samples available in maui.</span>
+<span class="k">def</span> <span class="nf">get_leec_audio_sample</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get Leec Audio Samples available in maui.</span>
 
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
-<span class="sd">	None</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    None</span>
 
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	df : pandas.DataFrame</span>
-<span class="sd">	    A DataFrame containing information about the audio samples.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        A DataFrame containing information about the audio samples.</span>
 
-<span class="sd">	Examples</span>
-<span class="sd">	--------</span>
-<span class="sd">	To retrieve Leec audio samples and store the information in a DataFrame, you can call this function as follows:</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    To retrieve Leec audio samples and store the information in a DataFrame,</span>
+<span class="sd">    you can call this function as follows:</span>
 
-<span class="sd">	&gt;&gt;&gt; from maui import samples</span>
-<span class="sd">	&gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_leec_audio_sample()</span>
 
 
-<span class="sd">	&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-	<span class="n">absolute_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
-	<span class="n">relative_path</span> <span class="o">=</span> <span class="s1">&#39;../data/audio_samples/&#39;</span>
-	<span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">absolute_path</span><span class="p">,</span> <span class="n">relative_path</span><span class="p">)</span>
+    <span class="n">absolute_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+    <span class="n">relative_path</span> <span class="o">=</span> <span class="s2">&quot;../data/audio_samples/&quot;</span>
+    <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">absolute_path</span><span class="p">,</span> <span class="n">relative_path</span><span class="p">)</span>
 
-	<span class="n">df</span> <span class="o">=</span> <span class="n">maui</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">get_audio_info</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="n">store_duration</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">perc_sample</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">maui</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">get_audio_info</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="n">format_name</span><span class="o">=</span><span class="s1">&#39;LEEC_FILE_FORMAT&#39;</span><span class="p">,</span>
+    							<span class="n">store_duration</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">perc_sample</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-	<span class="k">return</span> <span class="n">df</span></div>
+    <span class="k">return</span> <span class="n">df</span></div>
 
 </pre></div>
 

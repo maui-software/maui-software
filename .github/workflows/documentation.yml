@@ -43,7 +43,7 @@ jobs:
       - name: Build HTML
         run: |
           cd docs/
-          make clean html
+          make clean-generated-rst clean html
 
       - name: Run ghp-import
         run: |

@@ -91,8 +91,10 @@ If everything is ok, run the following command to install the changes:
 poetry install
 ```
 
-## Code Style
+It is important that all changes are properly tested and works correctly.
 
+
+## Code Style
 
 To ensure maintainability and straightforward understanding of the code,
 this project adheres to PEP8 standards. Pull requests will be accepted
@@ -116,6 +118,21 @@ your code:
 This is an iterative process. Periodically check that the developed code
 meets PEP8 standards.
 
+## Update documentation
+
+After ensuring that the code works without errors, one should verify if 
+the documentation is correctly updated. To do so, locally, 
+first navigate to the root directory of the project and run the 
+following commands:
+
+```bash
+cd docs
+make clean html
+```
+
+This will update the documentation and store it locally under 
+`/maui-software/docs/build/html`. 
+Verify if the documentation is correct and easy to understand!
 
 ## Pull requests and branches
 
