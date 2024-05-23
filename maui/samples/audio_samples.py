@@ -1,29 +1,29 @@
 """
-	This module offers a streamlined approach to retrieving information on
-	audio samples within the Maui project framework. It serves to abstract the
-	complexities of accessing and parsing audio file metadata, providing a simple
-	method for users to obtain a structured and comprehensive overview of available
-	audio samples. The methods returns a pandas DataFrame detailing
-	the samples, including aspects such as file paths, durations, and other
-	pertinent metadata.
+    This module offers a streamlined approach to retrieving information on
+    audio samples within the Maui project framework. It serves to abstract the
+    complexities of accessing and parsing audio file metadata, providing a simple
+    method for users to obtain a structured and comprehensive overview of available
+    audio samples. The methods returns a pandas DataFrame detailing
+    the samples, including aspects such as file paths, durations, and other
+    pertinent metadata.
 
-	The functionality leverages the `maui.io` module for the extraction of audio
-	information, ensuring consistency and reliability in the data presented.
+    The functionality leverages the `maui.io` module for the extraction of audio
+    information, ensuring consistency and reliability in the data presented.
 
-	Functionality:
-	- Simplifies the retrieval of audio sample metadata within the Maui
-	  framework.
+    Functionality:
+    - Simplifies the retrieval of audio sample metadata within the Maui
+      framework.
 
-	Usage:
-	- Intended for use in data analysis workflows requiring access to structured
-	  information about specific sets of audio samples.
+    Usage:
+    - Intended for use in data analysis workflows requiring access to structured
+      information about specific sets of audio samples.
 
-	Dependencies:
-	- os: For handling file and directory paths.
-	- maui.io: For underlying audio information extraction processes.
+    Dependencies:
+    - os: For handling file and directory paths.
+    - maui.io: For underlying audio information extraction processes.
 
-	Examples and additional details are provided in the function docstring,
-	guiding users in applying the module to their specific needs.
+    Examples and additional details are provided in the function docstring,
+    guiding users in applying the module to their specific needs.
 """
 
 import os
@@ -34,7 +34,7 @@ import pandas as pd
 import maui.io
 
 
-def get_audio_sample(dataset: str) -> pd.DataFrame:
+def get_audio_sample(dataset: str, extract_path: str = None) -> pd.DataFrame:
     """
     Get Leec Audio Samples available in maui.
 
@@ -42,6 +42,8 @@ def get_audio_sample(dataset: str) -> pd.DataFrame:
     ----------
     dataset : str
         Dataset to be loaded. The available datasets are: leec
+    extract_path : str
+        Directory to extract sample files
 
     Returns
     -------
@@ -66,20 +68,23 @@ def get_audio_sample(dataset: str) -> pd.DataFrame:
     if dataset == "leec":
         dataset_format_name = "LEEC_FILE_FORMAT"
 
+
     absolute_path = os.path.dirname(__file__)
     relative_path = f"""../data/audio_samples/{dataset}_data.zip"""
     full_path = os.path.join(absolute_path, relative_path)
 
-    # Create a directory to store the extracted files
-    os.makedirs(f"""maui_samples_{dataset}""", exist_ok=True)
+    if extract_path is None:
+        # Create a directory to store the extracted files
+        extract_path = f"""maui_samples_{dataset}"""
+        os.makedirs(extract_path, exist_ok=True)
 
     # Open the zip file
     with zipfile.ZipFile(full_path, "r") as zip_ref:
-        # Extract all files to the specified directory
-        zip_ref.extractall(f"""maui_samples_{dataset}""")
+        # Extract all files to the specified directory 
+        zip_ref.extractall(extract_path)
 
     df = maui.io.get_audio_info(
-        f"""./maui_samples_{dataset}""",
+        extract_path,
         format_name=dataset_format_name,
         store_duration=1,
         perc_sample=1,
