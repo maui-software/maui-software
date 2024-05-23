@@ -1,5 +1,5 @@
 """
-Module for testing the visualizations in the `maui` library.
+Module for testing the visualizations module in the `maui` library.
 
 This module contains tests for various visualization functions in the 
 `maui` library, ensuring that these functions work correctly with sample 
