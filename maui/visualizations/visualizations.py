@@ -371,8 +371,9 @@ def indices_histogram_plot(
 
     # 0. Initial configuration
     # 0.1. Verify if group_by column is available
+
     if group_by is not None:
-        assert group_by in df.columns, f"'{group_by}' is not in {df.column}"
+        assert group_by in list(df.columns), f"'{group_by}' is not in {list(df.columns)}"
         if len(indices) > 1:
             raise Exception(
                 "Sorry, to group by some category, only one index is supported."
