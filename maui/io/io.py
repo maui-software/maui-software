@@ -33,7 +33,6 @@ Dependencies:
 import random
 import os
 import glob
-import datetime
 
 import audioread
 
@@ -51,7 +50,7 @@ def get_audio_info(
     format_name,
     date_time_func=None,
     format_file_path=None,
-    store_duration=0,
+    store_duration=False,
     perc_sample=1,
 ):
     """
@@ -85,9 +84,10 @@ def get_audio_info(
         >>> from maui import io
         >>> audio_file = "forest_channelA_20210911_153000_jungle.wav"
         >>> io.get_audio_info(audio_file, store_duration=1, perc_sample=0.8)
-     
+
         >>> audio_dir = "/path/to/audio/directory"
-        >>> io.get_audio_info(audio_dir, store_duration=0, perc_sample=0.5)
+        >>> df = io.get_audio_info(audio_dir, "LEEC_FILE_FORMAT", store_duration=True, perc_sample=1)
+        >>> df["dt"] = pd.to_datetime(df["timestamp_init"]).dt.date
     """
 
     file_dict = None
@@ -100,16 +100,10 @@ def get_audio_info(
             filename, format_name, date_time_func, format_file_path
         )
 
-        file_dict["timestamp_end"] = None
-        file_dict["duration"] = None
-
         if store_duration:
             x = audioread.audio_open(audio_path)
             duration = x.duration
 
-            file_dict["timestamp_end"] = file_dict[
-                "timestamp_init"
-            ] + datetime.timedelta(seconds=duration)
             file_dict["duration"] = duration
 
         file_dict["file_path"] = audio_path
@@ -118,7 +112,8 @@ def get_audio_info(
 
     elif os.path.isdir(audio_path):
         file_dict = []
-        for file_path in glob.glob(audio_path + "/*.wav"):
+
+        for file_path in glob.glob(os.path.join(audio_path, "*.wav")):
 
             if random.uniform(0, 1) < perc_sample:
                 basename = os.path.basename(file_path)
@@ -128,16 +123,10 @@ def get_audio_info(
                     filename, format_name, date_time_func, format_file_path
                 )
 
-                file_dict_temp["timestamp_end"] = None
-                file_dict_temp["duration"] = None
-
                 if store_duration:
                     x = audioread.audio_open(file_path)
                     duration = x.duration
 
-                    file_dict_temp["timestamp_end"] = file_dict_temp[
-                        "timestamp_init"
-                    ] + datetime.timedelta(seconds=duration)
                     file_dict_temp["duration"] = duration
 
                 file_dict_temp["file_path"] = file_path
@@ -145,10 +134,6 @@ def get_audio_info(
                 file_dict.append(file_dict_temp)
 
         df = pd.DataFrame(file_dict)
-
-        df["hour"] = pd.to_datetime(df["timestamp_init"]).dt.hour
-        df["time"] = pd.to_datetime(df["timestamp_init"]).dt.time
-        df["dt"] = pd.to_datetime(df["timestamp_init"]).dt.date
 
     else:
         raise Exception("The input must be a file or a directory")
@@ -193,6 +178,11 @@ def store_df(df, file_type, base_dir, file_name):
         # Saves the DataFrame as '/path/to/directory/my_dataframe.pkl'
 
     """
+
+    available_file_types = ["csv", "pickle"]
+
+    if file_type not in available_file_types:
+        raise ValueError("File type not available")
 
     if file_type == "csv":
         full_path = os.path.join(base_dir, file_name + ".csv")

@@ -452,7 +452,7 @@ def daily_distribution_analysis(
         x=date_column,
         color=category_column,
         opacity=0.7,
-        title=f"""Ammount of samples by Day and {category_column}""",
+        title=f"""Amount of samples by Day and {category_column}""",
     )
     fig.update_layout(bargap=0.1, title_x=0.5)
 
