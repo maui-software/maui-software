@@ -104,7 +104,7 @@ def get_audio_info(
         if store_duration:
             x = audioread.audio_open(audio_path)
             duration = x.duration
-            
+
             file_dict["duration"] = duration
 
         file_dict["file_path"] = audio_path
