@@ -33,7 +33,6 @@ Dependencies:
 import random
 import os
 import glob
-import datetime
 
 import audioread
 
@@ -85,7 +84,7 @@ def get_audio_info(
         >>> from maui import io
         >>> audio_file = "forest_channelA_20210911_153000_jungle.wav"
         >>> io.get_audio_info(audio_file, store_duration=1, perc_sample=0.8)
-     
+
         >>> audio_dir = "/path/to/audio/directory"
         >>> df = io.get_audio_info(audio_dir, "LEEC_FILE_FORMAT", store_duration=True, perc_sample=1)
         >>> df["dt"] = pd.to_datetime(df["timestamp_init"]).dt.date
@@ -123,7 +122,7 @@ def get_audio_info(
                 file_dict_temp = maui.files_metadata.extract_metadata(
                     filename, format_name, date_time_func, format_file_path
                 )
-                
+
                 if store_duration:
                     x = audioread.audio_open(file_path)
                     duration = x.duration
@@ -180,10 +179,10 @@ def store_df(df, file_type, base_dir, file_name):
 
     """
 
-    available_file_types = ['csv', 'pickle']
+    available_file_types = ["csv", "pickle"]
 
     if file_type not in available_file_types:
-        raise ValueError('File type not available')
+        raise ValueError("File type not available")
 
     if file_type == "csv":
         full_path = os.path.join(base_dir, file_name + ".csv")
