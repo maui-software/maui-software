@@ -35,12 +35,12 @@ jobs:
         run: |
           poetry run pytest --cov-report "xml:coverage.xml" --cov=.
           
-      - name: Configure Codacy environment variables
+      - name: Upload coverage report to Codacy
         run: |
 
           export CODACY_API_TOKEN=${{secrets.CODACY_API_TOKEN}}
           export CODACY_ORGANIZATION_PROVIDER=gh
           export CODACY_USERNAME=maui-software
           export CODACY_PROJECT_NAME=maui-software
-          bash <(curl -Ls https://coverage.codacy.com/get.sh)
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r coverage.xml
 
