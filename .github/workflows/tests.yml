@@ -42,8 +42,5 @@ jobs:
           export CODACY_ORGANIZATION_PROVIDER=gh
           export CODACY_USERNAME=maui-software
           export CODACY_PROJECT_NAME=maui-software
-          
-      - name: Upload coverage data to Codacy
-        run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh)
 
