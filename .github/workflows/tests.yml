@@ -45,4 +45,4 @@ jobs:
           
       - name: Upload coverage data to Codacy
         run: |
-          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r coverage.xml
+          bash <(curl -Ls https://coverage.codacy.com/get.sh)
