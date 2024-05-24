@@ -64,7 +64,7 @@ def sample_audio_files(tmpdir):
     """
     audio_dir = tmpdir.mkdir("audio_files")
 
-    sample_path = "../maui/data/audio_samples/leec_data_test_sample.zip"
+    sample_path = "./maui/data/audio_samples/leec_data_test_sample.zip"
     with zipfile.ZipFile(sample_path, "r") as zip_ref:
         zip_ref.extractall(audio_dir)
 
