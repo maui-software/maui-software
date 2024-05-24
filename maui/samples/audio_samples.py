@@ -30,9 +30,16 @@ import os
 import zipfile
 
 import pandas as pd
+import gdown
 
 import maui.io
 
+
+def get_dataset_url(dataset: str,) -> str:
+    file_id = ""
+    if dataset == 'leec':
+        file_id = '1tw7BpPNBeS6Dz0XJOwwYuJOYJgd4XSUE'
+    return f"https://drive.google.com/uc?id={file_id}"
 
 def get_audio_sample(dataset: str, extract_path: str = None) -> pd.DataFrame:
     """
@@ -64,24 +71,33 @@ def get_audio_sample(dataset: str, extract_path: str = None) -> pd.DataFrame:
     if dataset not in available_datasets:
         raise Exception("Dataset not available")
 
-    dataset_format_name = "unknwown"
+    dataset_format_name = "unknown"
     if dataset == "leec":
         dataset_format_name = "LEEC_FILE_FORMAT"
 
-
-    absolute_path = os.path.dirname(__file__)
-    relative_path = f"""../data/audio_samples/{dataset}_data.zip"""
-    full_path = os.path.join(absolute_path, relative_path)
-
+    zip_file_name = f"{dataset}.zip"
+    zip_file_path = os.path.join(os.path.dirname(__file__), 'data', zip_file_name)
     if extract_path is None:
-        # Create a directory to store the extracted files
-        extract_path = f"""maui_samples_{dataset}"""
-        os.makedirs(extract_path, exist_ok=True)
-
-    # Open the zip file
-    with zipfile.ZipFile(full_path, "r") as zip_ref:
-        # Extract all files to the specified directory 
-        zip_ref.extractall(extract_path)
+        extract_path = os.path.join(os.path.dirname(__file__), 'data', dataset)
+    
+    print(zip_file_path)
+    print(extract_path)
+    
+    file_url = get_dataset_url(dataset)
+    
+    os.makedirs(os.path.dirname(zip_file_path), exist_ok=True)
+    gdown.download(file_url, zip_file_path, quiet=False)
+    
+    # Check if the file is a valid zip file
+    try:
+        with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
+            zip_ref.testzip()
+            # Extract all files to the specified directory 
+            zip_ref.extractall(extract_path)
+        print("Extraction complete.")
+    except zipfile.BadZipFile:
+        print("Error: The downloaded file is not a valid zip file.")
+        return None
 
     df = maui.io.get_audio_info(
         extract_path,
