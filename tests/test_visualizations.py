@@ -53,12 +53,14 @@ test_spectrogram_plot_invalid_mode(sample_wav_file_fixt)
 """
 
 import wave
+from unittest import mock
+
 import pytest
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
-from maui import visualizations
 
+from maui import visualizations
 
 @pytest.fixture(name="sample_df_fixt")
 def sample_dataframe():
@@ -348,3 +350,167 @@ def test_spectrogram_plot_invalid_mode(sample_wav_file_fixt):
         visualizations.spectrogram_plot(
             file_path=str(sample_wav_file_fixt), mode="invalid", show_plot=False
         )
+
+
+def test_false_color_spectrogram_plot_valid_input():
+    """
+    Test the `false_color_spectrogram_plot` function with valid input.
+
+    This test creates a DataFrame with 1D arrays for each index column,
+    runs the `false_color_spectrogram_plot` function, and verifies
+    that the output spectrogram has the expected shape and dtype.
+
+    Assertions
+    ----------
+    - The shape of the resulting spectrogram should be (10, 100, 3).
+    - The spectrogram values should be normalized to uint8 dtype, in the range [0, 255].
+
+    Raises
+    ------
+    AssertionError
+        If the shape or dtype of the spectrogram is not as expected.
+    """
+    # Create a sample dataframe
+    data = {
+        "timestamp": pd.date_range("2023-01-01", periods=100, freq="s"),
+        "index1": [np.random.rand(10) for _ in range(100)],
+        "index2": [np.random.rand(10) for _ in range(100)],
+        "index3": [np.random.rand(10) for _ in range(100)],
+    }
+    df = pd.DataFrame(data)
+
+    print(df)
+
+    indices = ["index1", "index2", "index3"]
+
+    # Run the function with valid input
+    spectrogram = visualizations.false_color_spectrogram_plot(
+        df, "timestamp", indices, display=False
+    )
+
+    # Assertions
+    assert spectrogram.shape == (
+        10,
+        100,
+        3,
+    ), "The spectrogram should have a shape of (100, 10, 3)."
+    assert (
+        spectrogram.dtype == np.uint8
+    ), "The spectrogram values should be in the range of [0, 255]."
+
+
+def test_false_color_spectrogram_plot_empty_indices():
+    """
+    Test the `false_color_spectrogram_plot` function with an empty indices list.
+
+    This test verifies that the function raises an `IndexError` when called
+    with an empty list of acoustic indices.
+
+    Raises
+    ------
+    IndexError
+        If the indices list is empty.
+    """
+    df = pd.DataFrame(
+        {
+            "timestamp": pd.date_range("2023-01-01", periods=100, freq="s"),
+            "index1": np.random.rand(100),
+        }
+    )
+
+    with pytest.raises(IndexError):
+        visualizations.false_color_spectrogram_plot(df, "timestamp", [], display=False)
+
+
+def test_false_color_spectrogram_plot_invalid_index():
+    """
+    Test the `false_color_spectrogram_plot` function with an invalid index.
+
+    This test verifies that the function raises an `AssertionError` when the
+    specified index is not found in the DataFrame columns.
+
+    Raises
+    ------
+    AssertionError
+        If the specified index is not present in the DataFrame.
+    """
+    df = pd.DataFrame(
+        {
+            "timestamp": pd.date_range("2023-01-01", periods=100, freq="s"),
+            "index1": np.random.rand(100),
+        }
+    )
+
+    with pytest.raises(AssertionError):
+        visualizations.false_color_spectrogram_plot(
+            df, "timestamp", ["invalid_index"], display=False
+        )
+
+
+def test_false_color_spectrogram_plot_invalid_unit():
+    """
+    Test the `false_color_spectrogram_plot` function with an invalid unit.
+
+    This test checks that the function raises an `Exception` when an invalid
+    unit is passed for truncating timestamps.
+
+    Raises
+    ------
+    Exception
+        If the unit is not one of the accepted time units.
+    """
+    data = {
+        "timestamp": pd.date_range("2023-01-01", periods=100, freq="s"),
+        "index1": [np.random.rand(10) for _ in range(100)],
+        "index2": [np.random.rand(10) for _ in range(100)],
+        "index3": [np.random.rand(10) for _ in range(100)],
+    }
+    df = pd.DataFrame(data)
+
+    with pytest.raises(Exception):
+        visualizations.false_color_spectrogram_plot(
+            df,
+            "timestamp",
+            ["index1", "index2", "index3"],
+            unit="invalid_unit",
+            display=False,
+        )
+
+
+@mock.patch("plotly.graph_objects.Figure.show")
+def test_display_false_color_spectrogram_plot(mock_show):
+    """
+    Test the display functionality of `false_color_spectrogram_plot`.
+
+    This test creates a DataFrame with 1D arrays for the index columns,
+    runs the `false_color_spectrogram_plot` function with `display=True`,
+    and checks if the plot is displayed using Plotly.
+
+    Parameters
+    ----------
+    mock_show : mock.Mock
+        Mock object for Plotly's `Figure.show` function to prevent
+        actual display during the test.
+
+    Assertions
+    ----------
+    - Verifies that the `show` function was called exactly once.
+    """
+    # Create a sample dataframe
+    data = {
+        "timestamp": pd.date_range("2023-01-01", periods=100, freq="s"),
+        "index1": [np.random.rand(10) for _ in range(100)],
+        "index2": [np.random.rand(10) for _ in range(100)],
+        "index3": [np.random.rand(10) for _ in range(100)],
+    }
+    df = pd.DataFrame(data)
+
+    indices = ["index1", "index2", "index3"]
+
+    # Test the display functionality with valid data
+    visualizations.false_color_spectrogram_plot(
+        df, "timestamp", indices, display=True, fig_size={"width": 1000, "height": 500}
+    )
+
+    # Assert that the show function was called to display the plot
+    mock_show.assert_called_once()
