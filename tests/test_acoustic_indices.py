@@ -16,14 +16,12 @@ test_calculate_acoustic_indices_parallel(tmp_path)
     Test `calculate_acoustic_indices` with parallel execution.
 """
 
+from unittest import mock
 import pytest
 import pandas as pd
 import numpy as np
-from unittest import mock
 
-from maad import sound
-
-from maui import acoustic_indices, samples
+from maui import acoustic_indices
 
 
 def pre_calc_method(s, fs):
@@ -42,7 +40,8 @@ def pre_calc_method(s, fs):
     dict
         A dictionary containing the sound array as value for key 's'.
     """
-    return {'s': s}  # Pass the sound array as the pre-calculation variable
+    return {"s": s, "fs": fs}  # Pass the sound array as the pre-calculation variable
+
 
 def acoustic_method(pre_calc):
     """
@@ -59,9 +58,10 @@ def acoustic_method(pre_calc):
     dict
         A dictionary containing the computed acoustic index under key 'index1'.
     """
-    return {'index1': np.mean(pre_calc['s'])}  # Example index: mean of the sound array
+    return {"index1": np.mean(pre_calc["s"])}  # Example index: mean of the sound array
 
-@pytest.fixture
+
+@pytest.fixture(name="sample_dataframe_fixt")
 def sample_dataframe():
     """
     Fixture to create a sample DataFrame for testing.
@@ -73,20 +73,28 @@ def sample_dataframe():
         and metadata strings.
     """
     data = {
-        'file_path': ['audio1.wav'],
-        'metadata': ['[1, 2, 3]']  # Strings to be converted to lists
+        "file_path": ["audio1.wav"],
+        "metadata": ["[1, 2, 3]"],  # Strings to be converted to lists
     }
     return pd.DataFrame(data)
+
 
 @mock.patch("os.makedirs")
 @mock.patch("pandas.DataFrame.to_csv")
 @mock.patch("pandas.read_csv")  # Mock read_csv
 @mock.patch("maad.sound.load")
 @mock.patch("os.remove")  # Mock os.remove to avoid FileNotFoundError
-def test_calculate_acoustic_indices(mock_remove, mock_load, mock_read_csv, mock_to_csv, mock_makedirs, sample_dataframe):
+def test_calculate_acoustic_indices(
+    mock_remove,
+    mock_load,
+    mock_read_csv,
+    mock_to_csv,
+    mock_makedirs,
+    sample_dataframe_fixt,
+):
     """
-    Test the `calculate_acoustic_indices` function to ensure it correctly calculates acoustic indices
-    for all files in the DataFrame when executed in serial mode.
+    Test the `calculate_acoustic_indices` function to ensure it correctly calculates
+    acoustic indices for all files in the DataFrame when executed in serial mode.
 
     Parameters
     ----------
@@ -100,7 +108,7 @@ def test_calculate_acoustic_indices(mock_remove, mock_load, mock_read_csv, mock_
         Mock object for `pandas.DataFrame.to_csv` to avoid actual file writing.
     mock_makedirs : MagicMock
         Mock object for `os.makedirs` to simulate directory creation.
-    sample_dataframe : pd.DataFrame
+    sample_dataframe_fixt : pd.DataFrame
         A sample DataFrame with file paths and metadata for testing.
 
     Returns
@@ -110,9 +118,9 @@ def test_calculate_acoustic_indices(mock_remove, mock_load, mock_read_csv, mock_
     # Mock sound.load to return dummy audio data
     mock_load.return_value = (np.array([1, 2, 3]), 44100)
     data = {
-        'file_path': ['audio1.wav'],
-        'metadata': ['[1, 2, 3]'],
-        'index1': [np.mean([1, 2, 3])]  # Strings to be converted to lists
+        "file_path": ["audio1.wav"],
+        "metadata": ["[1, 2, 3]"],
+        "index1": [np.mean([1, 2, 3])],  # Strings to be converted to lists
     }
 
     # Mock read_csv to return a dummy DataFrame when it is called
@@ -120,35 +128,35 @@ def test_calculate_acoustic_indices(mock_remove, mock_load, mock_read_csv, mock_
 
     # Call the calculate_acoustic_indices function
     result_df = acoustic_indices.calculate_acoustic_indices(
-        sample_dataframe,
-        file_path_col='file_path',
+        sample_dataframe_fixt,
+        file_path_col="file_path",
         acoustic_indices_methods=[acoustic_method],
         pre_calculation_method=pre_calc_method,
         parallel=False,
         chunk_size=1,
-        temp_dir='./temp_dir'
+        temp_dir="./temp_dir",
     )
 
-    print('result_df: ', result_df)
-    print('sample_dataframe: ', sample_dataframe)
+    print("result_df: ", result_df)
+    print("sample_dataframe: ", sample_dataframe_fixt)
 
     # Ensure the directory is created
-    mock_makedirs.assert_called_with('./temp_dir', exist_ok=True)
+    mock_makedirs.assert_called_with("./temp_dir", exist_ok=True)
 
     # Verify if 'index1' is in the resulting DataFrame
-    assert 'index1' in result_df.columns
-    assert len(result_df) == len(sample_dataframe)
+    assert "index1" in result_df.columns
+    assert len(result_df) == len(sample_dataframe_fixt)
 
     # Ensure the result contains valid calculated indices
-    assert result_df['index1'].iloc[0] == np.mean([1, 2, 3])
-
-
+    assert result_df["index1"].iloc[0] == np.mean([1, 2, 3])
 
     # Verify that the 'file_path' column is preserved and has correct values
-    assert all(result_df['file_path'] == sample_dataframe['file_path'])
+    assert all(result_df["file_path"] == sample_dataframe_fixt["file_path"])
 
     # Verify that os.remove was called with the correct paths
-    expected_temp_files = ['./temp_dir/temp_0.csv']  # Adjust this if your temp files have different names
+    expected_temp_files = [
+        "./temp_dir/temp_0.csv"
+    ]  # Adjust this if your temp files have different names
     mock_remove.assert_called_with(expected_temp_files[0])
 
 
@@ -156,10 +164,18 @@ def test_calculate_acoustic_indices(mock_remove, mock_load, mock_read_csv, mock_
 @mock.patch("pandas.DataFrame.to_csv")
 @mock.patch("pandas.read_csv")  # Mock read_csv
 @mock.patch("maad.sound.load")
-@mock.patch("os.remove")
-def test_calculate_acoustic_indices_parallel(mock_remove, mock_load, mock_read_csv, mock_to_csv, mock_makedirs, sample_dataframe):
+@mock.patch("os.remove")  # Mock os.remove to avoid FileNotFoundError
+def test_calculate_acoustic_indices_parallel(
+    mock_remove,
+    mock_load,
+    mock_read_csv,
+    mock_to_csv,
+    mock_makedirs,
+    sample_dataframe_fixt,
+):
     """
-    Test the `calculate_acoustic_indices` function in parallel mode to ensure that it works correctly.
+    Test the `calculate_acoustic_indices` function in parallel mode to ensure that it
+    works correctly.
 
     Parameters
     ----------
@@ -173,7 +189,7 @@ def test_calculate_acoustic_indices_parallel(mock_remove, mock_load, mock_read_c
         Mock object for `pandas.DataFrame.to_csv` to avoid actual file writing.
     mock_makedirs : MagicMock
         Mock object for `os.makedirs` to simulate directory creation.
-    sample_dataframe : pd.DataFrame
+    sample_dataframe_fixt : pd.DataFrame
         A sample DataFrame with file paths and metadata for testing.
 
     Returns
@@ -182,30 +198,30 @@ def test_calculate_acoustic_indices_parallel(mock_remove, mock_load, mock_read_c
     """
     mock_load.return_value = (np.array([1, 2, 3]), 44100)
     data = {
-        'file_path': ['audio1.wav'],
-        'metadata': ['[1, 2, 3]'],
-        'index1': [np.mean([1, 2, 3])]  # Strings to be converted to lists
+        "file_path": ["audio1.wav"],
+        "metadata": ["[1, 2, 3]"],
+        "index1": [np.mean([1, 2, 3])],  # Strings to be converted to lists
     }
 
     # Mock read_csv to return a dummy DataFrame when it is called
     mock_read_csv.return_value = pd.DataFrame(data)
-    
+
     result_df = acoustic_indices.calculate_acoustic_indices(
-        sample_dataframe,
-        file_path_col='file_path',
+        sample_dataframe_fixt,
+        file_path_col="file_path",
         acoustic_indices_methods=[acoustic_method],
         pre_calculation_method=pre_calc_method,
         parallel=True,  # Test in parallel mode
         chunk_size=1,
-        temp_dir='./temp_dir'
+        temp_dir="./temp_dir",
     )
 
     # Ensure the directory is created
-    mock_makedirs.assert_called_with('./temp_dir', exist_ok=True)
+    mock_makedirs.assert_called_with("./temp_dir", exist_ok=True)
 
     # Verify if 'index1' is in the resulting DataFrame
-    assert 'index1' in result_df.columns
-    assert len(result_df) == len(sample_dataframe)
+    assert "index1" in result_df.columns
+    assert len(result_df) == len(sample_dataframe_fixt)
 
     # Ensure the result contains valid calculated indices
-    assert result_df['index1'].iloc[0] == np.mean([1, 2, 3])
+    assert result_df["index1"].iloc[0] == np.mean([1, 2, 3])
