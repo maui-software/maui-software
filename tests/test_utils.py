@@ -12,7 +12,6 @@ The module also includes helper functions to generate temporary audio files for 
 """
 
 import zipfile
-from pathlib import Path
 from datetime import datetime
 
 import pytest
