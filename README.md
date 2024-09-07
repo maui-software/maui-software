@@ -7,6 +7,7 @@
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#active)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/2fda82e1f9cd459eb38a78674c544031)](https://app.codacy.com/gh/maui-software/maui-software/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/2fda82e1f9cd459eb38a78674c544031)](https://app.codacy.com/gh/maui-software/maui-software/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 
 # Operating Systems
 
