@@ -898,11 +898,12 @@ def false_color_spectrogram_plot(
 
     unit : str, optional
         The time unit to truncate the timestamps from 0.2 seconds to 60 seconds. Must be one of
-        ['scale_02','scale_04','scale_06','scale_2','scale_4','scale_6','scale_12','scale_24'].
+        ['scale_02', 'scale_04', 'scale_06', 'scale_2', 'scale_4', 'scale_6', 'scale_12', 'scale_24'].
         Default is 'scale_60'.
 
     **kwargs : dict, optional
         Additional arguments for customizing the display:
+        
         - fig_size (dict): Dictionary specifying the figure size with 'width'
           and 'height' keys.
         - tick_interval (int): Interval for selecting ticks on the x-axis.
@@ -934,7 +935,72 @@ def false_color_spectrogram_plot(
       the false color spectrogram.
     - If `display` is True, the spectrogram is displayed using Plotly,
       with customizable figure size and tick interval.
+
+    Examples
+    --------
+    >>> from maui import samples, utils, visualizations
+    >>> df = samples.get_audio_sample(dataset="leec")
+    >>> df["dt"] = pd.to_datetime(df["timestamp_init"]).dt.date
+    >>> def pre_calculation_method(s, fs):   
+    >>>     Sxx_power, tn, fn, ext = maad.sound.spectrogram (s, fs) 
+    >>>     Sxx_noNoise= maad.sound.median_equalizer(Sxx_power, display=False, extent=ext) 
+    >>>     Sxx_dB_noNoise = maad.util.power2dB(Sxx_noNoise)
+    >>> 
+    >>>     Sxx, tn, fn, ext = maad.sound.spectrogram(s, fs, mode='amplitude')
+    >>>     
+    >>>     pre_calc_vars = {'Sxx': Sxx, 'tn':tn , 'fn':fn , 'ext':ext, 'Sxx_dB_noNoise':Sxx_dB_noNoise }
+    >>>     return pre_calc_vars
+    >>>         
+    >>> def get_aci(pre_calc_vars):
+    >>>     aci_xx, aci_per_bin, aci_sum  = maad.features.acoustic_complexity_index(pre_calc_vars['Sxx'])
+    >>>     indices = {'aci_xx': aci_xx, 'aci_per_bin':aci_per_bin , 'aci_sum':aci_sum}
+    >>>     return indices
+    >>> 
+    >>> def get_spectral_events(pre_calc_vars):
+    >>>     EVNspFract_per_bin, EVNspMean_per_bin, EVNspCount_per_bin, EVNsp = maad.features.spectral_events(
+    >>>                 pre_calc_vars['Sxx_dB_noNoise'],
+    >>>                 dt=pre_calc_vars['tn'][1] - pre_calc_vars['tn'][0],
+    >>>                 dB_threshold=6,
+    >>>                 rejectDuration=0.1,
+    >>>                 display=False,
+    >>>                 extent=pre_calc_vars['ext'])  
+    >>>     
+    >>>     indices = {'EVNspFract_per_bin': EVNspFract_per_bin, 'EVNspMean_per_bin':EVNspMean_per_bin , 'EVNspCount_per_bin':EVNspCount_per_bin, 'EVNsp':EVNsp}
+    >>>     return indices
+    >>> def get_spectral_activity(pre_calc_vars):
+    >>>     ACTspfract_per_bin, ACTspcount_per_bin, ACTspmean_per_bin = maad.features.spectral_activity(pre_calc_vars['Sxx_dB_noNoise'])
+    >>>     indices = {'ACTspfract_per_bin': ACTspfract_per_bin, 'ACTspcount_per_bin':ACTspcount_per_bin , 'ACTspmean_per_bin':ACTspmean_per_bin}
+    >>>     return indices
+    >>> acoustic_indices_methods = [get_aci, get_spectral_activity, get_spectral_events]
+    >>> 
+    >>> df_temp = df.iloc[0:1]
+    >>> segmented_df = utils.false_color_spectrogram_prepare_dataset(
+    >>>     df_temp, 
+    >>>     datetime_col = 'timestamp_init',
+    >>>     duration_col = 'duration',
+    >>>     file_path_col = 'file_path',
+    >>>     indices = ['acoustic_complexity_index', 'spectral_activity', 'spectral_events'], 
+    >>>     output_dir = './segmented_indices',
+    >>>     store_audio_segments = True,
+    >>>     unit = 'scale_02',
+    >>>     acoustic_indices_methods = acoustic_indices_methods,
+    >>>     pre_calculation_method = pre_calculation_method,
+    >>>     temp_dir = os.path.abspath('./temp_ac_files/'),
+    >>>     parallel = True
+    >>> )
+    >>>
+    >>> fcs = visualizations.false_color_spectrogram_plot(
+    >>>             segmented_df, 
+    >>>             datetime_col = 'start_time', 
+    >>>             indices = ['aci_per_bin', 'ACTspfract_per_bin', 'EVNspCount_per_bin'], 
+    >>>             display = True, 
+    >>>             unit = 'scale_02'
+    >>>         )
+
+
+
     """
+
 
     # 0. Initial configuration
     # 0.1. Verify if the select indices have been already calculated

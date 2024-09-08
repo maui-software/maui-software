@@ -10,6 +10,7 @@ The module ``visualizations`` has a collection of functions to create visualizat
     indices_histogram_plot
     indices_violin_plot
     spectrogram_plot
+    false_color_spectrogram_plot
 
 """
 
