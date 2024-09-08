@@ -7,7 +7,8 @@ The module ``utils`` has a collection of utilities to be used in audio files man
     :toctree: generated/
 
     
-    segment_audio_files
+    false_color_spectrogram_prepare_dataset
+    segment_audio_files    
 
 """
 

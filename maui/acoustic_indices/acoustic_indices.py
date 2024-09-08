@@ -251,10 +251,41 @@ def calculate_acoustic_indices(
 
     Example
     -------
-    >>> df = pd.DataFrame({'file_path': ['audio1.wav', 'audio2.wav']})
-    >>> indices_methods = [method1, method2]
-    >>> pre_calc = pre_calculation
-    >>> result_df = calculate_acoustic_indices(
+    >>> from maui import samples, utils, acoustic_indices
+    >>> df = samples.get_audio_sample(dataset="leec")
+    >>> df["dt"] = pd.to_datetime(df["timestamp_init"]).dt.date
+    >>> def pre_calculation_method(s, fs):   
+    >>>     Sxx_power, tn, fn, ext = maad.sound.spectrogram (s, fs) 
+    >>>     Sxx_noNoise= maad.sound.median_equalizer(Sxx_power, display=False, extent=ext) 
+    >>>     Sxx_dB_noNoise = maad.util.power2dB(Sxx_noNoise)
+    >>> 
+    >>>     Sxx, tn, fn, ext = maad.sound.spectrogram(s, fs, mode='amplitude')
+    >>>     
+    >>>     pre_calc_vars = {'Sxx': Sxx, 'tn':tn , 'fn':fn , 'ext':ext, 'Sxx_dB_noNoise':Sxx_dB_noNoise }
+    >>>     return pre_calc_vars
+    >>>         
+    >>> def get_aci(pre_calc_vars):
+    >>>     aci_xx, aci_per_bin, aci_sum  = maad.features.acoustic_complexity_index(pre_calc_vars['Sxx'])
+    >>>     indices = {'aci_xx': aci_xx, 'aci_per_bin':aci_per_bin , 'aci_sum':aci_sum}
+    >>>     return indices
+    >>> 
+    >>> def get_spectral_events(pre_calc_vars):
+    >>>     EVNspFract_per_bin, EVNspMean_per_bin, EVNspCount_per_bin, EVNsp = maad.features.spectral_events(
+    >>>                 pre_calc_vars['Sxx_dB_noNoise'],
+    >>>                 dt=pre_calc_vars['tn'][1] - pre_calc_vars['tn'][0],
+    >>>                 dB_threshold=6,
+    >>>                 rejectDuration=0.1,
+    >>>                 display=False,
+    >>>                 extent=pre_calc_vars['ext'])  
+    >>>     
+    >>>     indices = {'EVNspFract_per_bin': EVNspFract_per_bin, 'EVNspMean_per_bin':EVNspMean_per_bin , 'EVNspCount_per_bin':EVNspCount_per_bin, 'EVNsp':EVNsp}
+    >>>     return indices
+    >>> def get_spectral_activity(pre_calc_vars):
+    >>>     ACTspfract_per_bin, ACTspcount_per_bin, ACTspmean_per_bin = maad.features.spectral_activity(pre_calc_vars['Sxx_dB_noNoise'])
+    >>>     indices = {'ACTspfract_per_bin': ACTspfract_per_bin, 'ACTspcount_per_bin':ACTspcount_per_bin , 'ACTspmean_per_bin':ACTspmean_per_bin}
+    >>>     return indices
+    >>> acoustic_indices_methods = [get_aci, get_spectral_activity, get_spectral_events]
+    >>> result_df = acoustic_indices.calculate_acoustic_indices(
         df, 'file_path', indices_methods, pre_calc, parallel=True)
     """
 
