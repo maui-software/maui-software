@@ -12,6 +12,7 @@ Subpackages
    maui.io
    maui.visualizations
    maui.samples
+   maui.utils
 
 Module contents
 ---------------

@@ -23,6 +23,7 @@ Acoustic Ecology Visualization
    maui.io
    maui.visualizations
    maui.samples
+   maui.utils
 
 .. toctree::
    :caption: Example Gallery
