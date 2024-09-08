@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.samples.audio_samples &mdash; maui-software 0.1.22 documentation</title>
+  <title>maui.samples.audio_samples &mdash; maui-software 0.1.25 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -13,8 +13,8 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/documentation_options.js?v=842aa08f"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/documentation_options.js?v=4fa33042"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -34,7 +34,7 @@
               <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.22
+                0.1.25
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -51,6 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../maui.io.html">Input and Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maui.visualizations.html">Visualizations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maui.samples.html">Samples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.utils.html">Utils</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
 <ul>
@@ -83,44 +84,51 @@
              
   <h1>Source code for maui.samples.audio_samples</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	This module offers a streamlined approach to retrieving information on</span>
-<span class="sd">	audio samples within the Maui project framework. It serves to abstract the</span>
-<span class="sd">	complexities of accessing and parsing audio file metadata, providing a simple</span>
-<span class="sd">	method for users to obtain a structured and comprehensive overview of available</span>
-<span class="sd">	audio samples. The methods returns a pandas DataFrame detailing</span>
-<span class="sd">	the samples, including aspects such as file paths, durations, and other</span>
-<span class="sd">	pertinent metadata.</span>
+<span class="sd">    This module offers a streamlined approach to retrieving information on</span>
+<span class="sd">    audio samples within the Maui project framework. It serves to abstract the</span>
+<span class="sd">    complexities of accessing and parsing audio file metadata, providing a simple</span>
+<span class="sd">    method for users to obtain a structured and comprehensive overview of available</span>
+<span class="sd">    audio samples. The methods returns a pandas DataFrame detailing</span>
+<span class="sd">    the samples, including aspects such as file paths, durations, and other</span>
+<span class="sd">    pertinent metadata.</span>
 
-<span class="sd">	The functionality leverages the `maui.io` module for the extraction of audio</span>
-<span class="sd">	information, ensuring consistency and reliability in the data presented.</span>
+<span class="sd">    The functionality leverages the `maui.io` module for the extraction of audio</span>
+<span class="sd">    information, ensuring consistency and reliability in the data presented.</span>
 
-<span class="sd">	Functionality:</span>
-<span class="sd">	- Simplifies the retrieval of audio sample metadata within the Maui</span>
-<span class="sd">	  framework.</span>
+<span class="sd">    Functionality:</span>
+<span class="sd">    - Simplifies the retrieval of audio sample metadata within the Maui</span>
+<span class="sd">      framework.</span>
 
-<span class="sd">	Usage:</span>
-<span class="sd">	- Intended for use in data analysis workflows requiring access to structured</span>
-<span class="sd">	  information about specific sets of audio samples.</span>
+<span class="sd">    Usage:</span>
+<span class="sd">    - Intended for use in data analysis workflows requiring access to structured</span>
+<span class="sd">      information about specific sets of audio samples.</span>
 
-<span class="sd">	Dependencies:</span>
-<span class="sd">	- os: For handling file and directory paths.</span>
-<span class="sd">	- maui.io: For underlying audio information extraction processes.</span>
+<span class="sd">    Dependencies:</span>
+<span class="sd">    - os: For handling file and directory paths.</span>
+<span class="sd">    - maui.io: For underlying audio information extraction processes.</span>
 
-<span class="sd">	Examples and additional details are provided in the function docstring,</span>
-<span class="sd">	guiding users in applying the module to their specific needs.</span>
+<span class="sd">    Examples and additional details are provided in the function docstring,</span>
+<span class="sd">    guiding users in applying the module to their specific needs.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">zipfile</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">gdown</span>
 
 <span class="kn">import</span> <span class="nn">maui.io</span>
 
 
+<span class="k">def</span> <span class="nf">get_dataset_url</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">file_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s1">&#39;leec&#39;</span><span class="p">:</span>
+        <span class="n">file_id</span> <span class="o">=</span> <span class="s1">&#39;1tw7BpPNBeS6Dz0XJOwwYuJOYJgd4XSUE&#39;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;https://drive.google.com/uc?id=</span><span class="si">{</span><span class="n">file_id</span><span class="si">}</span><span class="s2">&quot;</span>
+
 <div class="viewcode-block" id="get_audio_sample">
 <a class="viewcode-back" href="../../../maui.samples.html#maui.samples.get_audio_sample">[docs]</a>
-<span class="k">def</span> <span class="nf">get_audio_sample</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">get_audio_sample</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extract_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get Leec Audio Samples available in maui.</span>
 
@@ -128,6 +136,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    dataset : str</span>
 <span class="sd">        Dataset to be loaded. The available datasets are: leec</span>
+<span class="sd">    extract_path : str</span>
+<span class="sd">        Directory to extract sample files</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -148,24 +158,36 @@
     <span class="k">if</span> <span class="n">dataset</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">available_datasets</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Dataset not available&quot;</span><span class="p">)</span>
 
-    <span class="n">dataset_format_name</span> <span class="o">=</span> <span class="s2">&quot;unknwown&quot;</span>
+    <span class="n">dataset_format_name</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
     <span class="k">if</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s2">&quot;leec&quot;</span><span class="p">:</span>
         <span class="n">dataset_format_name</span> <span class="o">=</span> <span class="s2">&quot;LEEC_FILE_FORMAT&quot;</span>
 
-    <span class="n">absolute_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
-    <span class="n">relative_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;../data/audio_samples/</span><span class="si">{</span><span class="n">dataset</span><span class="si">}</span><span class="s2">_data.zip&quot;&quot;&quot;</span>
-    <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">absolute_path</span><span class="p">,</span> <span class="n">relative_path</span><span class="p">)</span>
-
-    <span class="c1"># Create a directory to store the extracted files</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;maui_samples_</span><span class="si">{</span><span class="n">dataset</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="c1"># Open the zip file</span>
-    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ref</span><span class="p">:</span>
-        <span class="c1"># Extract all files to the specified directory</span>
-        <span class="n">zip_ref</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;maui_samples_</span><span class="si">{</span><span class="n">dataset</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+    <span class="n">zip_file_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset</span><span class="si">}</span><span class="s2">.zip&quot;</span>
+    <span class="n">zip_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">zip_file_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">extract_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">extract_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="n">zip_file_path</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">extract_path</span><span class="p">)</span>
+    
+    <span class="n">file_url</span> <span class="o">=</span> <span class="n">get_dataset_url</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+    
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">zip_file_path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">gdown</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">file_url</span><span class="p">,</span> <span class="n">zip_file_path</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    
+    <span class="c1"># Check if the file is a valid zip file</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ref</span><span class="p">:</span>
+            <span class="n">zip_ref</span><span class="o">.</span><span class="n">testzip</span><span class="p">()</span>
+            <span class="c1"># Extract all files to the specified directory </span>
+            <span class="n">zip_ref</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">extract_path</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Extraction complete.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">BadZipFile</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: The downloaded file is not a valid zip file.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">maui</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">get_audio_info</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;&quot;&quot;./maui_samples_</span><span class="si">{</span><span class="n">dataset</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="n">extract_path</span><span class="p">,</span>
         <span class="n">format_name</span><span class="o">=</span><span class="n">dataset_format_name</span><span class="p">,</span>
         <span class="n">store_duration</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">perc_sample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
