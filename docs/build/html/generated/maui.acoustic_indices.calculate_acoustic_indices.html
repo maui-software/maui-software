@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.acoustic_indices.calculate_acoustic_indices &mdash; maui-software 0.1.22 documentation</title>
+  <title>maui.acoustic_indices.calculate_acoustic_indices &mdash; maui-software 0.1.25 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
@@ -14,8 +14,8 @@
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/documentation_options.js?v=842aa08f"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/documentation_options.js?v=4fa33042"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -37,7 +37,7 @@
               <img src="../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.22
+                0.1.25
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -60,6 +60,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../maui.io.html">Input and Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.visualizations.html">Visualizations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.samples.html">Samples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.utils.html">Utils</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
 <ul>
@@ -95,91 +96,60 @@
 <h1>maui.acoustic_indices.calculate_acoustic_indices<a class="headerlink" href="#maui-acoustic-indices-calculate-acoustic-indices" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="maui.acoustic_indices.calculate_acoustic_indices">
-<span class="sig-prename descclassname"><span class="pre">maui.acoustic_indices.</span></span><span class="sig-name descname"><span class="pre">calculate_acoustic_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/acoustic_indices/acoustic_indices.html#calculate_acoustic_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.acoustic_indices.calculate_acoustic_indices" title="Link to this definition">¶</a></dt>
-<dd><p>Calculate a set of acoustic indices for audio files and optionally
-store the results.</p>
-<p>This function calculates a set of specified acoustic indices for audio
-files in the input DataFrame. The supported indices include
-median_amplitude_envelope, temporal_entropy, acoustic_richness, and others.
-The calculated indices are added as columns to the DataFrame, and the
-resulting DataFrame is returned. If the ‘store_df’ parameter is set
-to True, the DataFrame can be saved to a file.</p>
+<span class="sig-prename descclassname"><span class="pre">maui.acoustic_indices.</span></span><span class="sig-name descname"><span class="pre">calculate_acoustic_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acoustic_indices_methods</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_calculation_method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./tmp_maui_ac_files/'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/acoustic_indices/acoustic_indices.html#calculate_acoustic_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.acoustic_indices.calculate_acoustic_indices" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate acoustic indices for audio files in a DataFrame.</p>
+<p>This method processes a DataFrame containing file paths to audio files, calculates
+acoustic indices using the specified methods, and returns a DataFrame with the results.
+The calculations can be performed in parallel or sequentially, depending on the <cite>parallel</cite> flag.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>df_init</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The DataFrame containing audio file data with a ‘file_path’
-column specifying the path to each audio file.</p>
+<dt><strong>df_init</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The initial DataFrame containing the file paths to audio files and any other
+necessary metadata.</p>
 </dd>
-<dt><strong>indices_list</strong><span class="classifier">List[str]</span></dt><dd><p>A list of acoustic indices to calculate. Available indices are: 
-median_amplitude_envelope ,temporal_entropy ,acoustic_richness
-,temporal_activity ,temporal_events ,acoustic_complexity_index
-,frequency_entropy ,number_of_peaks ,spectral_entropy
-,spectral_activity ,spectral_events ,spectral_cover
-,soundscape_index ,acoustic_diversity_index ,acoustic_eveness_index
-,temporal_leq ,spectral_leq ,tfsd ,more_entropy
-,acoustic_gradient_index ,frequency_raoq
-,region_of_interest_index</p>
+<dt><strong>file_path_col</strong><span class="classifier">str</span></dt><dd><p>The name of the column in <cite>df_init</cite> that contains the file paths to the audio files.</p>
 </dd>
-<dt><strong>store_df</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to store the resulting DataFrame to a file. Default is False.</p>
+<dt><strong>acoustic_indices_methods</strong><span class="classifier">list of callables</span></dt><dd><p>A list of methods, where each method computes a specific acoustic index.
+Each method should accept the output of <cite>pre_calculation_method</cite> and return a dictionary
+of index names and values.</p>
 </dd>
-<dt><strong>base_dir</strong><span class="classifier">str, optional</span></dt><dd><p>The base directory where the output file will be saved. Required if ‘store_df’ is True.</p>
+<dt><strong>pre_calculation_method</strong><span class="classifier">callable</span></dt><dd><p>A method that performs any necessary pre-calculations on the audio data.
+It should accept the loaded audio data and sampling rate, returning an object
+that will be passed to each of the <cite>acoustic_indices_methods</cite>.</p>
 </dd>
-<dt><strong>file_name</strong><span class="classifier">str, optional</span></dt><dd><p>The name of the output file to save the DataFrame. Required if ‘store_df’ is True.</p>
+<dt><strong>parallel</strong><span class="classifier">bool</span></dt><dd><p>If True, the calculations will be performed in parallel using multiple processes.
+If False, the calculations will be performed sequentially.</p>
 </dd>
-<dt><strong>file_type</strong><span class="classifier">str, optional</span></dt><dd><p>The file format for saving the DataFrame (‘csv’ or ‘pickle’).
-Required if ‘store_df’ is True.</p>
+<dt><strong>chunk_size</strong><span class="classifier">int, optional</span></dt><dd><p>The number of rows to process in each chunk. If not provided, a default value is calculated
+based on the number of CPU cores available.</p>
 </dd>
-<dt><strong>parallel</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to use parallel processing for calculating indices. Default is True.</p>
+<dt><strong>temp_dir</strong><span class="classifier">str, optional</span></dt><dd><p>The directory path where the temporary CSV files will be saved.
+The default is ‘./tmp_maui_ac_files/’.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt>pd.DataFrame</dt><dd><p>The DataFrame containing the calculated acoustic indices.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt>Exception</dt><dd><p>If the selected indices are not available or if
-the DataFrame is missing the ‘file_path’ column.</p>
+<dt>pd.DataFrame</dt><dd><p>A DataFrame containing the original data along with the calculated acoustic indices.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
 <ul class="simple">
-<li><dl class="simple">
-<dt>The function calculates a specified set of acoustic</dt><dd><p>indices for each audio file in the DataFrame.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>The ‘indices_list’ parameter should contain a list of available</dt><dd><p>indices to be calculated.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>The ‘store_df’, ‘base_dir’, ‘file_name’, and ‘file_type’ parameters</dt><dd><p>control whether and where to save the resulting DataFrame.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>If parallel processing is enabled (‘parallel’ is True),</dt><dd><p>the function will use multiple CPU cores for faster calculations.</p>
-</dd>
-</dl>
-</li>
+<li><p>The method first divides the DataFrame into smaller chunks, each of which is
+processed separately to calculate the acoustic indices. The results are saved
+as temporary CSV files.</p></li>
+<li><p>If <cite>parallel</cite> is True, multiple processes are used to calculate the indices concurrently.
+Otherwise, the calculation is done sequentially.</p></li>
+<li><p>The method combines the results from all chunks into a single DataFrame, restores the original
+data types, and removes the temporary files.</p></li>
+<li><p>The <cite>_convert_string_to_list</cite> function is applied to the final DataFrame to ensure that the
+data types are correctly interpreted.</p></li>
 </ul>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">acoustic_indices</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">indices_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;median_amplitude_envelope&#39;</span><span class="p">,</span> <span class="s1">&#39;temporal_entropy&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">acoustic_indices</span><span class="o">.</span><span class="n">calculate_acoustic_indices</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">indices_list</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </section>
