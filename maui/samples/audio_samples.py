@@ -240,8 +240,8 @@ def _download_xc_files(df: pd.DataFrame, extract_path: str) -> pd.DataFrame:
                 _, _ = urllib.request.urlretrieve(row["file"], full_path)
                 path_list.append(full_path)
                 downloaded_list.append(True)
-            except:
-                print(f"File {file_name_xc} could not be downloaded.")
+            except (urllib.error.URLError, OSError) as e:
+                print(f"File {file_name_xc} could not be downloaded. Error: {str(e)}")
                 path_list.append(None)
                 downloaded_list.append(False)
 
