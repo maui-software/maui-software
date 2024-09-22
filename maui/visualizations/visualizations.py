@@ -46,6 +46,7 @@ import warnings
 import os
 import re
 
+from dateutil import parser
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -759,6 +760,274 @@ def spectrogram_plot(
 # -----------------------------------------------------------------------
 
 
+def _parse_time_format(time_str: str):
+    """
+    Parse a time string into a 24-hour format (HH:MM).
+
+    Parameters
+    ----------
+    time_str : str
+        The time string to parse. Can be in various formats (e.g., '9am', '09:00').
+
+    Returns
+    -------
+    str
+        The parsed time in HH:MM format.
+
+    Raises
+    ------
+    ValueError
+        If the input time string is invalid or cannot be parsed.
+    """
+    try:
+
+        # Use dateutil's parser to interpret different time formats
+        parsed_time = parser.parse(time_str)
+        # Format the time in HH:MM (24-hour format)
+        return parsed_time.strftime("%H:%M")
+    except (ValueError, TypeError) as exc:
+        # Raise an exception if the format can't be parsed
+        raise ValueError(f"Invalid time format: {time_str}") from exc
+
+
+def _truncate_time_to_bin(time_str: str, time_bin_size: int) -> str:
+    """
+    Truncate the given time string to the nearest time bin based on `time_bin_size`.
+
+    Parameters
+    ----------
+    time_str : str
+        The time string in HH:MM format.
+    time_bin_size : int
+        The size of the time bin in minutes (e.g., 5, 10, 15).
+
+    Returns
+    -------
+    str
+        The truncated time string in HH:MM format.
+    """
+    # Parse the time string to a datetime object
+    parsed_time = pd.to_datetime(time_str, format="%H:%M")
+
+    # Extract hour and minute
+    minute = parsed_time.minute
+
+    # Truncate minute to the nearest bin
+    truncated_minute = (minute // time_bin_size) * time_bin_size
+
+    # Replace the minute in the parsed time
+    truncated_time = parsed_time.replace(minute=truncated_minute)
+
+    # Return the formatted truncated time in HH:MM format
+    return truncated_time.strftime("%H:%M")
+
+
+def _aggregate_dataframe(
+    df: pd.DataFrame, gb_cols: list, grouped_col: str, agg_type: str
+) -> pd.DataFrame:
+    """
+    Aggregate a DataFrame by specified columns and aggregation type.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The DataFrame to aggregate.
+    gb_cols : list
+        List of columns to group by.
+    grouped_col : str
+        The column to aggregate.
+    agg_type : str
+        The type of aggregation to perform. Options: "mean", "median",
+        "stddev", "var", "max", "min".
+
+    Returns
+    -------
+    pd.DataFrame
+        The aggregated DataFrame.
+
+    Raises
+    ------
+    AttributeError
+        If the `agg_type` is not one of the supported options.
+    """
+
+    if agg_type == "mean":
+        df_agg = df.groupby(gb_cols).mean(grouped_col).reset_index()
+    elif agg_type == "median":
+        df_agg = df.groupby(gb_cols).median(grouped_col).reset_index()
+    elif agg_type == "stddev":
+        df_agg = df.groupby(gb_cols).std(grouped_col).reset_index()
+    elif agg_type == "var":
+        df_agg = df.groupby(gb_cols).var(grouped_col).reset_index()
+    elif agg_type == "max":
+        df_agg = df.groupby(gb_cols).max(grouped_col).reset_index()
+    elif agg_type == "min":
+        df_agg = df.groupby(gb_cols).min(grouped_col).reset_index()
+    else:
+        agg_options = ["mean", "median", "stddev", "var", "max", "min"]
+        raise AttributeError(f"'{agg_type}' is not in {agg_options}.")
+
+    df_agg = df_agg.rename(columns={grouped_col: "metric"})
+
+    return df_agg
+
+
+def diel_plot(
+    df: pd.DataFrame,
+    date_col: str,
+    time_col: str,
+    duration_col: str,
+    time_bin_size: int,
+    color_map_col: str,
+    agg_type: str = None,
+    show_plot: bool = True,
+    **kwargs,
+):
+    """
+    Create a diel plot (heatmap) based on time and date columns.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input DataFrame containing date, time, and color mapping columns.
+    date_col : str
+        Column name for the date in the DataFrame.
+    time_col : str
+        Column name for the time in the DataFrame.
+    duration_col : str
+        Column name for the duration of each event in the DataFrame.
+    time_bin_size : int
+        The size of the time bin in minutes. Must be between 1 and 60.
+    color_map_col : str
+        Column used to color the plot. Can be numeric or categorical.
+    agg_type : str, optional
+        Aggregation type for numeric `color_map_col`. Default is None.
+    show_plot : bool, optional
+        Whether to show the plot. Default is True.
+    **kwargs : dict
+        Additional arguments for plot customization, such as `height` and `width`.
+
+    Returns
+    -------
+    plotly.graph_objects.Figure
+        The generated diel plot as a Plotly figure.
+
+    Raises
+    ------
+    AttributeError
+        If the `time_bin_size` is not between 1 and 60, or if `color_map_col` is
+        not of numeric or string type.
+
+    Warnings
+    --------
+    UserWarning
+        If any rows have durations greater than the `time_bin_size`, or if the
+        date column contains invalid dates.
+
+    Examples
+    --------
+    >>> from maui import samples, utils, visualizations
+    >>> df = samples.get_audio_sample(dataset="leec")
+    >>> def convert_to_seconds(duration_str):
+    >>> try:
+    >>>     minutes, seconds = map(int, duration_str.split(':'))
+    >>>     return minutes * 60 + seconds
+    >>> except ValueError:
+    >>>     # Handle the case where the input is not in "mm:ss" format
+    >>>     raise ValueError(f"Invalid duration format: {duration_str}")
+    >>>
+    >>> # Apply the function to the 'duration' column
+    >>> df = pd.read_csv('xc_data.csv')
+    >>> df['length'] = df['length'].apply(convert_to_seconds)
+    >>>
+    >>> df = df[~df['time'].str.contains(r'?', na=False)]
+    >>> df = df[df['time'] != 'am']
+    >>> df = df[df['time'] != 'pm']
+    >>> df = df[df['time'] != 'xx:xx']
+    >>> df = df[df['time'] != '?:?']
+    >>> fig = visualizations.diel_plot(df, date_col='date',
+    >>>                                 time_col='time', duration_col='length',
+    >>>                                 time_bin_size=1, color_map_col='group',
+    >>>                                 show_plot= True)
+
+    """
+
+    # 0. Prepare date and time columns
+    # 0.1. Parse time column
+
+    df[time_col] = df[time_col].apply(_parse_time_format)
+
+    # 0.2. Verify overlaps
+    if time_bin_size < 1 or time_bin_size > 60:
+        raise AttributeError(
+            "time_bin_size must be an integer between 1 and 60, representing minutes"
+        )
+    df_time_check = df[df[duration_col] > time_bin_size*60]
+
+    if len(df_time_check) > 0:
+        warnings.warn(
+            f"Warning: {len(df_time_check)} rows have a duration greater than the "
+            f"time_bin_size of {time_bin_size} minutes. The time will be "
+            "truncated according to time_bin_size. You should consider "
+            "segmenting audio files so each one does not exceed "
+            "time_bin_size duration."
+        )
+
+    # 0.3. Truncate time column according to time_bin_size
+    df[time_col] = df[time_col].apply(lambda t: _truncate_time_to_bin(t, time_bin_size))
+
+    # 0.4. Force date format
+    df[date_col] = pd.to_datetime(df[date_col], format="%Y-%m-%d", errors="coerce")
+    invalid_dates = df[date_col].isna().sum()
+    if invalid_dates > 0:
+        warnings.warn(
+            f"Warning: {invalid_dates} rows have invalid dates. This rows "
+            "will be ignored in the visualization."
+        )
+    df = df.dropna(subset=[date_col])
+
+    # 1. Aggregate dataframe
+    if pd.api.types.is_string_dtype(df[color_map_col]):
+        # count by color_map_col
+        df_plot = df.groupby([date_col, time_col]).size().reset_index(name="metric")
+        color_title = "Number of samples"
+    elif pd.api.types.is_numeric_dtype(df[color_map_col]):
+        # aggregate color_map_col
+        if agg_type is None:
+            raise AttributeError("agg_type should not be None")
+        df_plot = _aggregate_dataframe(
+            df, [date_col, time_col], color_map_col, agg_type
+        )
+        color_title = f"{agg_type} of {color_map_col}"
+    else:
+        raise AttributeError(f"'{color_map_col}' should be string or numeric type.")
+
+    #  2. Plot image
+    fig = go.Figure(
+        data=go.Heatmap(
+            z=df_plot["metric"],
+            x=df_plot[time_col],
+            y=df_plot[date_col],
+            colorscale="Viridis",
+            colorbar={"title": color_title},
+        )
+    )
+    # Set axis labels
+    fig.update_layout(
+        title="Diel Plot", title_x=0.5, xaxis_title="Time of day", yaxis_title="Date"
+    )
+    if "height" in kwargs.keys() and "width" in kwargs.keys():
+        fig.update_layout(height=kwargs["height"], width=kwargs["width"])
+
+    if show_plot:
+        fig.show()
+
+    return fig
+
+
+# -----------------------------------------------------------------------
+
+
 def _display_false_color_spectrogram(
     df: pd.DataFrame,
     fc_spectrogram: np.array,
@@ -844,20 +1113,20 @@ def _display_false_color_spectrogram(
         f"""{re.sub(r'_per_bin', '', indices[0])} (G) and {indices[2]} """
         f"""(B) False Color Spectrogram""",
         xaxis={
-            'showgrid':False,
-            'zeroline':False,
-            'tickvals':tick_indices,
-            'ticktext':tick_values,
-            'tickangle':90,
+            "showgrid": False,
+            "zeroline": False,
+            "tickvals": tick_indices,
+            "ticktext": tick_values,
+            "tickangle": 90,
         },
         yaxis={
-            'showgrid':False,
-            'zeroline':False,
-            'scaleanchor':"x",
-            'autorange':True,
-            'range':[0, fc_spectrogram.shape[0]],
+            "showgrid": False,
+            "zeroline": False,
+            "scaleanchor": "x",
+            "autorange": True,
+            "range": [0, fc_spectrogram.shape[0]],
         },
-        margin=dict(l=0, r=0, t=30, b=0),
+        margin={"l": 0, "r": 0, "t": 30, "b": 0},
         width=width,
         height=height,
     )
@@ -897,13 +1166,13 @@ def false_color_spectrogram_plot(
         If True, the spectrogram is displayed using Plotly. Default is True.
 
     unit : str, optional
-        The time unit to truncate the timestamps from 0.2 seconds to 60 seconds. Must be one of
-        ['scale_02', 'scale_04', 'scale_06', 'scale_2', 'scale_4', 'scale_6', 'scale_12', 'scale_24'].
-        Default is 'scale_60'.
+        The time unit to truncate the timestamps from 0.2 seconds to 60 seconds.
+        Must be one of ['scale_02', 'scale_04', 'scale_06', 'scale_2', 'scale_4',
+        'scale_6', 'scale_12', 'scale_24']. Default is 'scale_60'.
 
     **kwargs : dict, optional
         Additional arguments for customizing the display:
-        
+
         - fig_size (dict): Dictionary specifying the figure size with 'width'
           and 'height' keys.
         - tick_interval (int): Interval for selecting ticks on the x-axis.
@@ -941,45 +1210,54 @@ def false_color_spectrogram_plot(
     >>> from maui import samples, utils, visualizations
     >>> df = samples.get_audio_sample(dataset="leec")
     >>> df["dt"] = pd.to_datetime(df["timestamp_init"]).dt.date
-    >>> def pre_calculation_method(s, fs):   
-    >>>     Sxx_power, tn, fn, ext = maad.sound.spectrogram (s, fs) 
-    >>>     Sxx_noNoise= maad.sound.median_equalizer(Sxx_power, display=False, extent=ext) 
+    >>> def pre_calculation_method(s, fs):
+    >>>     Sxx_power, tn, fn, ext = maad.sound.spectrogram (s, fs)
+    >>>     Sxx_noNoise= maad.sound.median_equalizer(Sxx_power, display=False, extent=ext)
     >>>     Sxx_dB_noNoise = maad.util.power2dB(Sxx_noNoise)
-    >>> 
+    >>>
     >>>     Sxx, tn, fn, ext = maad.sound.spectrogram(s, fs, mode='amplitude')
-    >>>     
-    >>>     pre_calc_vars = {'Sxx': Sxx, 'tn':tn , 'fn':fn , 'ext':ext, 'Sxx_dB_noNoise':Sxx_dB_noNoise }
+    >>>
+    >>>     pre_calc_vars = {'Sxx': Sxx, 'tn':tn , 'fn':fn , 'ext':ext,
+    >>>                      'Sxx_dB_noNoise':Sxx_dB_noNoise }
     >>>     return pre_calc_vars
-    >>>         
+    >>>
     >>> def get_aci(pre_calc_vars):
-    >>>     aci_xx, aci_per_bin, aci_sum  = maad.features.acoustic_complexity_index(pre_calc_vars['Sxx'])
+    >>>     aci_xx, aci_per_bin, aci_sum = (
+    >>>             maad.features.acoustic_complexity_index(pre_calc_vars['Sxx']))
     >>>     indices = {'aci_xx': aci_xx, 'aci_per_bin':aci_per_bin , 'aci_sum':aci_sum}
     >>>     return indices
-    >>> 
+    >>>
     >>> def get_spectral_events(pre_calc_vars):
-    >>>     EVNspFract_per_bin, EVNspMean_per_bin, EVNspCount_per_bin, EVNsp = maad.features.spectral_events(
+    >>>     EVNspFract_per_bin, EVNspMean_per_bin, EVNspCount_per_bin, EVNsp = (
+    >>>             maad.features.spectral_events(
     >>>                 pre_calc_vars['Sxx_dB_noNoise'],
     >>>                 dt=pre_calc_vars['tn'][1] - pre_calc_vars['tn'][0],
     >>>                 dB_threshold=6,
     >>>                 rejectDuration=0.1,
     >>>                 display=False,
-    >>>                 extent=pre_calc_vars['ext'])  
-    >>>     
-    >>>     indices = {'EVNspFract_per_bin': EVNspFract_per_bin, 'EVNspMean_per_bin':EVNspMean_per_bin , 'EVNspCount_per_bin':EVNspCount_per_bin, 'EVNsp':EVNsp}
+    >>>                 extent=pre_calc_vars['ext'])
+    >>>             )
+    >>>
+    >>>     indices = {'EVNspFract_per_bin': EVNspFract_per_bin,
+    >>>                'EVNspMean_per_bin':EVNspMean_per_bin,
+    >>>                'EVNspCount_per_bin':EVNspCount_per_bin, 'EVNsp':EVNsp}
     >>>     return indices
     >>> def get_spectral_activity(pre_calc_vars):
-    >>>     ACTspfract_per_bin, ACTspcount_per_bin, ACTspmean_per_bin = maad.features.spectral_activity(pre_calc_vars['Sxx_dB_noNoise'])
-    >>>     indices = {'ACTspfract_per_bin': ACTspfract_per_bin, 'ACTspcount_per_bin':ACTspcount_per_bin , 'ACTspmean_per_bin':ACTspmean_per_bin}
+    >>>     ACTspfract_per_bin, ACTspcount_per_bin, ACTspmean_per_bin = (
+                        maad.features.spectral_activity(pre_calc_vars['Sxx_dB_noNoise']))
+    >>>     indices = {'ACTspfract_per_bin': ACTspfract_per_bin,
+    >>>                'ACTspcount_per_bin':ACTspcount_per_bin,
+    >>>                'ACTspmean_per_bin':ACTspmean_per_bin}
     >>>     return indices
     >>> acoustic_indices_methods = [get_aci, get_spectral_activity, get_spectral_events]
-    >>> 
+    >>>
     >>> df_temp = df.iloc[0:1]
     >>> segmented_df = utils.false_color_spectrogram_prepare_dataset(
-    >>>     df_temp, 
+    >>>     df_temp,
     >>>     datetime_col = 'timestamp_init',
     >>>     duration_col = 'duration',
     >>>     file_path_col = 'file_path',
-    >>>     indices = ['acoustic_complexity_index', 'spectral_activity', 'spectral_events'], 
+    >>>     indices = ['acoustic_complexity_index', 'spectral_activity', 'spectral_events'],
     >>>     output_dir = './segmented_indices',
     >>>     store_audio_segments = True,
     >>>     unit = 'scale_02',
@@ -990,17 +1268,16 @@ def false_color_spectrogram_plot(
     >>> )
     >>>
     >>> fcs = visualizations.false_color_spectrogram_plot(
-    >>>             segmented_df, 
-    >>>             datetime_col = 'start_time', 
-    >>>             indices = ['aci_per_bin', 'ACTspfract_per_bin', 'EVNspCount_per_bin'], 
-    >>>             display = True, 
+    >>>             segmented_df,
+    >>>             datetime_col = 'start_time',
+    >>>             indices = ['aci_per_bin', 'ACTspfract_per_bin', 'EVNspCount_per_bin'],
+    >>>             display = True,
     >>>             unit = 'scale_02'
     >>>         )
 
 
 
     """
-
 
     # 0. Initial configuration
     # 0.1. Verify if the select indices have been already calculated
