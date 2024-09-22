@@ -727,7 +727,7 @@ def test_diel_plot_warning_duration_greater_than_time_bin_size():
         {
             "date": ["2024-01-01"],
             "time": ["09:00"],
-            "length": [30],  # Greater than time_bin_size
+            "length": [3000],  # Greater than time_bin_size
             "group": ["1"],
         }
     )
