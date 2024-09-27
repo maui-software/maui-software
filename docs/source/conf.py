@@ -15,10 +15,10 @@ print(sys.path)
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'maui-software'
-copyright = '2023, Caio Ferreira Bernardo'
+copyright = '2024, Caio Ferreira Bernardo'
 author = 'Caio Ferreira Bernardo'
-release = '0.1.25'
-version = '0.1.25'
+release = '0.2.0'
+version = '0.2.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.files_metadata.extract_metadata &mdash; maui-software 0.2.0 documentation</title>
+  <title>maui.samples.get_xc_data &mdash; maui-software 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
@@ -19,7 +19,9 @@
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Utils" href="../maui.utils.html" />
+    <link rel="prev" title="maui.samples.get_audio_sample" href="maui.samples.get_audio_sample.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,12 +48,19 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../maui.acoustic_indices.html">Acoustic Indices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.eda.html">Exploratory data analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.io.html">Input and Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.visualizations.html">Visualizations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../maui.samples.html">Samples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../maui.samples.html">Samples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="maui.samples.get_audio_sample.html">maui.samples.get_audio_sample</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">maui.samples.get_xc_data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#maui.samples.get_xc_data"><code class="docutils literal notranslate"><span class="pre">get_xc_data()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../maui.utils.html">Utils</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
@@ -73,9 +82,10 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">maui.files_metadata.extract_metadata</li>
+          <li class="breadcrumb-item"><a href="../maui.samples.html">Samples</a></li>
+      <li class="breadcrumb-item active">maui.samples.get_xc_data</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/generated/maui.files_metadata.extract_metadata.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/generated/maui.samples.get_xc_data.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -83,40 +93,44 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="maui-files-metadata-extract-metadata">
-<h1>maui.files_metadata.extract_metadata<a class="headerlink" href="#maui-files-metadata-extract-metadata" title="Link to this heading">¶</a></h1>
+  <section id="maui-samples-get-xc-data">
+<h1>maui.samples.get_xc_data<a class="headerlink" href="#maui-samples-get-xc-data" title="Link to this heading">¶</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="maui.files_metadata.extract_metadata">
-<span class="sig-prename descclassname"><span class="pre">maui.files_metadata.</span></span><span class="sig-name descname"><span class="pre">extract_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_time_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_file_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/files_metadata/files_metadata.html#extract_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.files_metadata.extract_metadata" title="Link to this definition">¶</a></dt>
-<dd><p>Extract metadata from a string based on a specified format.</p>
+<dt class="sig sig-object py" id="maui.samples.get_xc_data">
+<span class="sig-prename descclassname"><span class="pre">maui.samples.</span></span><span class="sig-name descname"><span class="pre">get_xc_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/samples/audio_samples.html#get_xc_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.samples.get_xc_data" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves and downloads Xeno-canto data based on a set of query parameters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>string</strong><span class="classifier">str</span></dt><dd><p>The string from which metadata will be extracted.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
 </dd>
-<dt><strong>format_name</strong><span class="classifier">str</span></dt><dd><p>Name of the format to use for metadata extraction.</p>
-</dd>
-<dt><strong>date_time_func</strong><span class="classifier">function, optional</span></dt><dd><p>A function to handle date and time processing for extracted metadata.
-Default is None.</p>
-</dd>
-<dt><strong>format_file_path</strong><span class="classifier">str, optional</span></dt><dd><p>Path to the YAML file containing format configurations.
-Default is ‘files_formats.yaml’.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>dict or None</dt><dd><p>A dictionary containing extracted metadata if successful, None otherwise.</p>
+<dt><strong>q</strong><span class="classifier">dict</span></dt><dd><p>A dictionary of query parameters to filter recordings from Xeno-canto.</p>
+</dd>
+<dt><strong>extract_path</strong><span class="classifier">str</span></dt><dd><p>The directory where the audio files will be saved.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt>ValueError</dt><dd><p>If the specified format is not found in the format file.</p>
+<dt>pd.DataFrame</dt><dd><p>A DataFrame containing the recordings data from Xeno-canto, with additional columns for
+the local file paths and file download status.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>ValueError</dt><dd><p>If unexpected query parameters are provided.</p>
 </dd>
 </dl>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The method first validates the query dictionary to ensure only valid keys are used.</p></li>
+<li><p>After retrieving the recordings data using the <cite>_get_xc_dataset</cite> method, it downloads
+the audio files using the <cite>_download_xc_files</cite> method.</p></li>
+</ul>
 </dd></dl>
 
 </section>
@@ -124,7 +138,10 @@ Default is ‘files_formats.yaml’.</p>
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="maui.samples.get_audio_sample.html" class="btn btn-neutral float-left" title="maui.samples.get_audio_sample" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../maui.utils.html" class="btn btn-neutral float-right" title="Utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

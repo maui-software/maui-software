@@ -738,3 +738,204 @@ def test_diel_plot_warning_duration_greater_than_time_bin_size():
         _ = visualizations.diel_plot(
             df, "date", "time", "length", 15, "group", show_plot=False
         )
+
+
+# ------------ Test visualizations.polar_bar_plot -------------------------------------
+def test_polar_bar_plot_valid_input():
+    """
+    Test the `polar_bar_plot` function with valid input.
+
+    This test verifies that the function generates a valid plotly figure
+    when provided with a valid DataFrame. Specifically, it checks that the
+    returned object is a `plotly.graph_objects.Figure`.
+
+    Parameters
+    ----------
+    None
+
+    Raises
+    ------
+    AssertionError
+        If the returned object is not a plotly Figure.
+    """
+    # Create a valid DataFrame for testing
+    df = pd.DataFrame(
+        {
+            "date": pd.date_range(start="2023-01-01", periods=366, freq="D"),
+            "category": ["A", "B", "C"] * 122,
+        }
+    )
+
+    # Test the function with valid input
+    fig = visualizations.polar_bar_plot(
+        df, "date", "category", percent=False, show_plot=False
+    )
+
+    # Check if the returned object is a plotly figure
+    assert isinstance(fig, go.Figure)
+
+
+def test_missing_column():
+    """
+    Test the `polar_bar_plot` function with valid input.
+
+    This test verifies that the function generates a valid plotly figure
+    when provided with a valid DataFrame. Specifically, it checks that the
+    returned object is a `plotly.graph_objects.Figure`.
+
+    Parameters
+    ----------
+    None
+
+    Raises
+    ------
+    AssertionError
+        If the returned object is not a plotly Figure.
+
+    """
+    # Create a DataFrame missing the required columns
+    df = pd.DataFrame(
+        {
+            "date": pd.date_range(start="2023-01-01", periods=366, freq="D"),
+            "wrong_category": ["A", "B", "C"] * 122,
+        }
+    )
+
+    # Expect an AssertionError due to the missing category column
+    with pytest.raises(AssertionError):
+        visualizations.polar_bar_plot(
+            df, "date", "category", percent=False, show_plot=False
+        )
+
+
+def test_invalid_category_type():
+    """
+    Test the `polar_bar_plot` function with invalid category types.
+
+    This test checks that the function raises an `AttributeError` when the
+    `categories_col` contains continuous data instead of discrete categories.
+
+    Parameters
+    ----------
+    None
+
+    Raises
+    ------
+    AttributeError
+        If the `categories_col` contains continuous data instead of discrete categories.
+    """
+    # Create a DataFrame with invalid category type (continuous instead of discrete)
+    df = pd.DataFrame(
+        {
+            "date": pd.date_range(start="2023-01-01", periods=365, freq="D"),
+            "category": np.linspace(
+                0, 1, 365
+            ),  # Continuous values instead of categorical
+        }
+    )
+
+    # Expect an AttributeError due to continuous data in the category column
+    with pytest.raises(AttributeError):
+        visualizations.polar_bar_plot(
+            df, "date", "category", percent=False, show_plot=False
+        )
+
+
+def test_invalid_dates_warning():
+    """
+    Test the `polar_bar_plot` function with invalid date values.
+
+    This test checks that the function raises a `UserWarning` when invalid
+    date values are present in the DataFrame. Rows with invalid dates should
+    be ignored in the plot.
+
+    Parameters
+    ----------
+    None
+
+    Raises
+    ------
+    UserWarning
+        If invalid dates are found in the `date_time_col`.
+    """
+    # Create a DataFrame with invalid dates
+    df = pd.DataFrame(
+        {
+            "date": ["2023-01-01", "invalid_date", "2023-01-03"],
+            "category": ["A", "B", "C"],
+        }
+    )
+
+    # Expect a warning due to the invalid date
+    with pytest.warns(UserWarning, match="Warning: 1 rows have invalid dates"):
+        visualizations.polar_bar_plot(
+            df, "date", "category", percent=False, show_plot=False
+        )
+
+
+def test_percentage_mode():
+    """
+    Test the `polar_bar_plot` function with percentage mode enabled.
+
+    This test verifies that the function returns a valid plotly figure when
+    the `percent` parameter is set to True. The plot should display data as
+    percentages rather than raw counts.
+
+    Parameters
+    ----------
+    None
+
+    Raises
+    ------
+    AssertionError
+        If the returned object is not a plotly Figure.
+    """
+    # Create a valid DataFrame for testing
+    df = pd.DataFrame(
+        {
+            "date": pd.date_range(start="2023-01-01", periods=366, freq="D"),
+            "category": ["A", "B", "C"] * 122,
+        }
+    )
+
+    # Test the function with percent=True
+    fig = visualizations.polar_bar_plot(
+        df, "date", "category", percent=True, show_plot=False
+    )
+
+    # Check if the returned object is a plotly figure
+    assert isinstance(fig, go.Figure)
+
+
+def test_figure_custom_dimensions():
+    """
+    Test the `polar_bar_plot` function with custom figure dimensions.
+
+    This test verifies that the function correctly applies custom height and
+    width dimensions to the plot layout when passed as keyword arguments.
+
+    Parameters
+    ----------
+    None
+
+    Raises
+    ------
+    AssertionError
+        If the figure layout height or width does not match the expected values.
+    """
+    # Create a valid DataFrame for testing
+    df = pd.DataFrame(
+        {
+            "date": pd.date_range(start="2023-01-01", periods=366, freq="D"),
+            "category": ["A", "B", "C"] * 122,
+        }
+    )
+
+    # Test with custom figure dimensions
+    fig = visualizations.polar_bar_plot(
+        df, "date", "category", percent=False, show_plot=False, height=500, width=700
+    )
+
+    # Check if the layout has the correct height and width
+    assert fig.layout.height == 500
+    assert fig.layout.width == 700
