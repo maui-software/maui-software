@@ -12,3 +12,6 @@ sphinx_autodoc_typehints
 numpydoc
 ghp-import
 pyyaml
+gdown
+pypalettes
+matplotlib
