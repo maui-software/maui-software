@@ -738,3 +738,77 @@ def test_diel_plot_warning_duration_greater_than_time_bin_size():
         _ = visualizations.diel_plot(
             df, "date", "time", "length", 15, "group", show_plot=False
         )
+
+# ------------ Test visualizations.polar_bar_plot -------------------------------------
+def test_polar_bar_plot_valid_input():
+    # Create a valid DataFrame for testing
+    df = pd.DataFrame({
+        'date': pd.date_range(start='2023-01-01', periods=366, freq='D'),
+        'category': ['A', 'B', 'C'] * 122
+    })
+    
+    # Test the function with valid input
+    fig = visualizations.polar_bar_plot(df, 'date', 'category', percent=False, show_plot=False)
+    
+    # Check if the returned object is a plotly figure
+    assert isinstance(fig, go.Figure)
+
+def test_missing_column():
+    # Create a DataFrame missing the required columns
+    df = pd.DataFrame({
+        'date': pd.date_range(start='2023-01-01', periods=366, freq='D'),
+        'wrong_category': ['A', 'B', 'C'] * 122
+    })
+    
+    # Expect an AssertionError due to the missing category column
+    with pytest.raises(AssertionError):
+        visualizations.polar_bar_plot(df, 'date', 'category', percent=False, show_plot=False)
+
+def test_invalid_category_type():
+    # Create a DataFrame with invalid category type (continuous instead of discrete)
+    df = pd.DataFrame({
+        'date': pd.date_range(start='2023-01-01', periods=365, freq='D'),
+        'category': np.linspace(0, 1, 365)  # Continuous values instead of categorical
+    })
+    
+    # Expect an AttributeError due to continuous data in the category column
+    with pytest.raises(AttributeError):
+        visualizations.polar_bar_plot(df, 'date', 'category', percent=False, show_plot=False)
+
+def test_invalid_dates_warning():
+    # Create a DataFrame with invalid dates
+    df = pd.DataFrame({
+        'date': ['2023-01-01', 'invalid_date', '2023-01-03'],
+        'category': ['A', 'B', 'C']
+    })
+    
+    # Expect a warning due to the invalid date
+    with pytest.warns(UserWarning, match="Warning: 1 rows have invalid dates"):
+        visualizations.polar_bar_plot(df, 'date', 'category', percent=False, show_plot=False)
+
+def test_percentage_mode():
+    # Create a valid DataFrame for testing
+    df = pd.DataFrame({
+        'date': pd.date_range(start='2023-01-01', periods=366, freq='D'),
+        'category': ['A', 'B', 'C'] * 122
+    })
+    
+    # Test the function with percent=True
+    fig = visualizations.polar_bar_plot(df, 'date', 'category', percent=True, show_plot=False)
+    
+    # Check if the returned object is a plotly figure
+    assert isinstance(fig, go.Figure)
+
+def test_figure_custom_dimensions():
+    # Create a valid DataFrame for testing
+    df = pd.DataFrame({
+        'date': pd.date_range(start='2023-01-01', periods=366, freq='D'),
+        'category': ['A', 'B', 'C'] * 122
+    })
+    
+    # Test with custom figure dimensions
+    fig = visualizations.polar_bar_plot(df, 'date', 'category', percent=False, show_plot=False, height=500, width=700)
+    
+    # Check if the layout has the correct height and width
+    assert fig.layout.height == 500
+    assert fig.layout.width == 700

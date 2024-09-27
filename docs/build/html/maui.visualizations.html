@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Visualizations &mdash; maui-software 0.1.25 documentation</title>
+  <title>Visualizations &mdash; maui-software 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/documentation_options.js?v=4fa33042"></script>
+        <script src="_static/documentation_options.js?v=938c9ccc"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -37,7 +37,7 @@
               <img src="_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.25
+                0.2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -58,6 +58,8 @@
 <li class="toctree-l2"><a class="reference internal" href="generated/maui.visualizations.indices_violin_plot.html">maui.visualizations.indices_violin_plot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generated/maui.visualizations.spectrogram_plot.html">maui.visualizations.spectrogram_plot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generated/maui.visualizations.false_color_spectrogram_plot.html">maui.visualizations.false_color_spectrogram_plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/maui.visualizations.diel_plot.html">maui.visualizations.diel_plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/maui.visualizations.polar_bar_plot.html">maui.visualizations.polar_bar_plot</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="maui.samples.html">Samples</a></li>
@@ -112,8 +114,91 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.visualizations.false_color_spectrogram_plot.html#maui.visualizations.false_color_spectrogram_plot" title="maui.visualizations.false_color_spectrogram_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">false_color_spectrogram_plot</span></code></a>(df, ...[, ...])</p></td>
 <td><p>Generate and optionally display a false color spectrogram from acoustic indices.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/maui.visualizations.diel_plot.html#maui.visualizations.diel_plot" title="maui.visualizations.diel_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diel_plot</span></code></a>(df, date_col, time_col, ...[, ...])</p></td>
+<td><p>Create a diel plot (heatmap) based on time and date columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.visualizations.polar_bar_plot.html#maui.visualizations.polar_bar_plot" title="maui.visualizations.polar_bar_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">polar_bar_plot</span></code></a>(df, date_time_col, categories_col)</p></td>
+<td><p>Generate a polar bar plot to visualize category occurrences over the year.</p></td>
+</tr>
 </tbody>
 </table>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">maui.visualizations.</span></span><span class="sig-name descname"><span class="pre">diel_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_bin_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_map_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/visualizations/visualizations.html#diel_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Create a diel plot (heatmap) based on time and date columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>df</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>Input DataFrame containing date, time, and color mapping columns.</p>
+</dd>
+<dt><strong>date_col</strong><span class="classifier">str</span></dt><dd><p>Column name for the date in the DataFrame.</p>
+</dd>
+<dt><strong>time_col</strong><span class="classifier">str</span></dt><dd><p>Column name for the time in the DataFrame.</p>
+</dd>
+<dt><strong>duration_col</strong><span class="classifier">str</span></dt><dd><p>Column name for the duration of each event in the DataFrame.</p>
+</dd>
+<dt><strong>time_bin_size</strong><span class="classifier">int</span></dt><dd><p>The size of the time bin in minutes. Must be between 1 and 60.</p>
+</dd>
+<dt><strong>color_map_col</strong><span class="classifier">str</span></dt><dd><p>Column used to color the plot. Can be numeric or categorical.</p>
+</dd>
+<dt><strong>agg_type</strong><span class="classifier">str, optional</span></dt><dd><p>Aggregation type for numeric <cite>color_map_col</cite>. Default is None.</p>
+</dd>
+<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to show the plot. Default is True.</p>
+</dd>
+<dt><strong>**kwargs</strong><span class="classifier">dict</span></dt><dd><p>Additional arguments for plot customization, such as <cite>height</cite> and <cite>width</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>plotly.graph_objects.Figure</dt><dd><p>The generated diel plot as a Plotly figure.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>AttributeError</dt><dd><p>If the <cite>time_bin_size</cite> is not between 1 and 60, or if <cite>color_map_col</cite> is
+not of numeric or string type.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<dl class="simple">
+<dt>UserWarning</dt><dd><p>If any rows have durations greater than the <cite>time_bin_size</cite>, or if the
+date column contains invalid dates.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">visualizations</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_audio_sample</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;leec&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">convert_to_seconds</span><span class="p">(</span><span class="n">duration_str</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">minutes</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">duration_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">minutes</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">+</span> <span class="n">seconds</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># Handle the case where the input is not in &quot;mm:ss&quot; format</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid duration format: </span><span class="si">{</span><span class="n">duration_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Apply the function to the &#39;duration&#39; column</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;xc_data.csv&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">convert_to_seconds</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="n">na</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;am&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;pm&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;xx:xx&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;?:?&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">visualizations</span><span class="o">.</span><span class="n">diel_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">date_col</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">duration_col</span><span class="o">=</span><span class="s1">&#39;length&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                <span class="n">time_bin_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color_map_col</span><span class="o">=</span><span class="s1">&#39;group&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                <span class="n">show_plot</span><span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">maui.visualizations.</span></span><span class="sig-name descname"><span class="pre">false_color_spectrogram_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scale_60'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/visualizations/visualizations.html#false_color_spectrogram_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
@@ -136,9 +221,9 @@ for the R, G, and B channels of the spectrogram.</p>
 </dd>
 <dt><strong>display</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, the spectrogram is displayed using Plotly. Default is True.</p>
 </dd>
-<dt><strong>unit</strong><span class="classifier">str, optional</span></dt><dd><p>The time unit to truncate the timestamps from 0.2 seconds to 60 seconds. Must be one of
-[‘scale_02’, ‘scale_04’, ‘scale_06’, ‘scale_2’, ‘scale_4’, ‘scale_6’, ‘scale_12’, ‘scale_24’].
-Default is ‘scale_60’.</p>
+<dt><strong>unit</strong><span class="classifier">str, optional</span></dt><dd><p>The time unit to truncate the timestamps from 0.2 seconds to 60 seconds.
+Must be one of [‘scale_02’, ‘scale_04’, ‘scale_06’, ‘scale_2’, ‘scale_4’,
+‘scale_6’, ‘scale_12’, ‘scale_24’]. Default is ‘scale_60’.</p>
 </dd>
 <dt><strong>**kwargs</strong><span class="classifier">dict, optional</span></dt><dd><p>Additional arguments for customizing the display:</p>
 <ul class="simple">
@@ -182,45 +267,54 @@ with customizable figure size and tick interval.</p></li>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">visualizations</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_audio_sample</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;leec&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;dt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;timestamp_init&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">pre_calculation_method</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">):</span>   
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">Sxx_power</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">spectrogram</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span> 
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">Sxx_noNoise</span><span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">median_equalizer</span><span class="p">(</span><span class="n">Sxx_power</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">ext</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">pre_calculation_method</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">Sxx_power</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">spectrogram</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">Sxx_noNoise</span><span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">median_equalizer</span><span class="p">(</span><span class="n">Sxx_power</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">ext</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">Sxx_dB_noNoise</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">power2dB</span><span class="p">(</span><span class="n">Sxx_noNoise</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">Sxx</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">spectrogram</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;amplitude&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span>    
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">pre_calc_vars</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Sxx&#39;</span><span class="p">:</span> <span class="n">Sxx</span><span class="p">,</span> <span class="s1">&#39;tn&#39;</span><span class="p">:</span><span class="n">tn</span> <span class="p">,</span> <span class="s1">&#39;fn&#39;</span><span class="p">:</span><span class="n">fn</span> <span class="p">,</span> <span class="s1">&#39;ext&#39;</span><span class="p">:</span><span class="n">ext</span><span class="p">,</span> <span class="s1">&#39;Sxx_dB_noNoise&#39;</span><span class="p">:</span><span class="n">Sxx_dB_noNoise</span> <span class="p">}</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">pre_calc_vars</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Sxx&#39;</span><span class="p">:</span> <span class="n">Sxx</span><span class="p">,</span> <span class="s1">&#39;tn&#39;</span><span class="p">:</span><span class="n">tn</span> <span class="p">,</span> <span class="s1">&#39;fn&#39;</span><span class="p">:</span><span class="n">fn</span> <span class="p">,</span> <span class="s1">&#39;ext&#39;</span><span class="p">:</span><span class="n">ext</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                     <span class="s1">&#39;Sxx_dB_noNoise&#39;</span><span class="p">:</span><span class="n">Sxx_dB_noNoise</span> <span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">pre_calc_vars</span>
-<span class="gp">&gt;&gt;&gt; </span>        
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">get_aci</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">):</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">aci_xx</span><span class="p">,</span> <span class="n">aci_per_bin</span><span class="p">,</span> <span class="n">aci_sum</span>  <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">acoustic_complexity_index</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;Sxx&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">aci_xx</span><span class="p">,</span> <span class="n">aci_per_bin</span><span class="p">,</span> <span class="n">aci_sum</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">acoustic_complexity_index</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;Sxx&#39;</span><span class="p">]))</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">indices</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;aci_xx&#39;</span><span class="p">:</span> <span class="n">aci_xx</span><span class="p">,</span> <span class="s1">&#39;aci_per_bin&#39;</span><span class="p">:</span><span class="n">aci_per_bin</span> <span class="p">,</span> <span class="s1">&#39;aci_sum&#39;</span><span class="p">:</span><span class="n">aci_sum</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">indices</span>
-<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">get_spectral_events</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">):</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">EVNspFract_per_bin</span><span class="p">,</span> <span class="n">EVNspMean_per_bin</span><span class="p">,</span> <span class="n">EVNspCount_per_bin</span><span class="p">,</span> <span class="n">EVNsp</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_events</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">EVNspFract_per_bin</span><span class="p">,</span> <span class="n">EVNspMean_per_bin</span><span class="p">,</span> <span class="n">EVNspCount_per_bin</span><span class="p">,</span> <span class="n">EVNsp</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_events</span><span class="p">(</span>
 <span class="gp">&gt;&gt;&gt; </span>                <span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;Sxx_dB_noNoise&#39;</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>                <span class="n">dt</span><span class="o">=</span><span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;tn&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;tn&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>                <span class="n">dB_threshold</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                <span class="n">rejectDuration</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                <span class="n">extent</span><span class="o">=</span><span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;ext&#39;</span><span class="p">])</span>  
-<span class="gp">&gt;&gt;&gt; </span>    
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">indices</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;EVNspFract_per_bin&#39;</span><span class="p">:</span> <span class="n">EVNspFract_per_bin</span><span class="p">,</span> <span class="s1">&#39;EVNspMean_per_bin&#39;</span><span class="p">:</span><span class="n">EVNspMean_per_bin</span> <span class="p">,</span> <span class="s1">&#39;EVNspCount_per_bin&#39;</span><span class="p">:</span><span class="n">EVNspCount_per_bin</span><span class="p">,</span> <span class="s1">&#39;EVNsp&#39;</span><span class="p">:</span><span class="n">EVNsp</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span>                <span class="n">extent</span><span class="o">=</span><span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;ext&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">indices</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;EVNspFract_per_bin&#39;</span><span class="p">:</span> <span class="n">EVNspFract_per_bin</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="s1">&#39;EVNspMean_per_bin&#39;</span><span class="p">:</span><span class="n">EVNspMean_per_bin</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="s1">&#39;EVNspCount_per_bin&#39;</span><span class="p">:</span><span class="n">EVNspCount_per_bin</span><span class="p">,</span> <span class="s1">&#39;EVNsp&#39;</span><span class="p">:</span><span class="n">EVNsp</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">indices</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">get_spectral_activity</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">):</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ACTspfract_per_bin</span><span class="p">,</span> <span class="n">ACTspcount_per_bin</span><span class="p">,</span> <span class="n">ACTspmean_per_bin</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_activity</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;Sxx_dB_noNoise&#39;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">indices</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ACTspfract_per_bin&#39;</span><span class="p">:</span> <span class="n">ACTspfract_per_bin</span><span class="p">,</span> <span class="s1">&#39;ACTspcount_per_bin&#39;</span><span class="p">:</span><span class="n">ACTspcount_per_bin</span> <span class="p">,</span> <span class="s1">&#39;ACTspmean_per_bin&#39;</span><span class="p">:</span><span class="n">ACTspmean_per_bin</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ACTspfract_per_bin</span><span class="p">,</span> <span class="n">ACTspcount_per_bin</span><span class="p">,</span> <span class="n">ACTspmean_per_bin</span> <span class="o">=</span> <span class="p">(</span>
+<span class="go">                    maad.features.spectral_activity(pre_calc_vars[&#39;Sxx_dB_noNoise&#39;]))</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">indices</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ACTspfract_per_bin&#39;</span><span class="p">:</span> <span class="n">ACTspfract_per_bin</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="s1">&#39;ACTspcount_per_bin&#39;</span><span class="p">:</span><span class="n">ACTspcount_per_bin</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="s1">&#39;ACTspmean_per_bin&#39;</span><span class="p">:</span><span class="n">ACTspmean_per_bin</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">indices</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">acoustic_indices_methods</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_aci</span><span class="p">,</span> <span class="n">get_spectral_activity</span><span class="p">,</span> <span class="n">get_spectral_events</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df_temp</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">segmented_df</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">false_color_spectrogram_prepare_dataset</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">df_temp</span><span class="p">,</span> 
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">df_temp</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">datetime_col</span> <span class="o">=</span> <span class="s1">&#39;timestamp_init&#39;</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">duration_col</span> <span class="o">=</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">file_path_col</span> <span class="o">=</span> <span class="s1">&#39;file_path&#39;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;acoustic_complexity_index&#39;</span><span class="p">,</span> <span class="s1">&#39;spectral_activity&#39;</span><span class="p">,</span> <span class="s1">&#39;spectral_events&#39;</span><span class="p">],</span> 
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;acoustic_complexity_index&#39;</span><span class="p">,</span> <span class="s1">&#39;spectral_activity&#39;</span><span class="p">,</span> <span class="s1">&#39;spectral_events&#39;</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">output_dir</span> <span class="o">=</span> <span class="s1">&#39;./segmented_indices&#39;</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">store_audio_segments</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39;scale_02&#39;</span><span class="p">,</span>
@@ -231,10 +325,10 @@ with customizable figure size and tick interval.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fcs</span> <span class="o">=</span> <span class="n">visualizations</span><span class="o">.</span><span class="n">false_color_spectrogram_plot</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>            <span class="n">segmented_df</span><span class="p">,</span> 
-<span class="gp">&gt;&gt;&gt; </span>            <span class="n">datetime_col</span> <span class="o">=</span> <span class="s1">&#39;start_time&#39;</span><span class="p">,</span> 
-<span class="gp">&gt;&gt;&gt; </span>            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;aci_per_bin&#39;</span><span class="p">,</span> <span class="s1">&#39;ACTspfract_per_bin&#39;</span><span class="p">,</span> <span class="s1">&#39;EVNspCount_per_bin&#39;</span><span class="p">],</span> 
-<span class="gp">&gt;&gt;&gt; </span>            <span class="n">display</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">segmented_df</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">datetime_col</span> <span class="o">=</span> <span class="s1">&#39;start_time&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;aci_per_bin&#39;</span><span class="p">,</span> <span class="s1">&#39;ACTspfract_per_bin&#39;</span><span class="p">,</span> <span class="s1">&#39;EVNspCount_per_bin&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">display</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>            <span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39;scale_02&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span>        <span class="p">)</span>
 </pre></div>
@@ -409,6 +503,81 @@ category column.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">maui.visualizations.</span></span><span class="sig-name descname"><span class="pre">polar_bar_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_time_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categories_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/visualizations/visualizations.html#polar_bar_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Generate a polar bar plot to visualize category occurrences over the year.
+It will group data by day of the year, keep this in mind if you have more than one
+year of data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>The input dataframe containing the data to plot.</p>
+</dd>
+<dt><strong>date_time_col</strong><span class="classifier">str</span></dt><dd><p>The name of the column in <cite>df</cite> containing date or datetime values.</p>
+</dd>
+<dt><strong>categories_col</strong><span class="classifier">str</span></dt><dd><p>The name of the column in <cite>df</cite> representing the categorical variable.</p>
+</dd>
+<dt><strong>percent</strong><span class="classifier">bool, optional, default: False</span></dt><dd><p>If True, the plot will display the data as percentages of total occurrences
+for each day. If False, raw counts will be used.</p>
+</dd>
+<dt><strong>show_plot</strong><span class="classifier">bool, optional, default: True</span></dt><dd><p>If True, the plot will be displayed. If False, the plot will be returned
+without displaying it.</p>
+</dd>
+<dt><strong>**kwargs</strong><span class="classifier">dict, optional</span></dt><dd><p>Additional keyword arguments passed to the plot layout, such as height and width
+for figure dimensions.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>plotly.graph_objects.Figure</dt><dd><p>The generated polar bar plot figure.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>AssertionError</dt><dd><p>If <cite>date_time_col</cite> or <cite>categories_col</cite> is not in <cite>df</cite>.</p>
+</dd>
+<dt>AttributeError</dt><dd><p>If <cite>categories_col</cite> contains continuous data instead of discrete categories.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Warns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>UserWarning</dt><dd><p>If <cite>date_time_col</cite> contains invalid date values, a warning is issued, and those rows
+are ignored in the plot.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The <cite>date_time_col</cite> is converted to the day of the year
+(1 to 366, to account for leap years).</p></li>
+<li><p>If <cite>percent=True</cite>, the data is normalized by day to represent the
+proportion of occurrences.</p></li>
+<li><p>The method uses <cite>plotly.express.bar_polar</cite> to create the plot, with day of the
+year on the angular axis.</p></li>
+<li><p>A custom hover template is applied to display day of the month, count,
+and percentage (if applicable).</p></li>
+</ul>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;2023-01-01&#39;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">366</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;category&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">122</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">polar_bar_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;category&#39;</span><span class="p">,</span> <span class="n">percent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">maui.visualizations.</span></span><span class="sig-name descname"><span class="pre">spectrogram_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hann'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nperseg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noverlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/visualizations/visualizations.html#spectrogram_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Create a spectrogram plot from an audio file.</p>
 <p>This function loads an audio file, computes its spectrogram, and generates a
@@ -479,7 +648,7 @@ or Complex Spectrogram (‘complex’).</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, Caio Ferreira Bernardo.</p>
+    <p>&#169; Copyright 2024, Caio Ferreira Bernardo.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

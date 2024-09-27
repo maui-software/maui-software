@@ -6,25 +6,9 @@
     and audio properties. The module leverages Plotly for generating interactive
     plots, offering flexibility in exploring and presenting acoustic data.
 
-    Key functionalities include:
-    - Radar plots for comparing multiple indices across different categories or
-      groups.
-    - Histogram plots to visualize the distribution of indices.
-    - Violin plots for detailed distribution analysis of indices, showing density
-      and distribution shape.
-    - Spectrogram plots for visualizing the frequency content of audio files over
-      time.
-
     These tools are designed for researchers, ecologists, and sound engineers
     interested in analyzing audio data, particularly for environmental sound
     analysis, bioacoustics, and similar fields.
-
-    Functions:
-    - indices_radar_plot: Generates radar plots for comparing acoustic indices.
-    - indices_histogram_plot: Creates histogram plots to visualize index
-      distributions.
-    - indices_violin_plot: Produces violin plots for detailed distribution analysis.
-    - spectrogram_plot: Computes and visualizes spectrograms of audio files.
 
     Usage examples and parameters for each function are provided within their
     respective docstrings, guiding their application in various analysis scenarios.
@@ -49,9 +33,12 @@ import re
 from dateutil import parser
 import pandas as pd
 import numpy as np
+import matplotlib as plt
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
+from pypalettes import load_cmap
+
 from maad import sound, util
 
 
@@ -962,7 +949,7 @@ def diel_plot(
         raise AttributeError(
             "time_bin_size must be an integer between 1 and 60, representing minutes"
         )
-    df_time_check = df[df[duration_col] > time_bin_size*60]
+    df_time_check = df[df[duration_col] > time_bin_size * 60]
 
     if len(df_time_check) > 0:
         warnings.warn(
@@ -1016,7 +1003,7 @@ def diel_plot(
     fig.update_layout(
         title="Diel Plot", title_x=0.5, xaxis_title="Time of day", yaxis_title="Date"
     )
-    if "height" in kwargs.keys() and "width" in kwargs.keys():
+    if "height" in kwargs and "width" in kwargs:
         fig.update_layout(height=kwargs["height"], width=kwargs["width"])
 
     if show_plot:
@@ -1275,8 +1262,6 @@ def false_color_spectrogram_plot(
     >>>             unit = 'scale_02'
     >>>         )
 
-
-
     """
 
     # 0. Initial configuration
@@ -1336,10 +1321,209 @@ def false_color_spectrogram_plot(
             df,
             fc_spectrogram,
             indices,
-            fig_size=kwargs["fig_size"] if "fig_size" in kwargs.keys() else None,
+            fig_size=kwargs["fig_size"] if "fig_size" in kwargs else None,
             tick_interval=(
-                kwargs["tick_interval"] if "tick_interval" in kwargs.keys() else None
+                kwargs["tick_interval"] if "tick_interval" in kwargs else None
             ),
         )
 
     return fc_spectrogram
+
+
+# ----------------------------------------------------------------------------------------
+
+
+def polar_bar_plot(
+    df: pd.DataFrame,
+    date_time_col: str,
+    categories_col: str,
+    percent: bool = False,
+    show_plot: bool = True,
+    **kwargs,
+) -> go.Figure:
+    """
+    Generate a polar bar plot to visualize category occurrences over the year.
+    It will group data by day of the year, keep this in mind if you have more than one
+    year of data.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        The input dataframe containing the data to plot.
+    date_time_col : str
+        The name of the column in `df` containing date or datetime values.
+    categories_col : str
+        The name of the column in `df` representing the categorical variable.
+    percent : bool, optional, default: False
+        If True, the plot will display the data as percentages of total occurrences
+        for each day. If False, raw counts will be used.
+    show_plot : bool, optional, default: True
+        If True, the plot will be displayed. If False, the plot will be returned
+        without displaying it.
+    **kwargs : dict, optional
+        Additional keyword arguments passed to the plot layout, such as height and width
+        for figure dimensions.
+
+    Returns
+    -------
+    plotly.graph_objects.Figure
+        The generated polar bar plot figure.
+
+    Raises
+    ------
+    AssertionError
+        If `date_time_col` or `categories_col` is not in `df`.
+    AttributeError
+        If `categories_col` contains continuous data instead of discrete categories.
+
+    Warns
+    -----
+    UserWarning
+        If `date_time_col` contains invalid date values, a warning is issued, and those rows
+        are ignored in the plot.
+
+    Notes
+    -----
+    - The `date_time_col` is converted to the day of the year
+      (1 to 366, to account for leap years).
+    - If `percent=True`, the data is normalized by day to represent the
+      proportion of occurrences.
+
+    Examples
+    -------
+    >>> df = pd.DataFrame({
+    >>>     'date': pd.date_range(start='2023-01-01', periods=366, freq='D'),
+    >>>     'category': ['A', 'B', 'C'] * 122
+    >>> })
+    >>> fig = polar_bar_plot(df, 'date', 'category', percent=True)
+    >>> fig.show()
+
+    """
+    # 0. Verify columns
+    for col in [date_time_col, categories_col]:
+        assert col in df.columns, (
+            f"'{col}' is not in {df.columns}. "
+            "Verify if it is correctly spelled and if it has been calculated already."
+        )
+
+    # 0.2. Verify if categories_col is categoric
+    # if not pd.api.types.is_string_dtype(df[categories_col]):
+    if not df[categories_col].apply(lambda x: isinstance(x, (int, str, bool))).all():
+        raise AttributeError(
+            "The values of categories_col in the dataframe should be descrite, not continuous"
+        )
+
+    # 1. Convert datetime to day of the year
+    # 1.1. Convert date_time_col to datetime if not already
+    df = df.copy()
+    df[date_time_col] = pd.to_datetime(
+        df[date_time_col], format="%Y-%m-%d", errors="coerce"
+    )
+    invalid_dates = df[date_time_col].isna().sum()
+    if invalid_dates > 0:
+        warnings.warn(
+            f"Warning: {invalid_dates} rows have invalid dates. This rows "
+            "will be ignored in the visualization."
+        )
+    df = df.dropna(subset=[date_time_col])
+
+    # 1.2. Create a 'day_of_year' column
+
+    df["day_of_year"] = df[date_time_col].dt.dayofyear
+
+    # 2. Get all days of the year (1 to 365 or 366) for a full year
+    all_days = pd.DataFrame(
+        {"day_of_year": np.arange(1, 367)}
+    )  # 1-366 to include leap years
+
+    # 3. Aggregate dataframe by day of year and categories
+    df_agg = (
+        df.groupby(["day_of_year", categories_col]).size().reset_index(name="count")
+    )
+
+    # 4. Merge with all days of the year to include missing days (fill with zero where no data)
+    df_full = pd.merge(all_days, df_agg, on="day_of_year", how="left").fillna(0)
+    df_full = df_full.sort_values(by="day_of_year")
+
+    # 5. Create a new column for the day of the month
+    df_full["date"] = pd.to_datetime(df_full["day_of_year"], format="%j")
+    df_full["day_of_month"] = df_full["date"].dt.day
+
+    # 6. Calculate percentages if needed
+    if percent:
+        total_counts = df_full.groupby("day_of_year")["count"].transform("sum")
+        df_full["percent"] = (
+            df_full["count"] / total_counts * 100
+        )  # Convert to percentage
+        r_value = "percent"  # Use the 'percent' column for the plot
+    else:
+        r_value = "count"  # Use the 'count' column for the plot
+
+    cmap = load_cmap("BluGrn")
+    cmap = [plt.colors.rgb2hex(cmap(i)) for i in range(cmap.N)]
+
+    # 7. Create polar plot
+    fig = px.bar_polar(
+        df_full,
+        r=r_value,
+        theta="day_of_year",
+        color=categories_col,
+        color_discrete_sequence=cmap,
+        hover_data={"day_of_year": True, "day_of_month": True, "count": True},
+    )
+
+    # 8. Set custom hover text
+    # 8.1. Primary data
+    hovertemplate = (
+        "<b>Day of month</b>: %{customdata[1]}<br><b>Count</b>: %{customdata[2]}"
+    )
+
+    # 8.2. Add percentage to hovertemplate if percent=True
+    if percent:
+        hovertemplate += "<br><b>Percentage</b>: %{r:.2f}%"
+
+    # 8.3. update hover template
+    fig.update_traces(hovertemplate=hovertemplate)
+
+    # 9. Final plot customization
+    fig.update_layout(
+        title=f"Polar Bar Plot - {categories_col} over the year",
+        title_x=0.5,
+        polar={
+            'radialaxis':{
+                'visible':True,
+                'range':[
+                    0,
+                    (df_full["percent"] if percent else df_full["count"]).max() + 1,
+                ]
+            },
+            'angularaxis':{
+                'tickvals':[1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335],
+                'ticktext':[
+                    "Jan",
+                    "Feb",
+                    "Mar",
+                    "Apr",
+                    "May",
+                    "Jun",
+                    "Jul",
+                    "Aug",
+                    "Sep",
+                    "Oct",
+                    "Nov",
+                    "Dec",
+                ],
+                'rotation':90  # Align Jan at the top
+            },
+        },
+    )
+
+    # 9.2. Change fig size if custom fig size provided
+    if "height" in kwargs and "width" in kwargs:
+        fig.update_layout(height=kwargs["height"], width=kwargs["width"])
+
+    # 10. Show plot
+    if show_plot:
+        fig.show()
+
+    return fig
