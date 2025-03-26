@@ -42,15 +42,24 @@ Operating Systems
 Dependencies
 ============
 
-* python >=3.9,<3.13
-* scikit-maad = 1.3.0
-* plotly >= 5.16.1
-* tqdm >= 4.66.1
-* fpdf >= 1.7.2
-* audioread >= 3.0.0
-* numpy >= 1.19.5
-* pandas >= 1.1.5
+* python = >=3.9,<3.13
+* scikit-maad = ^1.3.0
+* plotly = ^5.16.1
+* tqdm = ^4.66.1
+* fpdf = ^1.7.2
+* audioread = ^3.0.0
+* pandas = >=1.5
+* numpy = >= 1.21
 * kaleido = 0.2.1
+* pyyaml = ^6.0.1
+* matplotlib = ^3.8.3
+* gdown = ^5.2.0
+* pydub = ^0.25.1
+* objgraph = ^3.6.1
+* pyarrow = ^17.0.0
+* fastparquet = ^2024.5.0
+* pypalettes = ^0.1.3
+
 
 Installation
 ============
