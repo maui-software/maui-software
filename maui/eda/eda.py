@@ -97,7 +97,7 @@ def card_summary(df, categories, show_plot: bool = True):
     Examples
     --------
     >>> from maui import samples, eda
-    >>> df = samples.get_leec_audio_sample()
+    >>> df = samples.get_audio_sample(dataset="leec")
     >>> categories = ['landscape', 'environment']
     >>> card_dict, fig = eda.card_summary(df, categories)
     """
@@ -199,6 +199,7 @@ def heatmap_analysis(
     y_axis: str,
     color_continuous_scale="Viridis",
     show_plot: bool = True,
+    **kwargs,
 ):
     """
     Generates a heatmap to analyze the relationship between two categorical
@@ -227,6 +228,8 @@ def heatmap_analysis(
     show_plot : bool, optional
             If True (default), displays the heatmap plot. 
             If False, the plot is not displayed but is still returned.
+    **kwargs : dict
+            Additional arguments for plot customization, such as `height` and `width`.
 
     Returns
     -------
@@ -246,7 +249,7 @@ def heatmap_analysis(
     Examples
     --------
     >>> from maui import samples, eda
-    >>> df = samples.get_leec_audio_sample()
+    >>> df = samples.get_audio_sample(dataset="leec")
     >>> df_group, fig = eda.heatmap_analysis(df, 'landscape', 'environment')
     """
 
@@ -259,9 +262,13 @@ def heatmap_analysis(
         df_group_temp,
         color_continuous_scale=color_continuous_scale,
         text_auto=True,
-        title=f"""{x_axis} vs {y_axis} Heatmap""",
+        title=f"""Heatmap - Number of audio files per {x_axis} and {y_axis}""",
     )
     fig.update_layout(title_x=0.5)
+    fig.update_layout(height=600, width=800)
+
+    if "height" in kwargs and "width" in kwargs:
+        fig.update_layout(height=kwargs["height"], width=kwargs["width"])
 
     if show_plot:
         fig.show()
@@ -316,7 +323,7 @@ def histogram_analysis(df, x_axis: str, category_column: str, show_plot: bool = 
     Examples
     --------
     >>> from maui import samples, eda
-    >>> df = samples.get_leec_audio_sample()
+    >>> df = samples.get_audio_sample(dataset="leec")
     >>> fig = eda.histogram_analysis(df, 'landscape', 'environment')
     """
 
@@ -381,7 +388,7 @@ def duration_analysis(df, category_column: str, duration_column: str, show_plot=
     Examples
     --------
     >>> from maui import samples, eda
-    >>> df = samples.get_leec_audio_sample()
+    >>> df = samples.get_audio_sample(dataset="leec")
     >>> fig = eda.duration_analysis(df, 'landscape', 'duration')
     """
 
@@ -443,7 +450,7 @@ def daily_distribution_analysis(
     Examples
     --------
     >>> from maui import samples, eda
-    >>> df = samples.get_leec_audio_sample()
+    >>> df = samples.get_audio_sample(dataset="leec")
     >>> fig = eda.daily_distribution_analysis(df, 'dt', 'landscape')
     """
 
@@ -465,7 +472,7 @@ def daily_distribution_analysis(
 # ----------------------------------------------------------------------------
 
 
-def duration_distribution(df, show_plot=True):
+def duration_distribution(df, time_unit='s', show_plot=True):
     """
     Generates a distribution plot for the 'duration' column in the provided DataFrame.
 
@@ -481,6 +488,9 @@ def duration_distribution(df, show_plot=True):
             The DataFrame containing the data to be analyzed. 
             It must include a column named 'duration',
             which contains numeric data.
+    time_unit: string
+            The time unit of the audio duration column. It is used to make it explicit in the
+            visualization which is the time unit. Default: 's'
     show_plot : bool, optional
             If True (default), the function will display the generated plot. If False, the plot will
             not be displayed but will still be returned.
@@ -502,14 +512,20 @@ def duration_distribution(df, show_plot=True):
     Examples
     --------
     >>> from maui import samples, eda
-    >>> df = samples.get_leec_audio_sample()
+    >>> df = samples.get_audio_sample(dataset="leec")
     >>> fig = eda.duration_distribution(df)
     """
 
     group_labels = ["duration"]  # name of the dataset
 
     fig = ff.create_distplot([df["duration"].values], group_labels)
-    fig.update_layout(bargap=0.005, title_text="Duration distribution", title_x=0.5)
+    fig.update_layout(
+        bargap=0.005,
+        title_text="Duration distribution",
+        title_x=0.5,
+        xaxis_title=f"""Duration ({time_unit})""",
+        yaxis_title="Density (number of files)"
+    )
 
     if show_plot:
         fig.show()
@@ -631,7 +647,8 @@ def export_file_names_summary_pdf_leec(
 
     Examples
     --------
-    >>> export_file_names_summary_pdf_leec(df, 'summary_report.pdf', analysis_title='Audio Files Analysis')
+    >>> export_file_names_summary_pdf_leec(df, 'summary_report.pdf', 
+                                           analysis_title='Audio Files Analysis')
     """
 
     categories = ['landscape', 'environment']

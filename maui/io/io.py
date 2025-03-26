@@ -86,7 +86,8 @@ def get_audio_info(
         >>> io.get_audio_info(audio_file, store_duration=1, perc_sample=0.8)
 
         >>> audio_dir = "/path/to/audio/directory"
-        >>> df = io.get_audio_info(audio_dir, "LEEC_FILE_FORMAT", store_duration=True, perc_sample=1)
+        >>> df = io.get_audio_info(audio_dir, "LEEC_FILE_FORMAT",
+                                   store_duration=True, perc_sample=1)
         >>> df["dt"] = pd.to_datetime(df["timestamp_init"]).dt.date
     """
 
@@ -101,20 +102,18 @@ def get_audio_info(
         )
 
         if store_duration:
-            x = audioread.audio_open(audio_path)
-            duration = x.duration
-
+            # Usa o with para garantir o fechamento do arquivo após acessar a duração
+            with audioread.audio_open(audio_path) as x:
+                duration = x.duration
             file_dict["duration"] = duration
 
         file_dict["file_path"] = audio_path
-
         df = pd.DataFrame(file_dict, index=[0])
 
     elif os.path.isdir(audio_path):
         file_dict = []
 
         for file_path in glob.glob(os.path.join(audio_path, "*.wav")):
-
             if random.uniform(0, 1) < perc_sample:
                 basename = os.path.basename(file_path)
                 filename, _ = os.path.splitext(basename)
@@ -124,13 +123,12 @@ def get_audio_info(
                 )
 
                 if store_duration:
-                    x = audioread.audio_open(file_path)
-                    duration = x.duration
-
+                    # Usa o with para garantir o fechamento do arquivo
+                    with audioread.audio_open(file_path) as x:
+                        duration = x.duration
                     file_dict_temp["duration"] = duration
 
                 file_dict_temp["file_path"] = file_path
-
                 file_dict.append(file_dict_temp)
 
         df = pd.DataFrame(file_dict)

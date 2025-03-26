@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.io.io &mdash; maui-software 0.2.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+  <title>maui.io.io &mdash; maui-software 0.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
   
@@ -13,7 +13,7 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+        <script src="../../../_static/documentation_options.js?v=37f418d5"></script>
         <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
               <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.2.0
+                0.2.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -115,16 +115,16 @@
 <span class="sd">  dates and randomness.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
 
-<span class="kn">import</span> <span class="nn">audioread</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">audioread</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="c1"># maui imports</span>
-<span class="kn">import</span> <span class="nn">maui.files_metadata</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">maui.files_metadata</span>
 
 
 <span class="c1"># ------------------------------------------------</span>
@@ -132,7 +132,7 @@
 
 <div class="viewcode-block" id="get_audio_info">
 <a class="viewcode-back" href="../../../maui.io.html#maui.io.get_audio_info">[docs]</a>
-<span class="k">def</span> <span class="nf">get_audio_info</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_audio_info</span><span class="p">(</span>
     <span class="n">audio_path</span><span class="p">,</span>
     <span class="n">format_name</span><span class="p">,</span>
     <span class="n">date_time_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -188,20 +188,18 @@
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">store_duration</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">audioread</span><span class="o">.</span><span class="n">audio_open</span><span class="p">(</span><span class="n">audio_path</span><span class="p">)</span>
-            <span class="n">duration</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">duration</span>
-
+            <span class="c1"># Usa o with para garantir o fechamento do arquivo após acessar a duração</span>
+            <span class="k">with</span> <span class="n">audioread</span><span class="o">.</span><span class="n">audio_open</span><span class="p">(</span><span class="n">audio_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">x</span><span class="p">:</span>
+                <span class="n">duration</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">duration</span>
             <span class="n">file_dict</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration</span>
 
         <span class="n">file_dict</span><span class="p">[</span><span class="s2">&quot;file_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">audio_path</span>
-
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">file_dict</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">audio_path</span><span class="p">):</span>
         <span class="n">file_dict</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">audio_path</span><span class="p">,</span> <span class="s2">&quot;*.wav&quot;</span><span class="p">)):</span>
-
             <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">perc_sample</span><span class="p">:</span>
                 <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
                 <span class="n">filename</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
@@ -211,13 +209,12 @@
                 <span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">store_duration</span><span class="p">:</span>
-                    <span class="n">x</span> <span class="o">=</span> <span class="n">audioread</span><span class="o">.</span><span class="n">audio_open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
-                    <span class="n">duration</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">duration</span>
-
+                    <span class="c1"># Usa o with para garantir o fechamento do arquivo</span>
+                    <span class="k">with</span> <span class="n">audioread</span><span class="o">.</span><span class="n">audio_open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">x</span><span class="p">:</span>
+                        <span class="n">duration</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">duration</span>
                     <span class="n">file_dict_temp</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration</span>
 
                 <span class="n">file_dict_temp</span><span class="p">[</span><span class="s2">&quot;file_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_path</span>
-
                 <span class="n">file_dict</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_dict_temp</span><span class="p">)</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">file_dict</span><span class="p">)</span>
@@ -234,7 +231,7 @@
 
 <div class="viewcode-block" id="store_df">
 <a class="viewcode-back" href="../../../maui.io.html#maui.io.store_df">[docs]</a>
-<span class="k">def</span> <span class="nf">store_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">file_type</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">store_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">file_type</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Store a DataFrame to a file in a specified format.</span>
 
