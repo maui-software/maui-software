@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "maui-software"
-version = "0.2.0"
+version = "0.2.1"
 description = "Eco-acoustics data visualization and analysis"
 authors = ["Caio Ferreira Bernardo <caio.bernardo@usp.br>"]
 readme = "README.md"
@@ -17,8 +17,8 @@ plotly = "^5.16.1"
 tqdm = "^4.66.1"
 fpdf = "^1.7.2"
 audioread = "^3.0.0"
-pandas = "^2.0.0"
-numpy = "< 2.0.0"
+pandas = ">=1.5"
+numpy = ">= 1.21"
 kaleido = "0.2.1"
 pyyaml = "^6.0.1"
 matplotlib = "^3.8.3"
