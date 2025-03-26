@@ -4,8 +4,8 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Utils &mdash; maui-software 0.2.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+  <title>Utils &mdash; maui-software 0.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
   
@@ -14,7 +14,7 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/documentation_options.js?v=938c9ccc"></script>
+        <script src="_static/documentation_options.js?v=37f418d5"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -37,7 +37,7 @@
               <img src="_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.2.0
+                0.2.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -173,10 +173,10 @@ time gaps are detected between segments.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">utils</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">maui</span><span class="w"> </span><span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">utils</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_audio_sample</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;leec&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;dt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;timestamp_init&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">pre_calculation_method</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">):</span>   
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">pre_calculation_method</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">):</span>   
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">Sxx_power</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">spectrogram</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span> 
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">Sxx_noNoise</span><span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">median_equalizer</span><span class="p">(</span><span class="n">Sxx_power</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">ext</span><span class="p">)</span> 
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">Sxx_dB_noNoise</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">power2dB</span><span class="p">(</span><span class="n">Sxx_noNoise</span><span class="p">)</span>
@@ -186,12 +186,12 @@ time gaps are detected between segments.</p>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">pre_calc_vars</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Sxx&#39;</span><span class="p">:</span> <span class="n">Sxx</span><span class="p">,</span> <span class="s1">&#39;tn&#39;</span><span class="p">:</span><span class="n">tn</span> <span class="p">,</span> <span class="s1">&#39;fn&#39;</span><span class="p">:</span><span class="n">fn</span> <span class="p">,</span> <span class="s1">&#39;ext&#39;</span><span class="p">:</span><span class="n">ext</span><span class="p">,</span> <span class="s1">&#39;Sxx_dB_noNoise&#39;</span><span class="p">:</span><span class="n">Sxx_dB_noNoise</span> <span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">pre_calc_vars</span>
 <span class="gp">&gt;&gt;&gt; </span>        
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">get_aci</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">get_aci</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">):</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">aci_xx</span><span class="p">,</span> <span class="n">aci_per_bin</span><span class="p">,</span> <span class="n">aci_sum</span>  <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">acoustic_complexity_index</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;Sxx&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">indices</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;aci_xx&#39;</span><span class="p">:</span> <span class="n">aci_xx</span><span class="p">,</span> <span class="s1">&#39;aci_per_bin&#39;</span><span class="p">:</span><span class="n">aci_per_bin</span> <span class="p">,</span> <span class="s1">&#39;aci_sum&#39;</span><span class="p">:</span><span class="n">aci_sum</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">indices</span>
 <span class="gp">&gt;&gt;&gt; </span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">get_spectral_events</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">get_spectral_events</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">):</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">EVNspFract_per_bin</span><span class="p">,</span> <span class="n">EVNspMean_per_bin</span><span class="p">,</span> <span class="n">EVNspCount_per_bin</span><span class="p">,</span> <span class="n">EVNsp</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_events</span><span class="p">(</span>
 <span class="gp">&gt;&gt;&gt; </span>                <span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;Sxx_dB_noNoise&#39;</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>                <span class="n">dt</span><span class="o">=</span><span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;tn&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;tn&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
@@ -202,7 +202,7 @@ time gaps are detected between segments.</p>
 <span class="gp">&gt;&gt;&gt; </span>    
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">indices</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;EVNspFract_per_bin&#39;</span><span class="p">:</span> <span class="n">EVNspFract_per_bin</span><span class="p">,</span> <span class="s1">&#39;EVNspMean_per_bin&#39;</span><span class="p">:</span><span class="n">EVNspMean_per_bin</span> <span class="p">,</span> <span class="s1">&#39;EVNspCount_per_bin&#39;</span><span class="p">:</span><span class="n">EVNspCount_per_bin</span><span class="p">,</span> <span class="s1">&#39;EVNsp&#39;</span><span class="p">:</span><span class="n">EVNsp</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">indices</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">get_spectral_activity</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">get_spectral_activity</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">):</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">ACTspfract_per_bin</span><span class="p">,</span> <span class="n">ACTspcount_per_bin</span><span class="p">,</span> <span class="n">ACTspmean_per_bin</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_activity</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;Sxx_dB_noNoise&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">indices</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ACTspfract_per_bin&#39;</span><span class="p">:</span> <span class="n">ACTspfract_per_bin</span><span class="p">,</span> <span class="s1">&#39;ACTspcount_per_bin&#39;</span><span class="p">:</span><span class="n">ACTspcount_per_bin</span> <span class="p">,</span> <span class="s1">&#39;ACTspmean_per_bin&#39;</span><span class="p">:</span><span class="n">ACTspmean_per_bin</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">indices</span>
@@ -257,7 +257,7 @@ time gaps are detected between segments.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">utils</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">maui</span><span class="w"> </span><span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">utils</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_audio_sample</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;leec&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;dt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;timestamp_init&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>

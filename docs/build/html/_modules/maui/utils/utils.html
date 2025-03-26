@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.utils.utils &mdash; maui-software 0.2.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+  <title>maui.utils.utils &mdash; maui-software 0.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
   
@@ -13,7 +13,7 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+        <script src="../../../_static/documentation_options.js?v=37f418d5"></script>
         <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
               <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.2.0
+                0.2.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -112,17 +112,17 @@
 <span class="sd">- maui.acoustic_indices: For calculating acoustic indices after segmentation.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
-<span class="kn">import</span> <span class="nn">wave</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">wave</span>
 
-<span class="kn">import</span> <span class="nn">audioread</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">audioread</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">maui</span> <span class="kn">import</span> <span class="n">acoustic_indices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">maui</span><span class="w"> </span><span class="kn">import</span> <span class="n">acoustic_indices</span>
 
 
-<span class="k">def</span> <span class="nf">_get_audio_duration</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_audio_duration</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retrieve the duration of an audio file in seconds.</span>
 
@@ -144,7 +144,7 @@
         <span class="k">return</span> <span class="kc">None</span>
 
 
-<span class="k">def</span> <span class="nf">_check_overlaps</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">datetime_col</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_overlaps</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">datetime_col</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if there are overlaps between audio segments based on start and end times.</span>
 
@@ -166,7 +166,7 @@
     <span class="k">return</span> <span class="kc">False</span>
 
 
-<span class="k">def</span> <span class="nf">_check_time_gaps</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">datetime_col</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_time_gaps</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">datetime_col</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Identify time gaps between consecutive audio segments.</span>
 
@@ -190,7 +190,7 @@
     <span class="k">return</span> <span class="n">gaps</span>
 
 
-<span class="k">def</span> <span class="nf">_unit_conversion</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_unit_conversion</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert unit identifier to its corresponding duration in seconds.</span>
 
@@ -225,7 +225,7 @@
 
 <div class="viewcode-block" id="segment_audio_files">
 <a class="viewcode-back" href="../../../maui.utils.html#maui.utils.segment_audio_files">[docs]</a>
-<span class="k">def</span> <span class="nf">segment_audio_files</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">segment_audio_files</span><span class="p">(</span>
     <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">min_duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -320,7 +320,7 @@
 
 <div class="viewcode-block" id="false_color_spectrogram_prepare_dataset">
 <a class="viewcode-back" href="../../../maui.utils.html#maui.utils.false_color_spectrogram_prepare_dataset">[docs]</a>
-<span class="k">def</span> <span class="nf">false_color_spectrogram_prepare_dataset</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">false_color_spectrogram_prepare_dataset</span><span class="p">(</span>
     <span class="n">df</span><span class="p">,</span>
     <span class="n">datetime_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">duration_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
