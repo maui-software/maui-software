@@ -262,7 +262,7 @@ def heatmap_analysis(
         df_group_temp,
         color_continuous_scale=color_continuous_scale,
         text_auto=True,
-        title=f"""{x_axis} vs {y_axis} Heatmap""",
+        title=f"""Heatmap - Number of audio files per {x_axis} and {y_axis}""",
     )
     fig.update_layout(title_x=0.5)
     fig.update_layout(height=600, width=800)
@@ -472,7 +472,7 @@ def daily_distribution_analysis(
 # ----------------------------------------------------------------------------
 
 
-def duration_distribution(df, show_plot=True):
+def duration_distribution(df, time_unit='s', show_plot=True):
     """
     Generates a distribution plot for the 'duration' column in the provided DataFrame.
 
@@ -488,6 +488,9 @@ def duration_distribution(df, show_plot=True):
             The DataFrame containing the data to be analyzed. 
             It must include a column named 'duration',
             which contains numeric data.
+    time_unit: string
+            The time unit of the audio duration column. It is used to make it explicit in the
+            visualization which is the time unit. Default: 's'
     show_plot : bool, optional
             If True (default), the function will display the generated plot. If False, the plot will
             not be displayed but will still be returned.
@@ -520,8 +523,8 @@ def duration_distribution(df, show_plot=True):
         bargap=0.005,
         title_text="Duration distribution",
         title_x=0.5,
-        xaxis_title="Duration",
-        yaxis_title="Density"
+        xaxis_title=f"""Duration ({time_unit})""",
+        yaxis_title="Density (number of files)"
     )
 
     if show_plot:
