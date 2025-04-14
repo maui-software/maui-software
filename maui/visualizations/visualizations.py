@@ -37,9 +37,10 @@ import matplotlib as plt
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-from pypalettes import load_cmap
 
 from maad import sound, util
+
+import maui.utils
 
 
 def indices_radar_plot(
@@ -1390,7 +1391,7 @@ def polar_bar_plot(
       proportion of occurrences.
 
     Examples
-    -------
+    --------
     >>> df = pd.DataFrame({
     >>>     'date': pd.date_range(start='2023-01-01', periods=366, freq='D'),
     >>>     'category': ['A', 'B', 'C'] * 122
@@ -1459,7 +1460,7 @@ def polar_bar_plot(
     else:
         r_value = "count"  # Use the 'count' column for the plot
 
-    cmap = load_cmap("BluGrn")
+    cmap = maui.utils.get_blu_grn_palette()
     cmap = [plt.colors.rgb2hex(cmap(i)) for i in range(cmap.N)]
 
     # 7. Create polar plot

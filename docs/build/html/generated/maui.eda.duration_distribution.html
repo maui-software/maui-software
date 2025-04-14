@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.eda.duration_distribution &mdash; maui-software 0.2.1 documentation</title>
+  <title>maui.eda.duration_distribution &mdash; maui-software 0.2.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/documentation_options.js?v=37f418d5"></script>
+        <script src="../_static/documentation_options.js?v=000c92bf"></script>
         <script src="../_static/doctools.js?v=9a2dae69"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -37,7 +37,7 @@
               <img src="../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.2.1
+                0.2.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -102,7 +102,7 @@
 <h1>maui.eda.duration_distribution<a class="headerlink" href="#maui-eda-duration-distribution" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="maui.eda.duration_distribution">
-<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">duration_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/eda/eda.html#duration_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.eda.duration_distribution" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">duration_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/eda/eda.html#duration_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.eda.duration_distribution" title="Link to this definition">¶</a></dt>
 <dd><p>Generates a distribution plot for the ‘duration’ column in the provided DataFrame.</p>
 <p>This function creates a distribution plot, including a
 histogram and a kernel density estimate (KDE),
@@ -115,6 +115,9 @@ distribution of duration values across the dataset.</p>
 <dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>The DataFrame containing the data to be analyzed. 
 It must include a column named ‘duration’,
 which contains numeric data.</p>
+</dd>
+<dt><strong>time_unit: string</strong></dt><dd><p>The time unit of the audio duration column. It is used to make it explicit in the
+visualization which is the time unit. Default: ‘s’</p>
 </dd>
 <dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>If True (default), the function will display the generated plot. If False, the plot will
 not be displayed but will still be returned.</p>
