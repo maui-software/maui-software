@@ -31,6 +31,7 @@ Note:
 
 import tempfile
 import time
+import pandas as pd
 
 import pkg_resources
 from fpdf import FPDF
