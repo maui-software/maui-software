@@ -253,27 +253,42 @@ def heatmap_analysis(
     >>> df_group, fig = eda.heatmap_analysis(df, 'landscape', 'environment')
     """
 
+    # Aggregates the count of occurrences based on the columns specified
     df_group = df.groupby([x_axis, y_axis], as_index=False)["file_path"].count()
     df_group = df_group.rename(columns={"file_path": "count"})
 
-    df_group_temp = df_group.pivot(index=x_axis, columns=y_axis, values="count")
+    # Creates all possible combinations of the categorical values
+    categorias_x = sorted(df[x_axis].unique())
+    categorias_y = sorted(df[y_axis].unique())
+    indice_completo = pd.MultiIndex.from_product([categorias_x, categorias_y], names=[x_axis, y_axis])
 
+    # Reindexes to ensure all combinations exist, filling in zeros where missing
+    df_group_complete = (
+        df_group.set_index([x_axis, y_axis])
+        .reindex(indice_completo, fill_value=0)
+        .reset_index()
+    )
+
+    # Creates the pivot table for generating the heatmap
+    df_group_pivot = df_group_complete.pivot(index=x_axis, columns=y_axis, values="count")
+
+    # Builds the heatmap using Plotly Express
     fig = px.imshow(
-        df_group_temp,
+        df_group_pivot,
         color_continuous_scale=color_continuous_scale,
         text_auto=True,
-        title=f"""Heatmap - Number of audio files per {x_axis} and {y_axis}""",
+        title=f"Heatmap - Número de arquivos de áudio por {x_axis} e {y_axis}",
     )
-    fig.update_layout(title_x=0.5)
-    fig.update_layout(height=600, width=800)
-
-    if "height" in kwargs and "width" in kwargs:
-        fig.update_layout(height=kwargs["height"], width=kwargs["width"])
+    fig.update_layout(
+        title_x=0.5,
+        height=kwargs.get("height", 600),
+        width=kwargs.get("width", 800),
+    )
 
     if show_plot:
         fig.show()
 
-    return df_group, fig
+    return df_group_complete, fig
 
 
 # ----------------------------------------------------------------------------

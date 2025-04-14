@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>maui.visualizations.indices_violin_plot &mdash; maui-software 0.2.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/documentation_options.js?v=000c92bf"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="maui.visualizations.spectrogram_plot" href="maui.visualizations.spectrogram_plot.html" />
+    <link rel="prev" title="maui.visualizations.indices_histogram_plot" href="maui.visualizations.indices_histogram_plot.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            maui-software
+              <img src="../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.2.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../maui.acoustic_indices.html">Acoustic Indices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.eda.html">Exploratory data analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.io.html">Input and Output</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../maui.visualizations.html">Visualizations</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="maui.visualizations.indices_radar_plot.html">maui.visualizations.indices_radar_plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.visualizations.indices_histogram_plot.html">maui.visualizations.indices_histogram_plot</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">maui.visualizations.indices_violin_plot</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#maui.visualizations.indices_violin_plot"><code class="docutils literal notranslate"><span class="pre">indices_violin_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="maui.visualizations.spectrogram_plot.html">maui.visualizations.spectrogram_plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.visualizations.false_color_spectrogram_plot.html">maui.visualizations.false_color_spectrogram_plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.visualizations.diel_plot.html">maui.visualizations.diel_plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.visualizations.polar_bar_plot.html">maui.visualizations.polar_bar_plot</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.samples.html">Samples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../example_gallery.html">Example gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">maui-software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../maui.visualizations.html">Visualizations</a></li>
+      <li class="breadcrumb-item active">maui.visualizations.indices_violin_plot</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/generated/maui.visualizations.indices_violin_plot.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="maui-visualizations-indices-violin-plot">
+<h1>maui.visualizations.indices_violin_plot<a class="headerlink" href="#maui-visualizations-indices-violin-plot" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="maui.visualizations.indices_violin_plot">
+<span class="sig-prename descclassname"><span class="pre">maui.visualizations.</span></span><span class="sig-name descname"><span class="pre">indices_violin_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/visualizations/visualizations.html#indices_violin_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.visualizations.indices_violin_plot" title="Link to this definition">¶</a></dt>
+<dd><p>Create violin plots to visualize the distribution of indices in a DataFrame.</p>
+<p>This function generates violin plots to visualize the distribution of one or
+more indices from a DataFrame. It provides the option to group data by a single
+category column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>The input DataFrame containing the data.</p>
+</dd>
+<dt><strong>indices</strong><span class="classifier">list</span></dt><dd><p>A list of column names in the DataFrame representing the indices to be plotted.</p>
+</dd>
+<dt><strong>group_by</strong><span class="classifier">str, optional</span></dt><dd><p>A column name for grouping data (default is None).</p>
+</dd>
+<dt><strong>fig_size</strong><span class="classifier">dict, optional</span></dt><dd><p>A dictionary specifying the height and width of the plot (default is None).</p>
+</dd>
+<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to display the plot (default is True).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>plotly.graph_objs._figure.Figure</dt><dd><p>A Plotly Figure object representing the violin plot.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>AssertionError</dt><dd><p>If the arguments are not correctly specified.</p>
+</dd>
+<dt>Exception</dt><dd><p>If the input data or arguments are invalid.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The ‘group_by’ argument is optional and allows grouping data by a single category column.</p></li>
+<li><p>‘fig_size’ should be a dictionary with ‘height’ and ‘width’ keys.</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">maui</span><span class="w"> </span><span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">acoustic_indices</span><span class="p">,</span> <span class="n">visualizations</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_leec_audio_sample</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indices_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;median_amplitude_envelope&#39;</span><span class="p">,</span> <span class="s1">&#39;temporal_entropy&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">acoustic_indices</span><span class="o">.</span><span class="n">calculate_acoustic_indices</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">indices_list</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">visualizations</span><span class="o">.</span><span class="n">indices_violin_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;ht&#39;</span><span class="p">],</span> <span class="n">group_by</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="maui.visualizations.indices_histogram_plot.html" class="btn btn-neutral float-left" title="maui.visualizations.indices_histogram_plot" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="maui.visualizations.spectrogram_plot.html" class="btn btn-neutral float-right" title="maui.visualizations.spectrogram_plot" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Caio Ferreira Bernardo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

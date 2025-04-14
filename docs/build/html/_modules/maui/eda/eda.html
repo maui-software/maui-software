@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.eda.eda &mdash; maui-software 0.2.1 documentation</title>
+  <title>maui.eda.eda &mdash; maui-software 0.2.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -13,7 +13,7 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/documentation_options.js?v=37f418d5"></script>
+        <script src="../../../_static/documentation_options.js?v=000c92bf"></script>
         <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
               <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.2.1
+                0.2.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -343,27 +343,42 @@
 <span class="sd">    &gt;&gt;&gt; df_group, fig = eda.heatmap_analysis(df, &#39;landscape&#39;, &#39;environment&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="c1"># Aggregates the count of occurrences based on the columns specified</span>
     <span class="n">df_group</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">y_axis</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s2">&quot;file_path&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
     <span class="n">df_group</span> <span class="o">=</span> <span class="n">df_group</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;file_path&quot;</span><span class="p">:</span> <span class="s2">&quot;count&quot;</span><span class="p">})</span>
 
-    <span class="n">df_group_temp</span> <span class="o">=</span> <span class="n">df_group</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">y_axis</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s2">&quot;count&quot;</span><span class="p">)</span>
+    <span class="c1"># Creates all possible combinations of the categorical values</span>
+    <span class="n">categorias_x</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">x_axis</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+    <span class="n">categorias_y</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">y_axis</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+    <span class="n">indice_completo</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_product</span><span class="p">([</span><span class="n">categorias_x</span><span class="p">,</span> <span class="n">categorias_y</span><span class="p">],</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">y_axis</span><span class="p">])</span>
 
+    <span class="c1"># Reindexes to ensure all combinations exist, filling in zeros where missing</span>
+    <span class="n">df_group_complete</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">df_group</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">y_axis</span><span class="p">])</span>
+        <span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">indice_completo</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Creates the pivot table for generating the heatmap</span>
+    <span class="n">df_group_pivot</span> <span class="o">=</span> <span class="n">df_group_complete</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">y_axis</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s2">&quot;count&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Builds the heatmap using Plotly Express</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
-        <span class="n">df_group_temp</span><span class="p">,</span>
+        <span class="n">df_group_pivot</span><span class="p">,</span>
         <span class="n">color_continuous_scale</span><span class="o">=</span><span class="n">color_continuous_scale</span><span class="p">,</span>
         <span class="n">text_auto</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">x_axis</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">y_axis</span><span class="si">}</span><span class="s2"> Heatmap&quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Heatmap - Número de arquivos de áudio por </span><span class="si">{</span><span class="n">x_axis</span><span class="si">}</span><span class="s2"> e </span><span class="si">{</span><span class="n">y_axis</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="s2">&quot;height&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="s2">&quot;width&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">])</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+        <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">height</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;height&quot;</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span>
+        <span class="n">width</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="mi">800</span><span class="p">),</span>
+    <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="n">df_group</span><span class="p">,</span> <span class="n">fig</span></div>
+    <span class="k">return</span> <span class="n">df_group_complete</span><span class="p">,</span> <span class="n">fig</span></div>
 
 
 
@@ -574,7 +589,7 @@
 
 <div class="viewcode-block" id="duration_distribution">
 <a class="viewcode-back" href="../../../maui.eda.html#maui.eda.duration_distribution">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">duration_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">duration_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">time_unit</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates a distribution plot for the &#39;duration&#39; column in the provided DataFrame.</span>
 
@@ -590,6 +605,9 @@
 <span class="sd">            The DataFrame containing the data to be analyzed. </span>
 <span class="sd">            It must include a column named &#39;duration&#39;,</span>
 <span class="sd">            which contains numeric data.</span>
+<span class="sd">    time_unit: string</span>
+<span class="sd">            The time unit of the audio duration column. It is used to make it explicit in the</span>
+<span class="sd">            visualization which is the time unit. Default: &#39;s&#39;</span>
 <span class="sd">    show_plot : bool, optional</span>
 <span class="sd">            If True (default), the function will display the generated plot. If False, the plot will</span>
 <span class="sd">            not be displayed but will still be returned.</span>
@@ -622,8 +640,8 @@
         <span class="n">bargap</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span>
         <span class="n">title_text</span><span class="o">=</span><span class="s2">&quot;Duration distribution&quot;</span><span class="p">,</span>
         <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-        <span class="n">xaxis_title</span><span class="o">=</span><span class="s2">&quot;Duration&quot;</span><span class="p">,</span>
-        <span class="n">yaxis_title</span><span class="o">=</span><span class="s2">&quot;Density&quot;</span>
+        <span class="n">xaxis_title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;Duration (</span><span class="si">{</span><span class="n">time_unit</span><span class="si">}</span><span class="s2">)&quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="n">yaxis_title</span><span class="o">=</span><span class="s2">&quot;Density (number of files)&quot;</span>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
