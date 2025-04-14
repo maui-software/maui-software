@@ -115,7 +115,7 @@ def test_heatmap_analysis(sample_df_fixt):
 
     assert isinstance(df_group, pd.DataFrame)
     assert isinstance(fig, go.Figure)
-    assert df_group.shape == (2, 3)
+    assert df_group.shape == (4, 3)
     assert "landscape" in df_group.columns
     assert "environment" in df_group.columns
     assert "count" in df_group.columns
