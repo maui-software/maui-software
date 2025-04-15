@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.utils.utils &mdash; maui-software 0.2.1 documentation</title>
+  <title>maui.utils.utils &mdash; maui-software 0.2.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -13,7 +13,7 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/documentation_options.js?v=37f418d5"></script>
+        <script src="../../../_static/documentation_options.js?v=000c92bf"></script>
         <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
               <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.2.1
+                0.2.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -118,6 +118,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">audioread</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">maui</span><span class="w"> </span><span class="kn">import</span> <span class="n">acoustic_indices</span>
 
@@ -517,6 +518,26 @@
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">segmented_df</span></div>
+
+
+
+<div class="viewcode-block" id="get_blu_grn_palette">
+<a class="viewcode-back" href="../../../maui.utils.html#maui.utils.get_blu_grn_palette">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_blu_grn_palette</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a colormap object that replicates the &#39;BluGrn&#39; palette.</span>
+
+<span class="sd">    This function creates a continuous colormap using a gradient from blue to green,</span>
+<span class="sd">    which can be used to generate a range of colors in a plot.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    matplotlib.colors.LinearSegmentedColormap</span>
+<span class="sd">        A colormap object that can be used to map data values to colors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="s2">&quot;BluGrn&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;#0000FF&quot;</span><span class="p">,</span> <span class="s2">&quot;#00FF00&quot;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">cmap</span></div>
 
 </pre></div>
 

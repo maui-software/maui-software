@@ -33,6 +33,7 @@ import wave
 
 import audioread
 import pandas as pd
+import matplotlib as mpl
 
 from maui import acoustic_indices
 
@@ -427,3 +428,20 @@ def false_color_spectrogram_prepare_dataset(
         )
 
     return segmented_df
+
+
+def get_blu_grn_palette():
+    """
+    Returns a colormap object that replicates the 'BluGrn' palette.
+
+    This function creates a continuous colormap using a gradient from blue to green,
+    which can be used to generate a range of colors in a plot.
+
+    Returns
+    -------
+    matplotlib.colors.LinearSegmentedColormap
+        A colormap object that can be used to map data values to colors.
+    """
+    cmap = mpl.colors.LinearSegmentedColormap.from_list("BluGrn", ["#0000FF", "#00FF00"])
+
+    return cmap

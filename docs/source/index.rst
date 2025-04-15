@@ -58,7 +58,6 @@ Dependencies
 * objgraph = ^3.6.1
 * pyarrow = ^17.0.0
 * fastparquet = ^2024.5.0
-* pypalettes = ^0.1.3
 
 
 Installation
