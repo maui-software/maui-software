@@ -476,10 +476,10 @@ def daily_distribution_analysis(
 
     # Convert with errors='coerce' to transform invalid dates to NaT (Not a Time)
     df_original_size = len(df)
-    df['dt'] = pd.to_datetime(df['dt'], errors='coerce')
+    df[date_column] = pd.to_datetime(df[date_column], errors='coerce')
 
     # Check for invalid dates and generate warning
-    invalid_dates_count = df['dt'].isna().sum()
+    invalid_dates_count = df[date_column].isna().sum()
     if invalid_dates_count > 0:
         warnings.warn(
             f"Found {invalid_dates_count} invalid dates out of {df_original_size} total records. "
@@ -488,17 +488,17 @@ def daily_distribution_analysis(
         )
 
     # Remove rows with invalid dates (optional)
-    df = df.dropna(subset=['dt'])
+    df = df.dropna(subset=[date_column])
 
     # Calculate number of unique days
-    num_days = df['dt'].dt.date.nunique()
+    num_days = df[date_column].dt.date.nunique()
 
     fig = px.histogram(
         df,
-        x='dt',
-        color='stage',
+        x=date_column,
+        color=category_column,
         opacity=0.7,
-        title=f"""Amount of samples by Day and {'stage'}""",
+        title=f"""Amount of samples by Day and {category_column}""",
         nbins=num_days  # Força um bin por dia
     )
     fig.update_layout(bargap=0.1, title_x=0.5)
