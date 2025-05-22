@@ -1098,7 +1098,7 @@ def _display_false_color_spectrogram(
     # 3.3. Update layout for better visualization
     fig.update_layout(
         title=f"""{re.sub(r'_per_bin', '', indices[0])} (R), """
-        f"""{re.sub(r'_per_bin', '', indices[0])} (G) and {indices[2]} """
+        f"""{re.sub(r'_per_bin', '', indices[1])} (G) and {indices[2]} """
         f"""(B) False Color Spectrogram""",
         xaxis={
             "showgrid": False,
