@@ -28,7 +28,7 @@ Note:
 - This module is designed to work with pandas DataFrames and expects a specific
   structure/format for input data.
 """
-
+import warnings
 import tempfile
 import time
 import pandas as pd
@@ -343,12 +343,16 @@ def histogram_analysis(df, x_axis: str, category_column: str, show_plot: bool = 
     >>> fig = eda.histogram_analysis(df, 'landscape', 'environment')
     """
 
+    totals = df.groupby(x_axis).size().sort_values(ascending=False)
+    order = totals.index.tolist()
+
     fig = px.histogram(
         df,
         x=x_axis,
         color=category_column,
         opacity=0.7,
         title=f"""Amount of samples by {x_axis} and segmented by {category_column}""",
+        category_orders={x_axis: order}
     )
     fig.update_layout(bargap=0.1, title_x=0.5)
 
@@ -470,17 +474,34 @@ def daily_distribution_analysis(
     >>> fig = eda.daily_distribution_analysis(df, 'dt', 'landscape')
     """
 
+    # Convert with errors='coerce' to transform invalid dates to NaT (Not a Time)
+    df_original_size = len(df)
+    df[date_column] = pd.to_datetime(df[date_column], errors='coerce')
+
+    # Check for invalid dates and generate warning
+    invalid_dates_count = df[date_column].isna().sum()
+    if invalid_dates_count > 0:
+        warnings.warn(
+            f"Found {invalid_dates_count} invalid dates out of {df_original_size} total records. "
+            f"These will be removed from the analysis.",
+            UserWarning
+        )
+
+    # Remove rows with invalid dates (optional)
+    df = df.dropna(subset=[date_column])
+
+    # Calculate number of unique days
+    num_days = df[date_column].dt.date.nunique()
+
     fig = px.histogram(
         df,
         x=date_column,
         color=category_column,
         opacity=0.7,
         title=f"""Amount of samples by Day and {category_column}""",
+        nbins=num_days  # Força um bin por dia
     )
     fig.update_layout(bargap=0.1, title_x=0.5)
-
-    if show_plot:
-        fig.show()
 
     return fig
 

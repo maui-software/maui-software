@@ -113,9 +113,10 @@
 <span class="sd">- This module is designed to work with pandas DataFrames and expects a specific</span>
 <span class="sd">  structure/format for input data.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pkg_resources</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fpdf</span><span class="w"> </span><span class="kn">import</span> <span class="n">FPDF</span>
@@ -435,12 +436,16 @@
 <span class="sd">    &gt;&gt;&gt; fig = eda.histogram_analysis(df, &#39;landscape&#39;, &#39;environment&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">totals</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">x_axis</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">totals</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
     <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
         <span class="n">df</span><span class="p">,</span>
         <span class="n">x</span><span class="o">=</span><span class="n">x_axis</span><span class="p">,</span>
         <span class="n">color</span><span class="o">=</span><span class="n">category_column</span><span class="p">,</span>
         <span class="n">opacity</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
         <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;Amount of samples by </span><span class="si">{</span><span class="n">x_axis</span><span class="si">}</span><span class="s2"> and segmented by </span><span class="si">{</span><span class="n">category_column</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="n">category_orders</span><span class="o">=</span><span class="p">{</span><span class="n">x_axis</span><span class="p">:</span> <span class="n">order</span><span class="p">}</span>
     <span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">bargap</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 
@@ -568,17 +573,34 @@
 <span class="sd">    &gt;&gt;&gt; fig = eda.daily_distribution_analysis(df, &#39;dt&#39;, &#39;landscape&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="c1"># Convert with errors=&#39;coerce&#39; to transform invalid dates to NaT (Not a Time)</span>
+    <span class="n">df_original_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Check for invalid dates and generate warning</span>
+    <span class="n">invalid_dates_count</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">invalid_dates_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">invalid_dates_count</span><span class="si">}</span><span class="s2"> invalid dates out of </span><span class="si">{</span><span class="n">df_original_size</span><span class="si">}</span><span class="s2"> total records. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;These will be removed from the analysis.&quot;</span><span class="p">,</span>
+            <span class="ne">UserWarning</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Remove rows with invalid dates (optional)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Calculate number of unique days</span>
+    <span class="n">num_days</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
+
     <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
         <span class="n">df</span><span class="p">,</span>
-        <span class="n">x</span><span class="o">=</span><span class="n">date_column</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="n">category_column</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="s1">&#39;dt&#39;</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span>
         <span class="n">opacity</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
-        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;Amount of samples by Day and </span><span class="si">{</span><span class="n">category_column</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;Amount of samples by Day and </span><span class="si">{</span><span class="s1">&#39;stage&#39;</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="n">nbins</span><span class="o">=</span><span class="n">num_days</span>  <span class="c1"># Força um bin por dia</span>
     <span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">bargap</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">fig</span></div>
 
