@@ -503,6 +503,9 @@ def daily_distribution_analysis(
     )
     fig.update_layout(bargap=0.1, title_x=0.5)
 
+    if show_plot:
+        fig.show()
+
     return fig
 
 
