@@ -909,19 +909,9 @@ def test_percentage_mode():
 
 def test_figure_custom_dimensions():
     """
-    Test the `polar_bar_plot` function with custom figure dimensions.
-
-    This test verifies that the function correctly applies custom height and
-    width dimensions to the plot layout when passed as keyword arguments.
-
-    Parameters
-    ----------
-    None
-
-    Raises
-    ------
-    AssertionError
-        If the figure layout height or width does not match the expected values.
+    Test that `polar_bar_plot` applies custom height and width to the figure layout.
+    
+    Verifies that when custom `height` and `width` keyword arguments are provided, the resulting Plotly figure's layout reflects these dimensions.
     """
     # Create a valid DataFrame for testing
     df = pd.DataFrame(
@@ -943,10 +933,16 @@ def test_figure_custom_dimensions():
 
 # ------------ Test visualizations.parallel_coordinates_plot -------------------------------------
 def test_returns_figure(sample_df_fixt):
+    """
+    Test that `parallel_coordinates_plot` returns a Plotly Figure object for valid input.
+    """
     fig = visualizations.parallel_coordinates_plot(sample_df_fixt, ['index1', 'index2'], color_col='group', show_plot=False)
     assert isinstance(fig, Figure)
 
 def test_axes_labels(sample_df_fixt):
+    """
+    Test that the axes labels in the parallel coordinates plot match the specified indices.
+    """
     fig = visualizations.parallel_coordinates_plot(sample_df_fixt, ['index1', 'index2'], color_col='group', show_plot=False)
     labels = [dim['label'] for dim in fig.data[0]['dimensions']]
     assert set(labels) == {'index1', 'index2'}
@@ -957,6 +953,9 @@ def test_color_array_length(sample_df_fixt):
     assert len(color_arr) == len(sample_df_fixt)
 
 def test_numeric_coloring(sample_df_fixt):
+    """
+    Test that the parallel_coordinates_plot function accepts a numeric color column and returns a Plotly Figure with correct axis labels.
+    """
     sample_df_fixt['numeric_group'] = [1, 2, 1, 2, 3]
     fig = visualizations.parallel_coordinates_plot(sample_df_fixt, ['index1', 'index2'], color_col='numeric_group', show_plot=False)
     assert isinstance(fig, Figure)
@@ -964,17 +963,29 @@ def test_numeric_coloring(sample_df_fixt):
     assert set(labels) == {'index1', 'index2'}
 
 def test_empty_indices_raises(sample_df_fixt):
+    """
+    Test that parallel_coordinates_plot raises IndexError when the indices list is empty.
+    """
     with pytest.raises(IndexError):
         visualizations.parallel_coordinates_plot(sample_df_fixt, [], color_col='group', show_plot=False)
 
 def test_one_index_raises(sample_df_fixt):
+    """
+    Test that parallel_coordinates_plot raises IndexError when only one index is provided.
+    """
     with pytest.raises(IndexError):
         visualizations.parallel_coordinates_plot(sample_df_fixt, ['index1'], color_col='group', show_plot=False)
 
 def test_index_not_in_df_raises(sample_df_fixt):
+    """
+    Test that parallel_coordinates_plot raises AssertionError if any specified index is not present in the DataFrame.
+    """
     with pytest.raises(AssertionError):
         visualizations.parallel_coordinates_plot(sample_df_fixt, ['index2', 'not_found'], color_col='group', show_plot=False)
 
 def test_color_col_missing_raises(sample_df_fixt):
+    """
+    Test that parallel_coordinates_plot raises AssertionError when the specified color column is not present in the DataFrame.
+    """
     with pytest.raises(AssertionError):
         visualizations.parallel_coordinates_plot(sample_df_fixt, ['index1', 'index2'], color_col='missing_col', show_plot=False)

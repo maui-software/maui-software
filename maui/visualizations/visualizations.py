@@ -54,56 +54,25 @@ def indices_radar_plot(
     show_plot: bool = True,
 ):
     """
-    Create a radar plot to compare indices in a DataFrame.
-
-    This function generates a radar plot to compare multiple indices from a DataFrame.
-    It allows aggregating data based on specified aggregation types and grouping by
-    one or two columns from the DataFrame.
-
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        The input DataFrame containing the data.
-    indices : list
-        A list of column names in the DataFrame representing the indices to be compared.
-    agg_type : str
-        The type of aggregation to be applied ('mean', 'median', 'stddev', 'var', 'max', 'min').
-    group_by : list, optional
-        A list of one or two column names for grouping data (default is None).
-    max_cols : int, optional
-        Maximum number of columns for subplots (default is 3).
-    fig_size : dict, optional
-        A dictionary specifying the height and width of the plot (default is None).
-    show_plot : bool, optional
-        Whether to display the plot (default is True).
-
-    Returns
-    -------
-    plotly.graph_objs._figure.Figure
-        A Plotly Figure object representing the radar plot.
-
-    Raises
-    ------
-    AssertionError
-        If the arguments are not correctly specified.
-    Exception
-        If the input data or arguments are invalid.
-
-    Examples
-    --------
-    >>> from maui import samples, acoustic_indices, visualizations
-    >>> df = samples.get_leec_audio_sample()
-    >>> indices_list = ['median_amplitude_envelope', 'temporal_entropy']
-    >>> df = acoustic_indices.calculate_acoustic_indices(df, indices_list, parallel=False)
-    >>> fig = visualizations.indices_radar_plot(df, indices=['m', 'ht'],
-            agg_type='mean', group_by=['environment'], max_cols=3)
-    # Generates a radar plot comparing 'Index1' and 'Index2' aggregated by 'Category'.
-
-    Notes
-    -----
-    - The 'agg_type' argument must be one of ['mean', 'median', 'stddev', 'var', 'max', 'min'].
-    - The 'group_by' argument can contain one or two columns for grouping data.
-    - 'fig_size' should be a dictionary with 'height' and 'width' keys.
+    Generate a radar plot to compare multiple acoustic indices from a DataFrame, with optional aggregation and grouping.
+    
+    This function normalizes selected indices, aggregates them using the specified method, and visualizes the results as radar (polar) plots. Supports grouping by up to two categorical columns, with each group rendered as a separate subplot or trace. Figure size and subplot arrangement are customizable.
+    
+    Parameters:
+        indices (list): List of DataFrame column names representing the indices to compare.
+        agg_type (str): Aggregation method to apply; one of 'mean', 'median', 'stddev', 'var', 'max', or 'min'.
+        group_by (list, optional): List of one or two column names to group data by.
+        max_cols (int, optional): Maximum number of subplot columns (default is 3).
+        fig_size (dict, optional): Dictionary with 'height' and 'width' keys for figure size.
+        show_plot (bool, optional): If True, displays the plot; otherwise, returns the Plotly Figure.
+    
+    Returns:
+        plotly.graph_objs._figure.Figure: The generated radar plot as a Plotly Figure object.
+    
+    Raises:
+        AssertionError: If aggregation type or group_by columns are invalid.
+        IndexError: If the indices list is empty.
+        AttributeError: If more than two grouping columns are specified or fig_size is malformed.
     """
 
     # 0. Initial configuration
@@ -1344,62 +1313,18 @@ def polar_bar_plot(
     **kwargs,
 ) -> go.Figure:
     """
-    Generate a polar bar plot to visualize category occurrences over the year.
-    It will group data by day of the year, keep this in mind if you have more than one
-    year of data.
-
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        The input dataframe containing the data to plot.
-    date_time_col : str
-        The name of the column in `df` containing date or datetime values.
-    categories_col : str
-        The name of the column in `df` representing the categorical variable.
-    percent : bool, optional, default: False
-        If True, the plot will display the data as percentages of total occurrences
-        for each day. If False, raw counts will be used.
-    show_plot : bool, optional, default: True
-        If True, the plot will be displayed. If False, the plot will be returned
-        without displaying it.
-    **kwargs : dict, optional
-        Additional keyword arguments passed to the plot layout, such as height and width
-        for figure dimensions.
-
-    Returns
-    -------
-    plotly.graph_objects.Figure
-        The generated polar bar plot figure.
-
-    Raises
-    ------
-    AssertionError
-        If `date_time_col` or `categories_col` is not in `df`.
-    AttributeError
-        If `categories_col` contains continuous data instead of discrete categories.
-
-    Warns
-    -----
-    UserWarning
-        If `date_time_col` contains invalid date values, a warning is issued, and those rows
-        are ignored in the plot.
-
-    Notes
-    -----
-    - The `date_time_col` is converted to the day of the year
-      (1 to 366, to account for leap years).
-    - If `percent=True`, the data is normalized by day to represent the
-      proportion of occurrences.
-
-    Examples
-    --------
-    >>> df = pd.DataFrame({
-    >>>     'date': pd.date_range(start='2023-01-01', periods=366, freq='D'),
-    >>>     'category': ['A', 'B', 'C'] * 122
-    >>> })
-    >>> fig = polar_bar_plot(df, 'date', 'category', percent=True)
-    >>> fig.show()
-
+    Creates a polar bar plot to visualize the distribution of categorical occurrences across days of the year.
+    
+    The function groups data by day of year, supporting both raw counts and percentage normalization per day. It validates that the date and category columns exist and that the category column contains discrete values. Invalid dates are dropped with a warning. The plot uses a blue-green color palette, displays custom hover information, and aligns months to angular axis ticks. Figure size can be customized via keyword arguments.
+    
+    Parameters:
+        date_time_col (str): Name of the column containing date or datetime values.
+        categories_col (str): Name of the column representing discrete categories.
+        percent (bool, optional): If True, displays percentages per day; otherwise, shows raw counts. Default is False.
+        show_plot (bool, optional): If True, displays the plot; otherwise, returns the Plotly Figure. Default is True.
+    
+    Returns:
+        plotly.graph_objects.Figure: The generated polar bar plot.
     """
     # 0. Verify columns
     for col in [date_time_col, categories_col]:
@@ -1535,43 +1460,21 @@ def parallel_coordinates_plot(
     df: pd.DataFrame, indices: list, color_col: str, show_plot: bool = True
 ) -> go.Figure:
     """
-    Plots a parallel coordinates chart for comparing acoustic indices for some categorical variable.
-
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        Input DataFrame containing the data to plot.
-    indices : list
-        List of column names (strings) from `df` that represents the acoustic
-        indices to be used as parallel axes. All must be numerical.
-    color_col : str, optional
-        Name of the column to use for coloring the lines. Can be categorical
-        or numerical. Required.
-    show_plot : bool, default True
-        If True, the plot is displayed interactively. If False, the Plotly
-        figure object is returned without displaying.
-
-
-    Returns
-    -------
-    fig : plotly.graph_objects.Figure
-        The Plotly Figure object containing the parallel coordinates plot.
-
-    Raises
-    ------
-    IndexError
-        If `indices` is empty or has fewer than two elements.
-    AssertionError
-        If any value in `indices` or `color_col` is not a column in `df`.
-
-    Notes
-    -----
-    - For categorical colors, colors and legend associations are assigned
-    automatically.
-    - The legend for categories appears below the plot and is adjusted to
-    avoid overlapping plot elements.
-    - If the coloring column is numerical, a standard colorbar is shown.
-    - Only numerical columns can be used for parallel axes.
+    Create a parallel coordinates plot to compare multiple numerical indices, with lines colored by a categorical or numerical column.
+    
+    Parameters:
+        indices (list): List of numerical column names to use as parallel axes.
+        color_col (str): Column name used to color the lines; can be categorical or numerical.
+        show_plot (bool, optional): If True, displays the plot interactively; if False, returns the Plotly Figure object.
+    
+    Returns:
+        plotly.graph_objects.Figure: The generated parallel coordinates plot.
+    
+    Raises:
+        IndexError: If fewer than two indices are provided.
+        AssertionError: If any specified column does not exist in the DataFrame.
+    
+    For categorical coloring, a discrete color palette and custom legend are used; for numerical coloring, a continuous colorbar is shown.
     """
 
     if indices is None or len(indices) == 0:
