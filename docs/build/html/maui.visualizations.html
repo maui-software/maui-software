@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Visualizations &mdash; maui-software 0.2.2 documentation</title>
+  <title>Visualizations &mdash; maui-software 0.2.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/documentation_options.js?v=000c92bf"></script>
+        <script src="_static/documentation_options.js?v=cb850272"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -37,7 +37,7 @@
               <img src="_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.2.2
+                0.2.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -60,6 +60,7 @@
 <li class="toctree-l2"><a class="reference internal" href="generated/maui.visualizations.false_color_spectrogram_plot.html">maui.visualizations.false_color_spectrogram_plot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generated/maui.visualizations.diel_plot.html">maui.visualizations.diel_plot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generated/maui.visualizations.polar_bar_plot.html">maui.visualizations.polar_bar_plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/maui.visualizations.parallel_coordinates_plot.html">maui.visualizations.parallel_coordinates_plot</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="maui.samples.html">Samples</a></li>
@@ -119,6 +120,9 @@
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/maui.visualizations.polar_bar_plot.html#maui.visualizations.polar_bar_plot" title="maui.visualizations.polar_bar_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">polar_bar_plot</span></code></a>(df, date_time_col, categories_col)</p></td>
 <td><p>Generate a polar bar plot to visualize category occurrences over the year.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/maui.visualizations.parallel_coordinates_plot.html#maui.visualizations.parallel_coordinates_plot" title="maui.visualizations.parallel_coordinates_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parallel_coordinates_plot</span></code></a>(df, indices, color_col)</p></td>
+<td><p>Plots a parallel coordinates chart for comparing acoustic indices for some categorical variable.</p></td>
 </tr>
 </tbody>
 </table>
@@ -499,6 +503,55 @@ category column.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">visualizations</span><span class="o">.</span><span class="n">indices_violin_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;ht&#39;</span><span class="p">],</span> <span class="n">group_by</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">maui.visualizations.</span></span><span class="sig-name descname"><span class="pre">parallel_coordinates_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maui/visualizations/visualizations.html#parallel_coordinates_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Plots a parallel coordinates chart for comparing acoustic indices for some categorical variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>Input DataFrame containing the data to plot.</p>
+</dd>
+<dt><strong>indices</strong><span class="classifier">list</span></dt><dd><p>List of column names (strings) from <cite>df</cite> that represents the acoustic
+indices to be used as parallel axes. All must be numerical.</p>
+</dd>
+<dt><strong>color_col</strong><span class="classifier">str, optional</span></dt><dd><p>Name of the column to use for coloring the lines. Can be categorical
+or numerical. Required.</p>
+</dd>
+<dt><strong>show_plot</strong><span class="classifier">bool, default True</span></dt><dd><p>If True, the plot is displayed interactively. If False, the Plotly
+figure object is returned without displaying.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>fig</strong><span class="classifier">plotly.graph_objects.Figure</span></dt><dd><p>The Plotly Figure object containing the parallel coordinates plot.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>IndexError</dt><dd><p>If <cite>indices</cite> is empty or has fewer than two elements.</p>
+</dd>
+<dt>AssertionError</dt><dd><p>If any value in <cite>indices</cite> or <cite>color_col</cite> is not a column in <cite>df</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>For categorical colors, colors and legend associations are assigned
+automatically.</p></li>
+<li><p>The legend for categories appears below the plot and is adjusted to
+avoid overlapping plot elements.</p></li>
+<li><p>If the coloring column is numerical, a standard colorbar is shown.</p></li>
+<li><p>Only numerical columns can be used for parallel axes.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py function">
