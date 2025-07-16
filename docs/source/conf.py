@@ -17,8 +17,8 @@ print(sys.path)
 project = 'maui-software'
 copyright = '2024, Caio Ferreira Bernardo'
 author = 'Caio Ferreira Bernardo'
-release = '0.2.4'
-version = '0.2.4'
+release = '0.2.5'
+version = '0.2.5'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

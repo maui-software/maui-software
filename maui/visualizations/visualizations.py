@@ -32,16 +32,17 @@ import re
 
 from dateutil import parser
 import pandas as pd
+from pandas.api.types import CategoricalDtype
 import numpy as np
 import matplotlib as plt
 import plotly.express as px
 from plotly.subplots import make_subplots
+from plotly.colors import qualitative
 import plotly.graph_objects as go
 
 from maad import sound, util
 
 import maui.utils
-
 
 def indices_radar_plot(
     df,
@@ -1491,16 +1492,16 @@ def polar_bar_plot(
         title=f"Polar Bar Plot - {categories_col} over the year",
         title_x=0.5,
         polar={
-            'radialaxis':{
-                'visible':True,
-                'range':[
+            "radialaxis": {
+                "visible": True,
+                "range": [
                     0,
                     (df_full["percent"] if percent else df_full["count"]).max() + 1,
-                ]
+                ],
             },
-            'angularaxis':{
-                'tickvals':[1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335],
-                'ticktext':[
+            "angularaxis": {
+                "tickvals": [1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335],
+                "ticktext": [
                     "Jan",
                     "Feb",
                     "Mar",
@@ -1514,7 +1515,7 @@ def polar_bar_plot(
                     "Nov",
                     "Dec",
                 ],
-                'rotation':90  # Align Jan at the top
+                "rotation": 90,  # Align Jan at the top
             },
         },
     )
@@ -1527,4 +1528,133 @@ def polar_bar_plot(
     if show_plot:
         fig.show()
 
+    return fig
+
+
+def parallel_coordinates_plot(
+    df: pd.DataFrame, indices: list, color_col: str, show_plot: bool = True
+) -> go.Figure:
+    """
+    Plots a parallel coordinates chart for comparing acoustic indices for some categorical variable.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Input DataFrame containing the data to plot.
+    indices : list
+        List of column names (strings) from `df` that represents the acoustic
+        indices to be used as parallel axes. All must be numerical.
+    color_col : str, optional
+        Name of the column to use for coloring the lines. Can be categorical
+        or numerical. Required.
+    show_plot : bool, default True
+        If True, the plot is displayed interactively. If False, the Plotly
+        figure object is returned without displaying.
+
+
+    Returns
+    -------
+    fig : plotly.graph_objects.Figure
+        The Plotly Figure object containing the parallel coordinates plot.
+
+    Raises
+    ------
+    IndexError
+        If `indices` is empty or has fewer than two elements.
+    AssertionError
+        If any value in `indices` or `color_col` is not a column in `df`.
+
+    Notes
+    -----
+    - For categorical colors, colors and legend associations are assigned
+    automatically.
+    - The legend for categories appears below the plot and is adjusted to
+    avoid overlapping plot elements.
+    - If the coloring column is numerical, a standard colorbar is shown.
+    - Only numerical columns can be used for parallel axes.
+    """
+
+    if indices is None or len(indices) == 0:
+        raise IndexError("The list of indices must be non-empty.")
+    if len(indices) < 2:
+        raise IndexError("At least two indices must be selected.")
+    for index in indices:
+        assert index in df.columns, f"'{index}' is not in {df.columns}."
+    assert color_col in df.columns, f"'{color_col}' is not in {df.columns}."
+
+    # Handle categorical coloring automatically
+    if (
+        isinstance(df[color_col].dtype, CategoricalDtype)
+        or df[color_col].dtype == object
+    ):
+        df["_color_code"] = df[color_col].astype("category").cat.codes
+        categories = list(df[color_col].astype("category").cat.categories)
+        palette = qualitative.Plotly
+        colors = [palette[i % len(palette)] for i in range(len(categories))]
+        color_map = dict(zip(categories, colors))
+        n_cats = len(categories)
+        if n_cats == 1:
+            colorscale = [[0.0, colors[0]], [1.0, colors[0]]]
+        else:
+            colorscale = [[i / (n_cats - 1), color] for i, color in enumerate(colors)]
+        color_column = df["_color_code"]
+        showscale = False
+    else:
+        color_column = df[color_col]
+        colorscale = "Viridis"
+        showscale = True
+        categories = []
+        color_map = {}
+
+    # Build dimensions
+    dimensions = [
+        {
+            'range':[df[column].min(),df[column].max()],
+            'label':column,
+            'values':df[column]
+        }
+        for column in indices
+    ]
+
+    fig = go.Figure(
+        go.Parcoords(
+            line={
+                'color':color_column,
+                'colorscale':colorscale,
+                'cmin':min(color_column),
+                'cmax':max(color_column),
+                'showscale':showscale,
+            },
+            dimensions=dimensions,
+        )
+    )
+
+    # Centralize LEGEND below the plot for categorical
+    if categories:
+        annotations = []
+        x_start = 0.14  # Moves legend blocks more to the center (adjust if needed)
+        x_spacing = 0.18 if len(categories) < 5 else 0.12
+        y = -0.22  # Lower this value if you want the legend further from the plot
+        for i, cat in enumerate(categories):
+            annotations.append(
+                {
+                    'x':x_start + i * x_spacing,
+                    'y':y,
+                    'xref':"paper",
+                    'yref':"paper",
+                    'showarrow':False,
+                    'align':"left",
+                    'text':f"<span 'style':'color:{color_map[cat]}; font-size:18px'>■</span> {cat}",
+                    'font':{"size": 15},
+                }
+            )
+        fig.update_layout(
+            margin={"b": 110, "r": 40, "t": 40, "l": 40},  # More bottom margin for legend
+            annotations=annotations,
+        )
+    else:
+        fig.update_layout(margin={"r": 40, "t": 40, "l": 40, "b": 40})
+
+    if show_plot:
+        fig.show()
     return fig

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>maui.visualizations.visualizations &mdash; maui-software 0.2.2 documentation</title>
+  <title>maui.visualizations.visualizations &mdash; maui-software 0.2.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -13,7 +13,7 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/documentation_options.js?v=000c92bf"></script>
+        <script src="../../../_static/documentation_options.js?v=cb850272"></script>
         <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
               <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.2.2
+                0.2.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -117,16 +117,17 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">dateutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">parser</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas.api.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">CategoricalDtype</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">plotly.express</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">px</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">plotly.subplots</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_subplots</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">plotly.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">qualitative</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">maad</span><span class="w"> </span><span class="kn">import</span> <span class="n">sound</span><span class="p">,</span> <span class="n">util</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">maui.utils</span>
-
 
 <div class="viewcode-block" id="indices_radar_plot">
 <a class="viewcode-back" href="../../../maui.visualizations.html#maui.visualizations.indices_radar_plot">[docs]</a>
@@ -1596,16 +1597,16 @@
         <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Polar Bar Plot - </span><span class="si">{</span><span class="n">categories_col</span><span class="si">}</span><span class="s2"> over the year&quot;</span><span class="p">,</span>
         <span class="n">title_x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
         <span class="n">polar</span><span class="o">=</span><span class="p">{</span>
-            <span class="s1">&#39;radialaxis&#39;</span><span class="p">:{</span>
-                <span class="s1">&#39;visible&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
-                <span class="s1">&#39;range&#39;</span><span class="p">:[</span>
+            <span class="s2">&quot;radialaxis&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;visible&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">[</span>
                     <span class="mi">0</span><span class="p">,</span>
                     <span class="p">(</span><span class="n">df_full</span><span class="p">[</span><span class="s2">&quot;percent&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">percent</span> <span class="k">else</span> <span class="n">df_full</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="p">]</span>
+                <span class="p">],</span>
             <span class="p">},</span>
-            <span class="s1">&#39;angularaxis&#39;</span><span class="p">:{</span>
-                <span class="s1">&#39;tickvals&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">121</span><span class="p">,</span> <span class="mi">152</span><span class="p">,</span> <span class="mi">182</span><span class="p">,</span> <span class="mi">213</span><span class="p">,</span> <span class="mi">244</span><span class="p">,</span> <span class="mi">274</span><span class="p">,</span> <span class="mi">305</span><span class="p">,</span> <span class="mi">335</span><span class="p">],</span>
-                <span class="s1">&#39;ticktext&#39;</span><span class="p">:[</span>
+            <span class="s2">&quot;angularaxis&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;tickvals&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">121</span><span class="p">,</span> <span class="mi">152</span><span class="p">,</span> <span class="mi">182</span><span class="p">,</span> <span class="mi">213</span><span class="p">,</span> <span class="mi">244</span><span class="p">,</span> <span class="mi">274</span><span class="p">,</span> <span class="mi">305</span><span class="p">,</span> <span class="mi">335</span><span class="p">],</span>
+                <span class="s2">&quot;ticktext&quot;</span><span class="p">:</span> <span class="p">[</span>
                     <span class="s2">&quot;Jan&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;Feb&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;Mar&quot;</span><span class="p">,</span>
@@ -1619,7 +1620,7 @@
                     <span class="s2">&quot;Nov&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;Dec&quot;</span><span class="p">,</span>
                 <span class="p">],</span>
-                <span class="s1">&#39;rotation&#39;</span><span class="p">:</span><span class="mi">90</span>  <span class="c1"># Align Jan at the top</span>
+                <span class="s2">&quot;rotation&quot;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span>  <span class="c1"># Align Jan at the top</span>
             <span class="p">},</span>
         <span class="p">},</span>
     <span class="p">)</span>
@@ -1632,6 +1633,139 @@
     <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="parallel_coordinates_plot">
+<a class="viewcode-back" href="../../../maui.visualizations.html#maui.visualizations.parallel_coordinates_plot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parallel_coordinates_plot</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">color_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">show_plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots a parallel coordinates chart for comparing acoustic indices for some categorical variable.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        Input DataFrame containing the data to plot.</span>
+<span class="sd">    indices : list</span>
+<span class="sd">        List of column names (strings) from `df` that represents the acoustic</span>
+<span class="sd">        indices to be used as parallel axes. All must be numerical.</span>
+<span class="sd">    color_col : str, optional</span>
+<span class="sd">        Name of the column to use for coloring the lines. Can be categorical</span>
+<span class="sd">        or numerical. Required.</span>
+<span class="sd">    show_plot : bool, default True</span>
+<span class="sd">        If True, the plot is displayed interactively. If False, the Plotly</span>
+<span class="sd">        figure object is returned without displaying.</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : plotly.graph_objects.Figure</span>
+<span class="sd">        The Plotly Figure object containing the parallel coordinates plot.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    IndexError</span>
+<span class="sd">        If `indices` is empty or has fewer than two elements.</span>
+<span class="sd">    AssertionError</span>
+<span class="sd">        If any value in `indices` or `color_col` is not a column in `df`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - For categorical colors, colors and legend associations are assigned</span>
+<span class="sd">      automatically.</span>
+<span class="sd">    - The legend for categories appears below the plot and is adjusted to</span>
+<span class="sd">      avoid overlapping plot elements.</span>
+<span class="sd">    - If the coloring column is numerical, a standard colorbar is shown.</span>
+<span class="sd">    - Only numerical columns can be used for parallel axes.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">indices</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;The list of indices must be non-empty.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;At least two indices must be selected.&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&#39; is not in </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s2">.&quot;</span>
+    <span class="k">assert</span> <span class="n">color_col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">color_col</span><span class="si">}</span><span class="s2">&#39; is not in </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+    <span class="c1"># Handle categorical coloring automatically</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">color_col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">CategoricalDtype</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="n">df</span><span class="p">[</span><span class="n">color_col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">object</span>
+    <span class="p">):</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;_color_code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">color_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span>
+        <span class="n">categories</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">color_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">categories</span><span class="p">)</span>
+        <span class="n">palette</span> <span class="o">=</span> <span class="n">qualitative</span><span class="o">.</span><span class="n">Plotly</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">palette</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">palette</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">categories</span><span class="p">))]</span>
+        <span class="n">color_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">colors</span><span class="p">))</span>
+        <span class="n">n_cats</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_cats</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">colorscale</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">colorscale</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_cats</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">color</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">colors</span><span class="p">)]</span>
+        <span class="n">color_column</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;_color_code&quot;</span><span class="p">]</span>
+        <span class="n">showscale</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">color_column</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">color_col</span><span class="p">]</span>
+        <span class="n">colorscale</span> <span class="o">=</span> <span class="s2">&quot;Viridis&quot;</span>
+        <span class="n">showscale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">categories</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">color_map</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Build dimensions</span>
+    <span class="n">dimensions</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;range&#39;</span><span class="p">:[</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()],</span>
+            <span class="s1">&#39;label&#39;</span><span class="p">:</span><span class="n">column</span><span class="p">,</span>
+            <span class="s1">&#39;values&#39;</span><span class="p">:</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">indices</span>
+    <span class="p">]</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span>
+        <span class="n">go</span><span class="o">.</span><span class="n">Parcoords</span><span class="p">(</span>
+            <span class="n">line</span><span class="o">=</span><span class="p">{</span>
+                <span class="s1">&#39;color&#39;</span><span class="p">:</span><span class="n">color_column</span><span class="p">,</span>
+                <span class="s1">&#39;colorscale&#39;</span><span class="p">:</span><span class="n">colorscale</span><span class="p">,</span>
+                <span class="s1">&#39;cmin&#39;</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="n">color_column</span><span class="p">),</span>
+                <span class="s1">&#39;cmax&#39;</span><span class="p">:</span><span class="nb">max</span><span class="p">(</span><span class="n">color_column</span><span class="p">),</span>
+                <span class="s1">&#39;showscale&#39;</span><span class="p">:</span><span class="n">showscale</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">dimensions</span><span class="o">=</span><span class="n">dimensions</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Centralize LEGEND below the plot for categorical</span>
+    <span class="k">if</span> <span class="n">categories</span><span class="p">:</span>
+        <span class="n">annotations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">x_start</span> <span class="o">=</span> <span class="mf">0.14</span>  <span class="c1"># Moves legend blocks more to the center (adjust if needed)</span>
+        <span class="n">x_spacing</span> <span class="o">=</span> <span class="mf">0.18</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">5</span> <span class="k">else</span> <span class="mf">0.12</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.22</span>  <span class="c1"># Lower this value if you want the legend further from the plot</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cat</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">categories</span><span class="p">):</span>
+            <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;x&#39;</span><span class="p">:</span><span class="n">x_start</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x_spacing</span><span class="p">,</span>
+                    <span class="s1">&#39;y&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">,</span>
+                    <span class="s1">&#39;xref&#39;</span><span class="p">:</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span>
+                    <span class="s1">&#39;yref&#39;</span><span class="p">:</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span>
+                    <span class="s1">&#39;showarrow&#39;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="s1">&#39;align&#39;</span><span class="p">:</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+                    <span class="s1">&#39;text&#39;</span><span class="p">:</span><span class="sa">f</span><span class="s2">&quot;&lt;span &#39;style&#39;:&#39;color:</span><span class="si">{</span><span class="n">color_map</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span><span class="si">}</span><span class="s2">; font-size:18px&#39;&gt;■&lt;/span&gt; </span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s1">&#39;font&#39;</span><span class="p">:{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">},</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+            <span class="n">margin</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">110</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">},</span>  <span class="c1"># More bottom margin for legend</span>
+            <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">margin</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">})</span>
+
+    <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">fig</span></div>
 
 </pre></div>

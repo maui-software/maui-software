@@ -22,7 +22,8 @@ from .visualizations import (indices_radar_plot,
                      spectrogram_plot,
                      false_color_spectrogram_plot,
                      diel_plot,
-                     polar_bar_plot)
+                     polar_bar_plot,
+                     parallel_coordinates_plot)
 
 
 __all__ = [ # visualizations
@@ -32,4 +33,5 @@ __all__ = [ # visualizations
            'spectrogram_plot',
            'false_color_spectrogram_plot',
            'diel_plot',
-           'polar_bar_plot']
+           'polar_bar_plot',
+           'parallel_coordinates_plot']

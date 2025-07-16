@@ -939,3 +939,42 @@ def test_figure_custom_dimensions():
     # Check if the layout has the correct height and width
     assert fig.layout.height == 500
     assert fig.layout.width == 700
+
+
+# ------------ Test visualizations.parallel_coordinates_plot -------------------------------------
+def test_returns_figure(sample_df_fixt):
+    fig = visualizations.parallel_coordinates_plot(sample_df_fixt, ['index1', 'index2'], color_col='group', show_plot=False)
+    assert isinstance(fig, Figure)
+
+def test_axes_labels(sample_df_fixt):
+    fig = visualizations.parallel_coordinates_plot(sample_df_fixt, ['index1', 'index2'], color_col='group', show_plot=False)
+    labels = [dim['label'] for dim in fig.data[0]['dimensions']]
+    assert set(labels) == {'index1', 'index2'}
+
+def test_color_array_length(sample_df_fixt):
+    fig = visualizations.parallel_coordinates_plot(sample_df_fixt, ['index1', 'index2'], color_col='group', show_plot=False)
+    color_arr = fig.data[0]['line']['color']
+    assert len(color_arr) == len(sample_df_fixt)
+
+def test_numeric_coloring(sample_df_fixt):
+    sample_df_fixt['numeric_group'] = [1, 2, 1, 2, 3]
+    fig = visualizations.parallel_coordinates_plot(sample_df_fixt, ['index1', 'index2'], color_col='numeric_group', show_plot=False)
+    assert isinstance(fig, Figure)
+    labels = [dim['label'] for dim in fig.data[0]['dimensions']]
+    assert set(labels) == {'index1', 'index2'}
+
+def test_empty_indices_raises(sample_df_fixt):
+    with pytest.raises(IndexError):
+        visualizations.parallel_coordinates_plot(sample_df_fixt, [], color_col='group', show_plot=False)
+
+def test_one_index_raises(sample_df_fixt):
+    with pytest.raises(IndexError):
+        visualizations.parallel_coordinates_plot(sample_df_fixt, ['index1'], color_col='group', show_plot=False)
+
+def test_index_not_in_df_raises(sample_df_fixt):
+    with pytest.raises(AssertionError):
+        visualizations.parallel_coordinates_plot(sample_df_fixt, ['index2', 'not_found'], color_col='group', show_plot=False)
+
+def test_color_col_missing_raises(sample_df_fixt):
+    with pytest.raises(AssertionError):
+        visualizations.parallel_coordinates_plot(sample_df_fixt, ['index1', 'index2'], color_col='missing_col', show_plot=False)
