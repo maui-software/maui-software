@@ -3,5 +3,8 @@ __pycache__/
 # ignoring local test files
 tests-local
 
+# ignoring local documentation
+docs/build
+
 # ignoring jupyter notebooks checkpoints
 .ipynb_checkpoints/
