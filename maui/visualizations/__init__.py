@@ -13,6 +13,7 @@ The module ``visualizations`` has a collection of functions to create visualizat
     false_color_spectrogram_plot
     diel_plot
     polar_bar_plot
+    parallel_coordinates_plot
 
 """
 
