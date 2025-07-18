@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>maui.visualizations.false_color_spectrogram_plot &mdash; maui-software 0.2.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+      <script src="../_static/documentation_options.js?v=58050c01"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="maui.visualizations.diel_plot" href="maui.visualizations.diel_plot.html" />
+    <link rel="prev" title="maui.visualizations.spectrogram_plot" href="maui.visualizations.spectrogram_plot.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            maui-software
+              <img src="../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../maui.acoustic_indices.html">Acoustic Indices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.eda.html">Exploratory data analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.io.html">Input and Output</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../maui.visualizations.html">Visualizations</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="maui.visualizations.indices_radar_plot.html">maui.visualizations.indices_radar_plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.visualizations.indices_histogram_plot.html">maui.visualizations.indices_histogram_plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.visualizations.indices_violin_plot.html">maui.visualizations.indices_violin_plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.visualizations.spectrogram_plot.html">maui.visualizations.spectrogram_plot</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">maui.visualizations.false_color_spectrogram_plot</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#maui.visualizations.false_color_spectrogram_plot"><code class="docutils literal notranslate"><span class="pre">false_color_spectrogram_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="maui.visualizations.diel_plot.html">maui.visualizations.diel_plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.visualizations.polar_bar_plot.html">maui.visualizations.polar_bar_plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.visualizations.parallel_coordinates_plot.html">maui.visualizations.parallel_coordinates_plot</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.samples.html">Samples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../example_gallery.html">Example gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">maui-software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../maui.visualizations.html">Visualizations</a></li>
+      <li class="breadcrumb-item active">maui.visualizations.false_color_spectrogram_plot</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/generated/maui.visualizations.false_color_spectrogram_plot.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="maui-visualizations-false-color-spectrogram-plot">
+<h1>maui.visualizations.false_color_spectrogram_plot<a class="headerlink" href="#maui-visualizations-false-color-spectrogram-plot" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="maui.visualizations.false_color_spectrogram_plot">
+<span class="sig-prename descclassname"><span class="pre">maui.visualizations.</span></span><span class="sig-name descname"><span class="pre">false_color_spectrogram_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scale_60'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/visualizations/visualizations.html#false_color_spectrogram_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.visualizations.false_color_spectrogram_plot" title="Link to this definition">¶</a></dt>
+<dd><p>Generate and optionally display a false color spectrogram from acoustic indices.</p>
+<p>This function creates a false color spectrogram by normalizing and combining
+selected acoustic indices from a DataFrame. The spectrogram can be displayed
+using Plotly and is returned as a 3D numpy array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>df</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>DataFrame containing the acoustic indices and timestamp data.</p>
+</dd>
+<dt><strong>datetime_col</strong><span class="classifier">str</span></dt><dd><p>Name of the column in <cite>df</cite> that contains datetime values.</p>
+</dd>
+<dt><strong>indices</strong><span class="classifier">list</span></dt><dd><p>List of column names corresponding to the acoustic indices to be used
+for the R, G, and B channels of the spectrogram.</p>
+</dd>
+<dt><strong>display</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, the spectrogram is displayed using Plotly. Default is True.</p>
+</dd>
+<dt><strong>unit</strong><span class="classifier">str, optional</span></dt><dd><p>The time unit to truncate the timestamps from 0.2 seconds to 60 seconds.
+Must be one of [‘scale_02’, ‘scale_04’, ‘scale_06’, ‘scale_2’, ‘scale_4’,
+‘scale_6’, ‘scale_12’, ‘scale_24’]. Default is ‘scale_60’.</p>
+</dd>
+<dt><strong>**kwargs</strong><span class="classifier">dict, optional</span></dt><dd><p>Additional arguments for customizing the display:</p>
+<ul class="simple">
+<li><p>fig_size (dict): Dictionary specifying the figure size with ‘width’
+and ‘height’ keys.</p></li>
+<li><p>tick_interval (int): Interval for selecting ticks on the x-axis.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>np.array</dt><dd><p>A 3D numpy array representing the false color spectrogram,
+where the third dimension corresponds to the color channels (R, G, B).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>IndexError</dt><dd><p>If <cite>indices</cite> is None or empty.</p>
+</dd>
+<dt>AssertionError</dt><dd><p>If any of the specified <cite>indices</cite> are not found in the DataFrame columns.</p>
+</dd>
+<dt>Exception</dt><dd><p>If <cite>unit</cite> is not one of the available units.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The function first checks that the selected indices are available in the DataFrame
+and that the specified time unit is valid.</p></li>
+<li><p>The DataFrame is sorted by timestamp, and timestamps are truncated according
+to the specified unit.</p></li>
+<li><p>Acoustic indices are normalized to the range [0, 255] and combined to form
+the false color spectrogram.</p></li>
+<li><p>If <cite>display</cite> is True, the spectrogram is displayed using Plotly,
+with customizable figure size and tick interval.</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">maui</span><span class="w"> </span><span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">visualizations</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_audio_sample</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;leec&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;dt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;timestamp_init&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">pre_calculation_method</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">Sxx_power</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">spectrogram</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">Sxx_noNoise</span><span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">median_equalizer</span><span class="p">(</span><span class="n">Sxx_power</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">ext</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">Sxx_dB_noNoise</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">power2dB</span><span class="p">(</span><span class="n">Sxx_noNoise</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">Sxx</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">maad</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">spectrogram</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;amplitude&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">pre_calc_vars</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Sxx&#39;</span><span class="p">:</span> <span class="n">Sxx</span><span class="p">,</span> <span class="s1">&#39;tn&#39;</span><span class="p">:</span><span class="n">tn</span> <span class="p">,</span> <span class="s1">&#39;fn&#39;</span><span class="p">:</span><span class="n">fn</span> <span class="p">,</span> <span class="s1">&#39;ext&#39;</span><span class="p">:</span><span class="n">ext</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                     <span class="s1">&#39;Sxx_dB_noNoise&#39;</span><span class="p">:</span><span class="n">Sxx_dB_noNoise</span> <span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">pre_calc_vars</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">get_aci</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">aci_xx</span><span class="p">,</span> <span class="n">aci_per_bin</span><span class="p">,</span> <span class="n">aci_sum</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">acoustic_complexity_index</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;Sxx&#39;</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">indices</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;aci_xx&#39;</span><span class="p">:</span> <span class="n">aci_xx</span><span class="p">,</span> <span class="s1">&#39;aci_per_bin&#39;</span><span class="p">:</span><span class="n">aci_per_bin</span> <span class="p">,</span> <span class="s1">&#39;aci_sum&#39;</span><span class="p">:</span><span class="n">aci_sum</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">indices</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">get_spectral_events</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">EVNspFract_per_bin</span><span class="p">,</span> <span class="n">EVNspMean_per_bin</span><span class="p">,</span> <span class="n">EVNspCount_per_bin</span><span class="p">,</span> <span class="n">EVNsp</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">maad</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">spectral_events</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>                <span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;Sxx_dB_noNoise&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>                <span class="n">dt</span><span class="o">=</span><span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;tn&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;tn&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>                <span class="n">dB_threshold</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                <span class="n">rejectDuration</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                <span class="n">extent</span><span class="o">=</span><span class="n">pre_calc_vars</span><span class="p">[</span><span class="s1">&#39;ext&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">indices</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;EVNspFract_per_bin&#39;</span><span class="p">:</span> <span class="n">EVNspFract_per_bin</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="s1">&#39;EVNspMean_per_bin&#39;</span><span class="p">:</span><span class="n">EVNspMean_per_bin</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="s1">&#39;EVNspCount_per_bin&#39;</span><span class="p">:</span><span class="n">EVNspCount_per_bin</span><span class="p">,</span> <span class="s1">&#39;EVNsp&#39;</span><span class="p">:</span><span class="n">EVNsp</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">indices</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">get_spectral_activity</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ACTspfract_per_bin</span><span class="p">,</span> <span class="n">ACTspcount_per_bin</span><span class="p">,</span> <span class="n">ACTspmean_per_bin</span> <span class="o">=</span> <span class="p">(</span>
+<span class="go">                    maad.features.spectral_activity(pre_calc_vars[&#39;Sxx_dB_noNoise&#39;]))</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">indices</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ACTspfract_per_bin&#39;</span><span class="p">:</span> <span class="n">ACTspfract_per_bin</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="s1">&#39;ACTspcount_per_bin&#39;</span><span class="p">:</span><span class="n">ACTspcount_per_bin</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="s1">&#39;ACTspmean_per_bin&#39;</span><span class="p">:</span><span class="n">ACTspmean_per_bin</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">indices</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">acoustic_indices_methods</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_aci</span><span class="p">,</span> <span class="n">get_spectral_activity</span><span class="p">,</span> <span class="n">get_spectral_events</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_temp</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">segmented_df</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">false_color_spectrogram_prepare_dataset</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">df_temp</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">datetime_col</span> <span class="o">=</span> <span class="s1">&#39;timestamp_init&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">duration_col</span> <span class="o">=</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">file_path_col</span> <span class="o">=</span> <span class="s1">&#39;file_path&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;acoustic_complexity_index&#39;</span><span class="p">,</span> <span class="s1">&#39;spectral_activity&#39;</span><span class="p">,</span> <span class="s1">&#39;spectral_events&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">output_dir</span> <span class="o">=</span> <span class="s1">&#39;./segmented_indices&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">store_audio_segments</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39;scale_02&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">acoustic_indices_methods</span> <span class="o">=</span> <span class="n">acoustic_indices_methods</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">pre_calculation_method</span> <span class="o">=</span> <span class="n">pre_calculation_method</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">temp_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;./temp_ac_files/&#39;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">parallel</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fcs</span> <span class="o">=</span> <span class="n">visualizations</span><span class="o">.</span><span class="n">false_color_spectrogram_plot</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">segmented_df</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">datetime_col</span> <span class="o">=</span> <span class="s1">&#39;start_time&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;aci_per_bin&#39;</span><span class="p">,</span> <span class="s1">&#39;ACTspfract_per_bin&#39;</span><span class="p">,</span> <span class="s1">&#39;EVNspCount_per_bin&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">display</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39;scale_02&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="maui.visualizations.spectrogram_plot.html" class="btn btn-neutral float-left" title="maui.visualizations.spectrogram_plot" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="maui.visualizations.diel_plot.html" class="btn btn-neutral float-right" title="maui.visualizations.diel_plot" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Caio Ferreira Bernardo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

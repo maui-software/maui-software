@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>maui.samples.audio_samples &mdash; maui-software 0.2.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+      <script src="../../../_static/documentation_options.js?v=58050c01"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            maui-software
+              <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.acoustic_indices.html">Acoustic Indices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.eda.html">Exploratory data analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.io.html">Input and Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.visualizations.html">Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.samples.html">Samples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../example_gallery.html">Example gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">maui-software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">maui.samples.audio_samples</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for maui.samples.audio_samples</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This module offers a streamlined approach to retrieving information on</span>
+<span class="sd">    audio samples within the Maui project framework. It serves to abstract the</span>
+<span class="sd">    complexities of accessing and parsing audio file metadata, providing a simple</span>
+<span class="sd">    method for users to obtain a structured and comprehensive overview of available</span>
+<span class="sd">    audio samples. The methods returns a pandas DataFrame detailing</span>
+<span class="sd">    the samples, including aspects such as file paths, durations, and other</span>
+<span class="sd">    pertinent metadata.</span>
+
+<span class="sd">    The functionality leverages the `maui.io` module for the extraction of audio</span>
+<span class="sd">    information, ensuring consistency and reliability in the data presented.</span>
+
+<span class="sd">    Functionality:</span>
+<span class="sd">    - Simplifies the retrieval of audio sample metadata within the Maui</span>
+<span class="sd">      framework.</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">    - Intended for use in data analysis workflows requiring access to structured</span>
+<span class="sd">      information about specific sets of audio samples.</span>
+
+<span class="sd">    Dependencies:</span>
+<span class="sd">    - os: For handling file and directory paths.</span>
+<span class="sd">    - maui.io: For underlying audio information extraction processes.</span>
+
+<span class="sd">    Examples and additional details are provided in the function docstring,</span>
+<span class="sd">    guiding users in applying the module to their specific needs.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gdown</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">maui.io</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_dataset_url</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a Google Drive URL for the specified dataset.</span>
+
+<span class="sd">    This function returns a direct download URL for the dataset based on the provided dataset name. </span>
+<span class="sd">    Currently, it supports the &quot;leec&quot; dataset, for which it constructs a URL from a pre-defined</span>
+<span class="sd">    Google Drive file ID.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataset : str</span>
+<span class="sd">        The name of the dataset for which the download URL is requested.</span>
+<span class="sd">        Currently supported datasets:</span>
+<span class="sd">        - &quot;leec&quot;: Returns the download URL for the &quot;leec&quot; dataset.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        A string containing the direct download URL from Google Drive for the specified dataset.</span>
+<span class="sd">        If the dataset is not supported, an empty URL is returned.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; get_dataset_url(&quot;leec&quot;)</span>
+<span class="sd">    &#39;https://drive.google.com/uc?id=1tw7BpPNBeS6Dz0XJOwwYuJOYJgd4XSUE&#39;</span>
+<span class="sd">    </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - This function is designed to handle future datasets by mapping their names to specific Google</span>
+<span class="sd">      Drive file IDs.</span>
+<span class="sd">    - If an unsupported dataset is provided, an empty file ID will result in an invalid URL.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s2">&quot;leec&quot;</span><span class="p">:</span>
+        <span class="n">file_id</span> <span class="o">=</span> <span class="s2">&quot;1tw7BpPNBeS6Dz0XJOwwYuJOYJgd4XSUE&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;https://drive.google.com/uc?id=</span><span class="si">{</span><span class="n">file_id</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<div class="viewcode-block" id="get_audio_sample">
+<a class="viewcode-back" href="../../../maui.samples.html#maui.samples.get_audio_sample">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_audio_sample</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extract_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get Leec Audio Samples available in maui.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataset : str</span>
+<span class="sd">        Dataset to be loaded. The available datasets are: leec</span>
+<span class="sd">    extract_path : str</span>
+<span class="sd">        Directory to extract sample files</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        A DataFrame containing information about the audio samples.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    To retrieve Leec audio samples and store the information in a DataFrame,</span>
+<span class="sd">    you can call this function as follows:</span>
+
+<span class="sd">    &gt;&gt;&gt; from maui import samples</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_audio_sample(dataset=&quot;leec&quot;)</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">available_datasets</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;leec&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">dataset</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">available_datasets</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Dataset not available&quot;</span><span class="p">)</span>
+
+    <span class="n">dataset_format_name</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+    <span class="k">if</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s2">&quot;leec&quot;</span><span class="p">:</span>
+        <span class="n">dataset_format_name</span> <span class="o">=</span> <span class="s2">&quot;LEEC_FILE_FORMAT&quot;</span>
+
+    <span class="n">zip_file_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset</span><span class="si">}</span><span class="s2">.zip&quot;</span>
+    <span class="n">zip_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">zip_file_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">extract_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">extract_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">zip_file_path</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">extract_path</span><span class="p">)</span>
+
+    <span class="n">file_url</span> <span class="o">=</span> <span class="n">get_dataset_url</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">zip_file_path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">gdown</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">file_url</span><span class="p">,</span> <span class="n">zip_file_path</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Check if the file is a valid zip file</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ref</span><span class="p">:</span>
+            <span class="n">zip_ref</span><span class="o">.</span><span class="n">testzip</span><span class="p">()</span>
+            <span class="c1"># Extract all files to the specified directory</span>
+            <span class="n">zip_ref</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">extract_path</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Extraction complete.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">BadZipFile</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: The downloaded file is not a valid zip file.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">maui</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">get_audio_info</span><span class="p">(</span>
+        <span class="n">extract_path</span><span class="p">,</span>
+        <span class="n">format_name</span><span class="o">=</span><span class="n">dataset_format_name</span><span class="p">,</span>
+        <span class="n">store_duration</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">perc_sample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_xc_dataset</span><span class="p">(</span><span class="n">q</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves a dataset from the Xeno-canto API based on the provided query parameters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    q : dict</span>
+<span class="sd">        A dictionary containing the query parameters to filter recordings from the Xeno-canto API.</span>
+<span class="sd">        Example of keys: &#39;gen&#39;, &#39;sp&#39;, &#39;cnt&#39;, etc.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        A DataFrame containing the recordings data retrieved from the Xeno-canto API.</span>
+<span class="sd">        If no recordings are found or an error occurs, an empty DataFrame is returned.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The method constructs the API URL from the query dictionary and sends a GET request.</span>
+<span class="sd">    - If the API response contains recordings, they are converted into a DataFrame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://xeno-canto.org/api/2/recordings?query=&quot;</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span>
+        <span class="n">url</span> <span class="o">+=</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">value</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="n">jsondata</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="c1"># Check if there are recordings</span>
+        <span class="k">if</span> <span class="s2">&quot;recordings&quot;</span> <span class="ow">in</span> <span class="n">jsondata</span> <span class="ow">and</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;recordings&quot;</span><span class="p">]:</span>
+            <span class="c1"># Create a DataFrame from the recordings data</span>
+            <span class="n">df_xc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;recordings&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No recordings found.&quot;</span><span class="p">)</span>
+            <span class="n">df_xc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>  <span class="c1"># Empty DataFrame in case no results</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">df_xc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>  <span class="c1"># Empty DataFrame in case of an error</span>
+
+    <span class="k">return</span> <span class="n">df_xc</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_download_xc_files</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">extract_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Downloads audio files from Xeno-canto based on a DataFrame of recordings and saves them locally.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pd.DataFrame</span>
+<span class="sd">        DataFrame containing the recordings information, including the file URLs and file names.</span>
+<span class="sd">    extract_path : str</span>
+<span class="sd">        The directory where the audio files will be saved. If the directory does not exist, it</span>
+<span class="sd">        is created.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        The input DataFrame with two additional columns:</span>
+<span class="sd">        - &#39;local_file_path&#39;: The local path where the file was saved (or None if download failed).</span>
+<span class="sd">        - &#39;file_downloaded&#39;: A boolean indicating whether the file was successfully downloaded.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - Files that already exist in the destination folder are skipped.</span>
+<span class="sd">    - If a file download fails, the method will print an error and add a None value to the</span>
+<span class="sd">    file path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">extract_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">extract_path</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">extract_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">path_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">downloaded_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Adding tqdm progress bar to the loop</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">(),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Downloading files&quot;</span><span class="p">):</span>
+        <span class="n">file_name_xc</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;file-name&quot;</span><span class="p">]</span>
+        <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extract_path</span><span class="p">,</span> <span class="n">file_name_xc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">full_path</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">file_name_xc</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
+            <span class="n">path_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+            <span class="n">downloaded_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">],</span> <span class="n">full_path</span><span class="p">)</span>
+                <span class="n">path_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+                <span class="n">downloaded_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">URLError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">file_name_xc</span><span class="si">}</span><span class="s2"> could not be downloaded. Error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">path_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">downloaded_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;local_file_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path_list</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;file_downloaded&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">downloaded_list</span>
+
+    <span class="k">return</span> <span class="n">df</span>
+
+
+<div class="viewcode-block" id="get_xc_data">
+<a class="viewcode-back" href="../../../maui.samples.html#maui.samples.get_xc_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_xc_data</span><span class="p">(</span><span class="n">q</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">extract_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves and downloads Xeno-canto data based on a set of query parameters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    q : dict</span>
+<span class="sd">        A dictionary of query parameters to filter recordings from Xeno-canto.</span>
+<span class="sd">    extract_path : str</span>
+<span class="sd">        The directory where the audio files will be saved.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        A DataFrame containing the recordings data from Xeno-canto, with additional columns for</span>
+<span class="sd">        the local file paths and file download status.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If unexpected query parameters are provided.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The method first validates the query dictionary to ensure only valid keys are used.</span>
+<span class="sd">    - After retrieving the recordings data using the `_get_xc_dataset` method, it downloads</span>
+<span class="sd">      the audio files using the `_download_xc_files` method.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples</span>
+<span class="sd">    &gt;&gt;&gt; params = {</span>
+<span class="sd">    &gt;&gt;&gt;     &#39;cnt&#39;:&#39;brazil&#39;</span>
+<span class="sd">    &gt;&gt;&gt; }</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_xc_data(q = params, extract_path=&quot;./xc_data&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">query_params_list</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;gen&quot;</span><span class="p">,</span> <span class="s2">&quot;sp&quot;</span><span class="p">,</span> <span class="s2">&quot;ssp&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="s2">&quot;rec&quot;</span><span class="p">,</span> <span class="s2">&quot;cnt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loc&quot;</span><span class="p">,</span>   <span class="s2">&quot;lat&quot;</span><span class="p">,</span>   <span class="s2">&quot;lng&quot;</span><span class="p">,</span>  <span class="s2">&quot;type&quot;</span><span class="p">,</span>   <span class="s2">&quot;sex&quot;</span><span class="p">,</span> <span class="s2">&quot;stage&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="s2">&quot;file-name&quot;</span><span class="p">,</span> <span class="s2">&quot;sono&quot;</span><span class="p">,</span> <span class="s2">&quot;osci&quot;</span><span class="p">,</span> <span class="s2">&quot;lic&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;length&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="s2">&quot;uploaded&quot;</span><span class="p">,</span> <span class="s2">&quot;also&quot;</span><span class="p">,</span> <span class="s2">&quot;rmk&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bird-seen&quot;</span><span class="p">,</span> <span class="s2">&quot;animal-seen&quot;</span><span class="p">,</span> <span class="s2">&quot;playback-used&quot;</span><span class="p">,</span> <span class="s2">&quot;temperature&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;regnr&quot;</span><span class="p">,</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;dvc&quot;</span><span class="p">,</span> <span class="s2">&quot;mic&quot;</span><span class="p">,</span> <span class="s2">&quot;smp&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="n">extra_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">query_params_list</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">extra_keys</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected keys found: </span><span class="si">{</span><span class="n">extra_keys</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">df_xc</span> <span class="o">=</span> <span class="n">_get_xc_dataset</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="n">df_xc</span> <span class="o">=</span> <span class="n">_download_xc_files</span><span class="p">(</span><span class="n">df_xc</span><span class="p">,</span> <span class="n">extract_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_xc</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Caio Ferreira Bernardo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

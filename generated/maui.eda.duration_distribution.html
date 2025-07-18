@@ -1,0 +1,183 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>maui.eda.duration_distribution &mdash; maui-software 0.2.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+      <script src="../_static/documentation_options.js?v=58050c01"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="maui.eda.export_file_names_summary_pdf_leec" href="maui.eda.export_file_names_summary_pdf_leec.html" />
+    <link rel="prev" title="maui.eda.daily_distribution_analysis" href="maui.eda.daily_distribution_analysis.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            maui-software
+              <img src="../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../maui.acoustic_indices.html">Acoustic Indices</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../maui.eda.html">Exploratory data analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="maui.eda.card_summary.html">maui.eda.card_summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.eda.heatmap_analysis.html">maui.eda.heatmap_analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.eda.histogram_analysis.html">maui.eda.histogram_analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.eda.duration_analysis.html">maui.eda.duration_analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maui.eda.daily_distribution_analysis.html">maui.eda.daily_distribution_analysis</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">maui.eda.duration_distribution</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#maui.eda.duration_distribution"><code class="docutils literal notranslate"><span class="pre">duration_distribution()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="maui.eda.export_file_names_summary_pdf_leec.html">maui.eda.export_file_names_summary_pdf_leec</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.io.html">Input and Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.visualizations.html">Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.samples.html">Samples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../example_gallery.html">Example gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">maui-software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../maui.eda.html">Exploratory data analysis</a></li>
+      <li class="breadcrumb-item active">maui.eda.duration_distribution</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/generated/maui.eda.duration_distribution.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="maui-eda-duration-distribution">
+<h1>maui.eda.duration_distribution<a class="headerlink" href="#maui-eda-duration-distribution" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="maui.eda.duration_distribution">
+<span class="sig-prename descclassname"><span class="pre">maui.eda.</span></span><span class="sig-name descname"><span class="pre">duration_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/eda/eda.html#duration_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.eda.duration_distribution" title="Link to this definition">¶</a></dt>
+<dd><p>Generates a distribution plot for the ‘duration’ column in the provided DataFrame.</p>
+<p>This function creates a distribution plot, including a
+histogram and a kernel density estimate (KDE),
+for the ‘duration’ column in the input DataFrame. 
+It is designed to give a visual understanding of the
+distribution of duration values across the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>df</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>The DataFrame containing the data to be analyzed. 
+It must include a column named ‘duration’,
+which contains numeric data.</p>
+</dd>
+<dt><strong>time_unit: string</strong></dt><dd><p>The time unit of the audio duration column. It is used to make it explicit in the
+visualization which is the time unit. Default: ‘s’</p>
+</dd>
+<dt><strong>show_plot</strong><span class="classifier">bool, optional</span></dt><dd><p>If True (default), the function will display the generated plot. If False, the plot will
+not be displayed but will still be returned.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>plotly.graph_objs._figure.Figure</dt><dd><p>A Plotly figure object representing the distribution plot of
+the ‘duration’ column. The plot includes both a histogram of
+the data and a kernel density estimate (KDE) curve.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function uses Plotly’s <cite>create_distplot</cite> function from the <cite>plotly.figure_factory</cite> module,
+offering a detailed visual representation of data distribution. It’s particularly useful for
+analyzing the spread and skewness of numeric data. The KDE curve provides insight into the
+probability density of the durations, complementing the histogram’s discrete bins.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">maui</span><span class="w"> </span><span class="kn">import</span> <span class="n">samples</span><span class="p">,</span> <span class="n">eda</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_audio_sample</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;leec&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">eda</span><span class="o">.</span><span class="n">duration_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="maui.eda.daily_distribution_analysis.html" class="btn btn-neutral float-left" title="maui.eda.daily_distribution_analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="maui.eda.export_file_names_summary_pdf_leec.html" class="btn btn-neutral float-right" title="maui.eda.export_file_names_summary_pdf_leec" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Caio Ferreira Bernardo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

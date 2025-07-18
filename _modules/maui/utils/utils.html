@@ -1,0 +1,572 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>maui.utils.utils &mdash; maui-software 0.2.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+      <script src="../../../_static/documentation_options.js?v=58050c01"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            maui-software
+              <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.acoustic_indices.html">Acoustic Indices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.eda.html">Exploratory data analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.io.html">Input and Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.visualizations.html">Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.samples.html">Samples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../example_gallery.html">Example gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">maui-software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">maui.utils.utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for maui.utils.utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module provides utilities for processing and segmenting audio data, as well</span>
+<span class="sd">as helper functions for working with other modules in the package. It includes</span>
+<span class="sd">methods for checking time overlaps and gaps, segmenting audio files based on</span>
+<span class="sd">duration, and preparing datasets for further analysis, such as calculating</span>
+<span class="sd">acoustic indices.</span>
+
+<span class="sd">The module handles various tasks related to audio data, including retrieving file</span>
+<span class="sd">durations, checking for temporal inconsistencies, and managing audio segmentation.</span>
+
+<span class="sd">Functions:</span>
+
+<span class="sd">    segment_audio_files: Segments audio files and creates new DataFrame entries </span>
+<span class="sd">    for each segment.</span>
+<span class="sd">    </span>
+<span class="sd">    false_color_spectrogram_prepare_dataset: Prepares a dataset for false-color </span>
+<span class="sd">    spectrograms, checking audio duration, segmenting files, and optionally </span>
+<span class="sd">    calculating acoustic indices.</span>
+
+<span class="sd">Dependencies</span>
+<span class="sd">------------</span>
+<span class="sd">- audioread: To retrieve audio file duration.</span>
+<span class="sd">- pandas: For handling tabular data and managing timestamps.</span>
+<span class="sd">- wave: To read and manipulate WAV audio files.</span>
+<span class="sd">- os: To manage filesystem operations.</span>
+<span class="sd">- datetime: To handle time-related calculations.</span>
+<span class="sd">- maui.acoustic_indices: For calculating acoustic indices after segmentation.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">wave</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">audioread</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">maui</span><span class="w"> </span><span class="kn">import</span> <span class="n">acoustic_indices</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_audio_duration</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve the duration of an audio file in seconds.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file_path : str</span>
+<span class="sd">        The path to the audio file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Duration of the audio file in seconds, or None if there is an error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">audioread</span><span class="o">.</span><span class="n">audio_open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">duration</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error processing </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_overlaps</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">datetime_col</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if there are overlaps between audio segments based on start and end times.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        DataFrame containing the audio segments data.</span>
+<span class="sd">    datetime_col : str</span>
+<span class="sd">        Column name for the start time of the segments.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if overlaps are found, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;end_time&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">datetime_col</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_time_gaps</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">datetime_col</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Identify time gaps between consecutive audio segments.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        DataFrame containing the audio segments data.</span>
+<span class="sd">    datetime_col : str</span>
+<span class="sd">        Column name for the start time of the segments.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of tuples</span>
+<span class="sd">        A list of tuples representing the time gaps between segments.</span>
+<span class="sd">        Each tuple contains the end time of one segment and the start time of the next segment.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gaps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;end_time&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">datetime_col</span><span class="p">]:</span>
+            <span class="n">gaps</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;end_time&quot;</span><span class="p">],</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">datetime_col</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">gaps</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_unit_conversion</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert unit identifier to its corresponding duration in seconds.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    unit : str</span>
+<span class="sd">        A string representing a unit of time (e.g., &#39;scale_02&#39;, &#39;scale_24&#39;).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The duration in seconds corresponding to the input unit.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;scale_02&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.2</span>
+    <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;scale_04&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.4</span>
+    <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;scale_06&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.6</span>
+    <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;scale_2&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">2.0</span>
+    <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;scale_4&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">4.0</span>
+    <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;scale_6&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">6.0</span>
+    <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;scale_12&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">12.0</span>
+    <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;scale_24&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">24.0</span>
+    <span class="k">return</span> <span class="mf">60.0</span>
+
+
+<div class="viewcode-block" id="segment_audio_files">
+<a class="viewcode-back" href="../../../maui.utils.html#maui.utils.segment_audio_files">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">segment_audio_files</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">min_duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">file_path_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">datetime_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Segment audio files based on a minimum duration and create new DataFrame entries.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        DataFrame containing the audio file paths and timestamps.</span>
+<span class="sd">    min_duration : float</span>
+<span class="sd">        The minimum duration in seconds for each audio segment.</span>
+<span class="sd">    output_dir : str</span>
+<span class="sd">        Directory where the segmented audio files will be saved.</span>
+<span class="sd">    file_path_col : str</span>
+<span class="sd">        Column name for the audio file paths in the DataFrame.</span>
+<span class="sd">    datetime_col : str</span>
+<span class="sd">        Column name for the start time of the audio files in the DataFrame.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        A DataFrame with new entries for each audio segment, including file paths and start/end times.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples, utils</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_audio_sample(dataset=&quot;leec&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; df[&quot;dt&quot;] = pd.to_datetime(df[&quot;timestamp_init&quot;]).dt.date</span>
+<span class="sd">    &gt;&gt;&gt; df = df.iloc[0:1]</span>
+<span class="sd">    &gt;&gt;&gt; segmented_df = utils.segment_audio_files(df, 0.2, &#39;./outputs&#39;, &#39;file_path&#39;, &#39;timestamp_init&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+
+    <span class="n">new_rows</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">audio_path</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">file_path_col</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">wave</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">audio_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wave_file</span><span class="p">:</span>
+                <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">wave_file</span><span class="o">.</span><span class="n">getframerate</span><span class="p">()</span>
+                <span class="n">num_frames</span> <span class="o">=</span> <span class="n">wave_file</span><span class="o">.</span><span class="n">getnframes</span><span class="p">()</span>
+                <span class="n">audio_duration</span> <span class="o">=</span> <span class="n">num_frames</span> <span class="o">/</span> <span class="n">sample_rate</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error processing </span><span class="si">{</span><span class="n">audio_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">start_time</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">segment_number</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">initial_timestamp</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">datetime_col</span><span class="p">]</span>
+
+        <span class="k">while</span> <span class="n">start_time</span> <span class="o">&lt;</span> <span class="n">audio_duration</span><span class="p">:</span>
+            <span class="n">end_time</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">start_time</span> <span class="o">+</span> <span class="n">min_duration</span><span class="p">,</span> <span class="n">audio_duration</span><span class="p">)</span>
+            <span class="n">segment_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">audio_path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">_segment_</span><span class="si">{</span><span class="n">segment_number</span><span class="si">}</span><span class="s2">.wav&quot;</span>
+            <span class="n">segment_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">segment_filename</span><span class="p">)</span>
+
+            <span class="c1"># Calculate frame positions</span>
+            <span class="n">start_frame</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">start_time</span> <span class="o">*</span> <span class="n">sample_rate</span><span class="p">)</span>
+            <span class="n">end_frame</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">end_time</span> <span class="o">*</span> <span class="n">sample_rate</span><span class="p">)</span>
+            <span class="n">num_frames_to_read</span> <span class="o">=</span> <span class="n">end_frame</span> <span class="o">-</span> <span class="n">start_frame</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">wave</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">audio_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wave_file</span><span class="p">:</span>
+                    <span class="n">wave_file</span><span class="o">.</span><span class="n">setpos</span><span class="p">(</span><span class="n">start_frame</span><span class="p">)</span>
+                    <span class="n">segment_frames</span> <span class="o">=</span> <span class="n">wave_file</span><span class="o">.</span><span class="n">readframes</span><span class="p">(</span><span class="n">num_frames_to_read</span><span class="p">)</span>
+                    <span class="k">with</span> <span class="n">wave</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">segment_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">segment_wave_file</span><span class="p">:</span>
+                        <span class="n">segment_wave_file</span><span class="o">.</span><span class="n">setnchannels</span><span class="p">(</span><span class="n">wave_file</span><span class="o">.</span><span class="n">getnchannels</span><span class="p">())</span>
+                        <span class="n">segment_wave_file</span><span class="o">.</span><span class="n">setsampwidth</span><span class="p">(</span><span class="n">wave_file</span><span class="o">.</span><span class="n">getsampwidth</span><span class="p">())</span>
+                        <span class="n">segment_wave_file</span><span class="o">.</span><span class="n">setframerate</span><span class="p">(</span><span class="n">sample_rate</span><span class="p">)</span>
+                        <span class="n">segment_wave_file</span><span class="o">.</span><span class="n">writeframes</span><span class="p">(</span><span class="n">segment_frames</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error processing segment </span><span class="si">{</span><span class="n">segment_filename</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">new_row</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">new_row</span><span class="p">[</span><span class="s2">&quot;segment_file_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">segment_path</span>
+            <span class="n">new_row</span><span class="p">[</span><span class="s2">&quot;start_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_timestamp</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">start_time</span><span class="p">)</span>
+            <span class="n">new_row</span><span class="p">[</span><span class="s2">&quot;end_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_timestamp</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">end_time</span><span class="p">)</span>
+            <span class="n">new_rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_row</span><span class="p">)</span>
+
+            <span class="n">start_time</span> <span class="o">+=</span> <span class="n">min_duration</span>
+            <span class="n">segment_number</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">new_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">new_rows</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_df</span></div>
+
+
+
+<div class="viewcode-block" id="false_color_spectrogram_prepare_dataset">
+<a class="viewcode-back" href="../../../maui.utils.html#maui.utils.false_color_spectrogram_prepare_dataset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">false_color_spectrogram_prepare_dataset</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">datetime_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">duration_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">file_path_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;scale_60&quot;</span><span class="p">,</span>
+    <span class="n">calculate_acoustic_indices</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prepare a dataset for generating false-color spectrograms, segmenting audio files,</span>
+<span class="sd">    and calculating acoustic indices.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        DataFrame containing the audio file paths and timestamps.</span>
+<span class="sd">    datetime_col : str</span>
+<span class="sd">        Column name for the start time of the audio files.</span>
+<span class="sd">    duration_col : str, optional</span>
+<span class="sd">        Column name for the duration of the audio files. If None, it will be calculated from file_path_col.</span>
+<span class="sd">    file_path_col : str, optional</span>
+<span class="sd">        Column name for the audio file paths. Required if duration_col is None.</span>
+<span class="sd">    output_dir : str, optional</span>
+<span class="sd">        Directory where segmented audio files and results will be stored.</span>
+<span class="sd">    unit : str, optional</span>
+<span class="sd">        Time unit for segmentation. Default is &#39;scale_60&#39;.</span>
+<span class="sd">    calculate_acoustic_indices : bool, optional</span>
+<span class="sd">        If True, acoustic indices will be calculated for the segmented files.</span>
+<span class="sd">    **kwargs : dict</span>
+<span class="sd">        Additional parameters for calculating acoustic indices. The available kwargs are:</span>
+
+<span class="sd">        - acoustic_indices_methods: list of str</span>
+<span class="sd">            A list of methods used for calculating acoustic indices.</span>
+
+<span class="sd">        - pre_calculation_method: callable</span>
+<span class="sd">            A method to be applied before the calculation of acoustic indices.</span>
+
+<span class="sd">        - parallel: bool</span>
+<span class="sd">            Whether to perform the calculation of acoustic indices in parallel.</span>
+
+<span class="sd">        - chunk_size: int, optional</span>
+<span class="sd">            Size of the chunks of data to be processed in parallel. Default is 5.</span>
+
+<span class="sd">        - temp_dir: str, optional</span>
+<span class="sd">            Path to a temporary directory for storing intermediate results.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        A DataFrame containing the segmented audio files and, optionally, the calculated acoustic indices.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If both duration_col and file_path_col are None, or if there are overlaps in the audio files, or if</span>
+<span class="sd">        time gaps are detected between segments.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples, utils</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_audio_sample(dataset=&quot;leec&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; df[&quot;dt&quot;] = pd.to_datetime(df[&quot;timestamp_init&quot;]).dt.date</span>
+<span class="sd">    &gt;&gt;&gt; def pre_calculation_method(s, fs):   </span>
+<span class="sd">    &gt;&gt;&gt;     Sxx_power, tn, fn, ext = maad.sound.spectrogram (s, fs) </span>
+<span class="sd">    &gt;&gt;&gt;     Sxx_noNoise= maad.sound.median_equalizer(Sxx_power, display=False, extent=ext) </span>
+<span class="sd">    &gt;&gt;&gt;     Sxx_dB_noNoise = maad.util.power2dB(Sxx_noNoise)</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt;     Sxx, tn, fn, ext = maad.sound.spectrogram(s, fs, mode=&#39;amplitude&#39;)</span>
+<span class="sd">    &gt;&gt;&gt;     </span>
+<span class="sd">    &gt;&gt;&gt;     pre_calc_vars = {&#39;Sxx&#39;: Sxx, &#39;tn&#39;:tn , &#39;fn&#39;:fn , &#39;ext&#39;:ext, &#39;Sxx_dB_noNoise&#39;:Sxx_dB_noNoise }</span>
+<span class="sd">    &gt;&gt;&gt;     return pre_calc_vars</span>
+<span class="sd">    &gt;&gt;&gt;         </span>
+<span class="sd">    &gt;&gt;&gt; def get_aci(pre_calc_vars):</span>
+<span class="sd">    &gt;&gt;&gt;     aci_xx, aci_per_bin, aci_sum  = maad.features.acoustic_complexity_index(pre_calc_vars[&#39;Sxx&#39;])</span>
+<span class="sd">    &gt;&gt;&gt;     indices = {&#39;aci_xx&#39;: aci_xx, &#39;aci_per_bin&#39;:aci_per_bin , &#39;aci_sum&#39;:aci_sum}</span>
+<span class="sd">    &gt;&gt;&gt;     return indices</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; def get_spectral_events(pre_calc_vars):</span>
+<span class="sd">    &gt;&gt;&gt;     EVNspFract_per_bin, EVNspMean_per_bin, EVNspCount_per_bin, EVNsp = maad.features.spectral_events(</span>
+<span class="sd">    &gt;&gt;&gt;                 pre_calc_vars[&#39;Sxx_dB_noNoise&#39;],</span>
+<span class="sd">    &gt;&gt;&gt;                 dt=pre_calc_vars[&#39;tn&#39;][1] - pre_calc_vars[&#39;tn&#39;][0],</span>
+<span class="sd">    &gt;&gt;&gt;                 dB_threshold=6,</span>
+<span class="sd">    &gt;&gt;&gt;                 rejectDuration=0.1,</span>
+<span class="sd">    &gt;&gt;&gt;                 display=False,</span>
+<span class="sd">    &gt;&gt;&gt;                 extent=pre_calc_vars[&#39;ext&#39;])  </span>
+<span class="sd">    &gt;&gt;&gt;     </span>
+<span class="sd">    &gt;&gt;&gt;     indices = {&#39;EVNspFract_per_bin&#39;: EVNspFract_per_bin, &#39;EVNspMean_per_bin&#39;:EVNspMean_per_bin , &#39;EVNspCount_per_bin&#39;:EVNspCount_per_bin, &#39;EVNsp&#39;:EVNsp}</span>
+<span class="sd">    &gt;&gt;&gt;     return indices</span>
+<span class="sd">    &gt;&gt;&gt; def get_spectral_activity(pre_calc_vars):</span>
+<span class="sd">    &gt;&gt;&gt;     ACTspfract_per_bin, ACTspcount_per_bin, ACTspmean_per_bin = maad.features.spectral_activity(pre_calc_vars[&#39;Sxx_dB_noNoise&#39;])</span>
+<span class="sd">    &gt;&gt;&gt;     indices = {&#39;ACTspfract_per_bin&#39;: ACTspfract_per_bin, &#39;ACTspcount_per_bin&#39;:ACTspcount_per_bin , &#39;ACTspmean_per_bin&#39;:ACTspmean_per_bin}</span>
+<span class="sd">    &gt;&gt;&gt;     return indices</span>
+<span class="sd">    &gt;&gt;&gt; acoustic_indices_methods = [get_aci, get_spectral_activity, get_spectral_events]</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; df_temp = df.iloc[0:1]</span>
+<span class="sd">    &gt;&gt;&gt; segmented_df = utils.false_color_spectrogram_prepare_dataset(</span>
+<span class="sd">    &gt;&gt;&gt;     df_temp, </span>
+<span class="sd">    &gt;&gt;&gt;     datetime_col = &#39;timestamp_init&#39;,</span>
+<span class="sd">    &gt;&gt;&gt;     duration_col = &#39;duration&#39;,</span>
+<span class="sd">    &gt;&gt;&gt;     file_path_col = &#39;file_path&#39;,</span>
+<span class="sd">    &gt;&gt;&gt;     indices = [&#39;acoustic_complexity_index&#39;, &#39;spectral_activity&#39;, &#39;spectral_events&#39;], </span>
+<span class="sd">    &gt;&gt;&gt;     output_dir = &#39;./segmented_indices&#39;,</span>
+<span class="sd">    &gt;&gt;&gt;     store_audio_segments = True,</span>
+<span class="sd">    &gt;&gt;&gt;     unit = &#39;scale_02&#39;,</span>
+<span class="sd">    &gt;&gt;&gt;     acoustic_indices_methods = acoustic_indices_methods,</span>
+<span class="sd">    &gt;&gt;&gt;     pre_calculation_method = pre_calculation_method,</span>
+<span class="sd">    &gt;&gt;&gt;     temp_dir = os.path.abspath(&#39;./temp_ac_files/&#39;),</span>
+<span class="sd">    &gt;&gt;&gt;     parallel = True</span>
+<span class="sd">    &gt;&gt;&gt; )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># 0.1. Verify if duration is already calculated or can be calculated</span>
+    <span class="k">if</span> <span class="n">duration_col</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">file_path_col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="s2">&quot;At least one of these arguments should not be None:&quot;</span>
+            <span class="s2">&quot;duration_col, file_path_col&quot;</span>
+        <span class="p">)</span>
+    <span class="n">available_units</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;scale_02&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;scale_04&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;scale_06&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;scale_2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;scale_4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;scale_6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;scale_12&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;scale_24&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;scale_60&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="c1"># 0.2. Verify unit is within the available units</span>
+    <span class="k">if</span> <span class="n">unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">available_units</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;The unit </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2"> is not available. &quot;&quot;&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;The list of available units is: </span><span class="si">{</span><span class="n">available_units</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># 0.3. Verify if the duration of the audios is higher than the unit</span>
+    <span class="n">min_duration</span> <span class="o">=</span> <span class="n">_unit_conversion</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+
+    <span class="c1"># 0.3.1. Calculate duration if not already calculated</span>
+    <span class="k">if</span> <span class="n">duration_col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">duration_col</span> <span class="o">=</span> <span class="s2">&quot;duration&quot;</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">file_path_col</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">_get_audio_duration</span><span class="p">)</span>
+
+    <span class="c1"># 0.3.2. Raise exception if duration is smaller than unit</span>
+    <span class="n">all_durations_valid</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">ge</span><span class="p">(</span><span class="n">min_duration</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">all_durations_valid</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;For </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">, all the files must have duration greater or &quot;&quot;&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;equal to </span><span class="si">{</span><span class="n">min_duration</span><span class="si">}</span><span class="s2"> seconds&quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># 0.4. Verify if there is overlap between files</span>
+    <span class="c1"># 0.4.1. Calculate the end time for each audio</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;end_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">datetime_col</span><span class="p">]</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">duration_col</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 0.4.2. Sort the DataFrame by start time</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">datetime_col</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># 0.4.3. Check for overlaps</span>
+    <span class="n">overlap_exists</span> <span class="o">=</span> <span class="n">_check_overlaps</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">datetime_col</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">overlap_exists</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="s2">&quot;To prepare the dataset correctly, the audios &quot;</span>
+            <span class="s2">&quot;provided should not overlap&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># 0.5. Verify the existence of gaps in datetime</span>
+    <span class="n">time_gaps</span> <span class="o">=</span> <span class="n">_check_time_gaps</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">datetime_col</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">time_gaps</span><span class="p">:</span>
+        <span class="n">gap_info</span> <span class="o">=</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Gap between </span><span class="si">{</span><span class="n">gap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">gap</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">gap</span> <span class="ow">in</span> <span class="n">time_gaps</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time gaps found, remove them to continue: </span><span class="si">{</span><span class="n">gap_info</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 1. Segment audio</span>
+    <span class="n">segmented_df</span> <span class="o">=</span> <span class="n">segment_audio_files</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">,</span> <span class="n">min_duration</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">file_path_col</span><span class="p">,</span> <span class="n">datetime_col</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 2. Calculate acoustic indices</span>
+    <span class="k">if</span> <span class="n">calculate_acoustic_indices</span><span class="p">:</span>
+        <span class="n">segmented_df</span> <span class="o">=</span> <span class="n">acoustic_indices</span><span class="o">.</span><span class="n">calculate_acoustic_indices</span><span class="p">(</span>
+            <span class="n">segmented_df</span><span class="p">,</span>
+            <span class="s2">&quot;segment_file_path&quot;</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;acoustic_indices_methods&quot;</span><span class="p">],</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;pre_calculation_method&quot;</span><span class="p">],</span>
+            <span class="n">parallel</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">],</span>
+            <span class="n">chunk_size</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;chunk_size&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;chunk_size&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="n">temp_dir</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;temp_dir&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">segmented_df</span></div>
+
+
+
+<div class="viewcode-block" id="get_blu_grn_palette">
+<a class="viewcode-back" href="../../../maui.utils.html#maui.utils.get_blu_grn_palette">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_blu_grn_palette</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a colormap object that replicates the &#39;BluGrn&#39; palette.</span>
+
+<span class="sd">    This function creates a continuous colormap using a gradient from blue to green,</span>
+<span class="sd">    which can be used to generate a range of colors in a plot.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    matplotlib.colors.LinearSegmentedColormap</span>
+<span class="sd">        A colormap object that can be used to map data values to colors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="s2">&quot;BluGrn&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;#0000FF&quot;</span><span class="p">,</span> <span class="s2">&quot;#00FF00&quot;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">cmap</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Caio Ferreira Bernardo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

@@ -1,0 +1,189 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>maui.acoustic_indices.calculate_acoustic_indices &mdash; maui-software 0.2.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+      <script src="../_static/documentation_options.js?v=58050c01"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Exploratory data analysis" href="../maui.eda.html" />
+    <link rel="prev" title="Acoustic Indices" href="../maui.acoustic_indices.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            maui-software
+              <img src="../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../maui.acoustic_indices.html">Acoustic Indices</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">maui.acoustic_indices.calculate_acoustic_indices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#maui.acoustic_indices.calculate_acoustic_indices"><code class="docutils literal notranslate"><span class="pre">calculate_acoustic_indices()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.eda.html">Exploratory data analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.io.html">Input and Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.visualizations.html">Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.samples.html">Samples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maui.utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../example_gallery.html">Example gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">maui-software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../maui.acoustic_indices.html">Acoustic Indices</a></li>
+      <li class="breadcrumb-item active">maui.acoustic_indices.calculate_acoustic_indices</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/generated/maui.acoustic_indices.calculate_acoustic_indices.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="maui-acoustic-indices-calculate-acoustic-indices">
+<h1>maui.acoustic_indices.calculate_acoustic_indices<a class="headerlink" href="#maui-acoustic-indices-calculate-acoustic-indices" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="maui.acoustic_indices.calculate_acoustic_indices">
+<span class="sig-prename descclassname"><span class="pre">maui.acoustic_indices.</span></span><span class="sig-name descname"><span class="pre">calculate_acoustic_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acoustic_indices_methods</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_calculation_method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./tmp_maui_ac_files/'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/maui/acoustic_indices/acoustic_indices.html#calculate_acoustic_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#maui.acoustic_indices.calculate_acoustic_indices" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate acoustic indices for audio files in a DataFrame.</p>
+<p>This method processes a DataFrame containing file paths to audio files, calculates
+acoustic indices using the specified methods, and returns a DataFrame with the results.
+The calculations can be performed in parallel or sequentially, depending on the <cite>parallel</cite> flag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>df_init</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The initial DataFrame containing the file paths to audio files and any other
+necessary metadata.</p>
+</dd>
+<dt><strong>file_path_col</strong><span class="classifier">str</span></dt><dd><p>The name of the column in <cite>df_init</cite> that contains the file paths to the audio files.</p>
+</dd>
+<dt><strong>acoustic_indices_methods</strong><span class="classifier">list of callables</span></dt><dd><p>A list of methods, where each method computes a specific acoustic index.
+Each method should accept the output of <cite>pre_calculation_method</cite> and return a dictionary
+of index names and values.</p>
+</dd>
+<dt><strong>pre_calculation_method</strong><span class="classifier">callable</span></dt><dd><p>A method that performs any necessary pre-calculations on the audio data.
+It should accept the loaded audio data and sampling rate, returning an object
+that will be passed to each of the <cite>acoustic_indices_methods</cite>.</p>
+</dd>
+<dt><strong>parallel</strong><span class="classifier">bool</span></dt><dd><p>If True, the calculations will be performed in parallel using multiple processes.
+If False, the calculations will be performed sequentially.</p>
+</dd>
+<dt><strong>chunk_size</strong><span class="classifier">int, optional</span></dt><dd><p>The number of rows to process in each chunk. If not provided, a default value is calculated
+based on the number of CPU cores available.</p>
+</dd>
+<dt><strong>temp_dir</strong><span class="classifier">str, optional</span></dt><dd><p>The directory path where the temporary CSV files will be saved.
+The default is ‘./tmp_maui_ac_files/’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>pd.DataFrame</dt><dd><p>A DataFrame containing the original data along with the calculated acoustic indices.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The method first divides the DataFrame into smaller chunks, each of which is
+processed separately to calculate the acoustic indices. The results are saved
+as temporary CSV files.</p></li>
+<li><p>If <cite>parallel</cite> is True, multiple processes are used to calculate the indices concurrently.
+Otherwise, the calculation is done sequentially.</p></li>
+<li><p>The method combines the results from all chunks into a single DataFrame, restores the original
+data types, and removes the temporary files.</p></li>
+<li><p>The <cite>_convert_string_to_list</cite> function is applied to the final DataFrame to ensure that the
+data types are correctly interpreted.</p></li>
+</ul>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../maui.acoustic_indices.html" class="btn btn-neutral float-left" title="Acoustic Indices" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../maui.eda.html" class="btn btn-neutral float-right" title="Exploratory data analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Caio Ferreira Bernardo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

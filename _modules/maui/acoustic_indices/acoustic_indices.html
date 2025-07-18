@@ -1,0 +1,474 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>maui.acoustic_indices.acoustic_indices &mdash; maui-software 0.2.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+      <script src="../../../_static/documentation_options.js?v=58050c01"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            maui-software
+              <img src="../../../_static/color_logo_no_background.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.acoustic_indices.html">Acoustic Indices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.eda.html">Exploratory data analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.io.html">Input and Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.visualizations.html">Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.samples.html">Samples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maui.utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../example_gallery.html">Example gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">maui-software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">maui.acoustic_indices.acoustic_indices</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for maui.acoustic_indices.acoustic_indices</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for Calculating Acoustic Indices from Audio Files</span>
+
+<span class="sd">This module provides functions to calculate acoustic indices from audio files stored </span>
+<span class="sd">in a pandas DataFrame. It supports both parallel and sequential processing, </span>
+<span class="sd">dividing the DataFrame into smaller chunks to optimize performance.</span>
+
+<span class="sd">Functions</span>
+<span class="sd">---------</span>
+<span class="sd">- calculate_acoustic_indices(df_init, file_path_col, acoustic_indices_methods, </span>
+<span class="sd">  pre_calculation_method, parallel, chunk_size=None, temp_dir=&#39;./tmp_maui_ac_files/&#39;): </span>
+<span class="sd">  Calculates acoustic indices for audio files in a DataFrame, with support for </span>
+<span class="sd">  parallel processing.</span>
+
+<span class="sd">Dependencies</span>
+<span class="sd">------------</span>
+<span class="sd">- numpy</span>
+<span class="sd">- pandas</span>
+<span class="sd">- maad</span>
+<span class="sd">- tqdm</span>
+<span class="sd">- tempfile</span>
+<span class="sd">- os</span>
+<span class="sd">- gc</span>
+<span class="sd">- functools.partial</span>
+<span class="sd">- multiprocessing as mp</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">maad</span><span class="w"> </span><span class="kn">import</span> <span class="n">sound</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_if_list_string</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function to convert a space-separated or comma-separated string of floats</span>
+<span class="sd">    or integers into a list of floats or integers.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    value (any): The value to check and possibly convert.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    any: The original value or a converted list of floats or integers if the string</span>
+<span class="sd">    represents a list of numbers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;[]&quot;</span><span class="p">)</span>  <span class="c1"># Remove the brackets</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>  <span class="c1"># Replace newlines with spaces</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>  <span class="c1"># Replace commas with spaces</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Convert the cleaned string to a list of floats or integers</span>
+            <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># If conversion fails, return the original string</span>
+            <span class="k">return</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_string_to_list</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert string representations of lists in a DataFrame to actual lists.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    df (pd.DataFrame): The DataFrame to process.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    pd.DataFrame: The DataFrame with strings converted to lists where applicable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;object&quot;</span><span class="p">:</span>  <span class="c1"># Only process columns with object dtype</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">_convert_if_list_string</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_extract_indices_worker</span><span class="p">(</span>
+    <span class="n">df_chunk</span><span class="p">,</span>
+    <span class="n">file_path_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">acoustic_indices_methods</span><span class="p">,</span>
+    <span class="n">pre_calculation_method</span><span class="p">,</span>
+    <span class="n">temp_dir</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function to extract acoustic indices from audio files and save them</span>
+<span class="sd">    temporarily in a CSV file.</span>
+
+<span class="sd">    This function processes a chunk of a DataFrame to calculate acoustic indices for</span>
+<span class="sd">    audio files. It loads each audio file, applies a pre-calculation method, and then</span>
+<span class="sd">    computes multiple acoustic indices using the provided methods. The results are stored</span>
+<span class="sd">    in a temporary CSV file and the original data types of the DataFrame columns are retained.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df_chunk : tuple of (pd.DataFrame, int)</span>
+<span class="sd">        A tuple containing a chunk of the DataFrame and its corresponding index.</span>
+<span class="sd">        The DataFrame must have at least the column specified by `file_path_col`.</span>
+
+<span class="sd">    file_path_col : str</span>
+<span class="sd">        The name of the column in the DataFrame that contains the file paths to the audio files.</span>
+
+<span class="sd">    acoustic_indices_methods : list of callables</span>
+<span class="sd">        A list of methods, where each method computes a specific acoustic index.</span>
+<span class="sd">        Each method should accept the output of `pre_calculation_method` and return a dictionary</span>
+<span class="sd">        of index names and values.</span>
+
+<span class="sd">    pre_calculation_method : callable</span>
+<span class="sd">        A method that performs any necessary pre-calculations on the audio data.</span>
+<span class="sd">        It should accept the loaded audio data and sampling rate and return an object</span>
+<span class="sd">        that will be passed to each of the `acoustic_indices_methods`.</span>
+
+<span class="sd">    temp_dir : str</span>
+<span class="sd">        The directory path where the temporary CSV file will be saved.</span>
+
+<span class="sd">    **kwargs : dict, optional</span>
+<span class="sd">        Additional keyword arguments:</span>
+<span class="sd">        - parallel (bool): If True, the function is running in parallel mode.</span>
+<span class="sd">        - fid (str): A file identifier used when not running in parallel mode.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    temp_file_path : str</span>
+<span class="sd">        The file path to the temporary CSV file where the calculated indices are saved.</span>
+
+<span class="sd">    original_dtypes : dict</span>
+<span class="sd">        A dictionary mapping column names to their original data types in the DataFrame.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - This function assumes that the DataFrame `df_chunk` contains a column with file paths</span>
+<span class="sd">      to the audio files. It processes each file, calculating the required indices and storing</span>
+<span class="sd">      them in a temporary file.</span>
+<span class="sd">    - If the audio file cannot be loaded, the function will print a message and skip the</span>
+<span class="sd">      calculation for that file.</span>
+<span class="sd">    - The `gc.collect()` calls are used to free memory after processing each row and after</span>
+<span class="sd">      creating the temporary file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">indices_temp</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">df</span><span class="p">,</span> <span class="n">fidx</span> <span class="o">=</span> <span class="n">df_chunk</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">chunk_index</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
+        <span class="n">s</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">sound</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">file_path_col</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Sound loading failed or the file </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;file_path&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> &quot;</span>\
+                <span class="s2">&quot;is corrupted. Acoustic indices not calculated.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pre_calc_vars</span> <span class="o">=</span> <span class="n">pre_calculation_method</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">acoustic_indices_methods</span><span class="p">:</span>
+                <span class="n">indices_dict</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="n">pre_calc_vars</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">indices_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">indices_temp</span><span class="p">:</span>
+                        <span class="n">indices_temp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+                        <span class="n">indices_temp</span><span class="p">[</span><span class="n">key</span><span class="p">][:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># Initialize with NaNs</span>
+                    <span class="n">indices_temp</span><span class="p">[</span><span class="n">key</span><span class="p">][</span>
+                        <span class="n">chunk_index</span>
+                    <span class="p">]</span> <span class="o">=</span> <span class="n">value</span>  <span class="c1"># Use chunk_index instead of index</span>
+            <span class="k">del</span> <span class="n">indices_dict</span>
+            <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">]:</span>
+        <span class="n">file_id</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;fid&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">file_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mp</span><span class="o">.</span><span class="n">current_process</span><span class="p">()</span><span class="o">.</span><span class="n">pid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">fidx</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">temp_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;temp_</span><span class="si">{</span><span class="n">file_id</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">indices_temp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">temp_file_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">original_dtypes</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dtypes</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+    <span class="k">del</span> <span class="n">indices_temp</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">temp_file_path</span><span class="p">,</span> <span class="n">original_dtypes</span>
+
+
+<div class="viewcode-block" id="calculate_acoustic_indices">
+<a class="viewcode-back" href="../../../maui.acoustic_indices.html#maui.acoustic_indices.calculate_acoustic_indices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_acoustic_indices</span><span class="p">(</span>
+    <span class="n">df_init</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">file_path_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">acoustic_indices_methods</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="n">pre_calculation_method</span><span class="p">,</span>
+    <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">temp_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./tmp_maui_ac_files/&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate acoustic indices for audio files in a DataFrame.</span>
+
+<span class="sd">    This method processes a DataFrame containing file paths to audio files, calculates</span>
+<span class="sd">    acoustic indices using the specified methods, and returns a DataFrame with the results.</span>
+<span class="sd">    The calculations can be performed in parallel or sequentially, depending on the `parallel` flag.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df_init : pd.DataFrame</span>
+<span class="sd">        The initial DataFrame containing the file paths to audio files and any other</span>
+<span class="sd">        necessary metadata.</span>
+
+<span class="sd">    file_path_col : str</span>
+<span class="sd">        The name of the column in `df_init` that contains the file paths to the audio files.</span>
+
+<span class="sd">    acoustic_indices_methods : list of callables</span>
+<span class="sd">        A list of methods, where each method computes a specific acoustic index.</span>
+<span class="sd">        Each method should accept the output of `pre_calculation_method` and return a dictionary</span>
+<span class="sd">        of index names and values.</span>
+
+<span class="sd">    pre_calculation_method : callable</span>
+<span class="sd">        A method that performs any necessary pre-calculations on the audio data.</span>
+<span class="sd">        It should accept the loaded audio data and sampling rate, returning an object</span>
+<span class="sd">        that will be passed to each of the `acoustic_indices_methods`.</span>
+
+<span class="sd">    parallel : bool</span>
+<span class="sd">        If True, the calculations will be performed in parallel using multiple processes.</span>
+<span class="sd">        If False, the calculations will be performed sequentially.</span>
+
+<span class="sd">    chunk_size : int, optional</span>
+<span class="sd">        The number of rows to process in each chunk. If not provided, a default value is calculated</span>
+<span class="sd">        based on the number of CPU cores available.</span>
+
+<span class="sd">    temp_dir : str, optional</span>
+<span class="sd">        The directory path where the temporary CSV files will be saved.</span>
+<span class="sd">        The default is &#39;./tmp_maui_ac_files/&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        A DataFrame containing the original data along with the calculated acoustic indices.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The method first divides the DataFrame into smaller chunks, each of which is</span>
+<span class="sd">      processed separately to calculate the acoustic indices. The results are saved</span>
+<span class="sd">      as temporary CSV files.</span>
+<span class="sd">    - If `parallel` is True, multiple processes are used to calculate the indices concurrently.</span>
+<span class="sd">      Otherwise, the calculation is done sequentially.</span>
+<span class="sd">    - The method combines the results from all chunks into a single DataFrame, restores the original</span>
+<span class="sd">      data types, and removes the temporary files.</span>
+<span class="sd">    - The `_convert_string_to_list` function is applied to the final DataFrame to ensure that the</span>
+<span class="sd">      data types are correctly interpreted.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; from maui import samples, utils, acoustic_indices</span>
+<span class="sd">    &gt;&gt;&gt; df = samples.get_audio_sample(dataset=&quot;leec&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; df[&quot;dt&quot;] = pd.to_datetime(df[&quot;timestamp_init&quot;]).dt.date</span>
+<span class="sd">    &gt;&gt;&gt; def pre_calculation_method(s, fs):   </span>
+<span class="sd">    &gt;&gt;&gt;     Sxx_power, tn, fn, ext = maad.sound.spectrogram (s, fs) </span>
+<span class="sd">    &gt;&gt;&gt;     Sxx_noNoise= maad.sound.median_equalizer(Sxx_power, display=False, extent=ext) </span>
+<span class="sd">    &gt;&gt;&gt;     Sxx_dB_noNoise = maad.util.power2dB(Sxx_noNoise)</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt;     Sxx, tn, fn, ext = maad.sound.spectrogram(s, fs, mode=&#39;amplitude&#39;)</span>
+<span class="sd">    &gt;&gt;&gt;     </span>
+<span class="sd">    &gt;&gt;&gt;     pre_calc_vars = {&#39;Sxx&#39;: Sxx, &#39;tn&#39;:tn , &#39;fn&#39;:fn , &#39;ext&#39;:ext, &#39;Sxx_dB_noNoise&#39;:Sxx_dB_noNoise }</span>
+<span class="sd">    &gt;&gt;&gt;     return pre_calc_vars</span>
+<span class="sd">    &gt;&gt;&gt;         </span>
+<span class="sd">    &gt;&gt;&gt; def get_aci(pre_calc_vars):</span>
+<span class="sd">    &gt;&gt;&gt;     aci_xx, aci_per_bin, aci_sum  = maad.features.acoustic_complexity_index(pre_calc_vars[&#39;Sxx&#39;])</span>
+<span class="sd">    &gt;&gt;&gt;     indices = {&#39;aci_xx&#39;: aci_xx, &#39;aci_per_bin&#39;:aci_per_bin , &#39;aci_sum&#39;:aci_sum}</span>
+<span class="sd">    &gt;&gt;&gt;     return indices</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; def get_spectral_events(pre_calc_vars):</span>
+<span class="sd">    &gt;&gt;&gt;     EVNspFract_per_bin, EVNspMean_per_bin, EVNspCount_per_bin, EVNsp = maad.features.spectral_events(</span>
+<span class="sd">    &gt;&gt;&gt;                 pre_calc_vars[&#39;Sxx_dB_noNoise&#39;],</span>
+<span class="sd">    &gt;&gt;&gt;                 dt=pre_calc_vars[&#39;tn&#39;][1] - pre_calc_vars[&#39;tn&#39;][0],</span>
+<span class="sd">    &gt;&gt;&gt;                 dB_threshold=6,</span>
+<span class="sd">    &gt;&gt;&gt;                 rejectDuration=0.1,</span>
+<span class="sd">    &gt;&gt;&gt;                 display=False,</span>
+<span class="sd">    &gt;&gt;&gt;                 extent=pre_calc_vars[&#39;ext&#39;])  </span>
+<span class="sd">    &gt;&gt;&gt;     </span>
+<span class="sd">    &gt;&gt;&gt;     indices = {&#39;EVNspFract_per_bin&#39;: EVNspFract_per_bin, &#39;EVNspMean_per_bin&#39;:EVNspMean_per_bin , &#39;EVNspCount_per_bin&#39;:EVNspCount_per_bin, &#39;EVNsp&#39;:EVNsp}</span>
+<span class="sd">    &gt;&gt;&gt;     return indices</span>
+<span class="sd">    &gt;&gt;&gt; def get_spectral_activity(pre_calc_vars):</span>
+<span class="sd">    &gt;&gt;&gt;     ACTspfract_per_bin, ACTspcount_per_bin, ACTspmean_per_bin = maad.features.spectral_activity(pre_calc_vars[&#39;Sxx_dB_noNoise&#39;])</span>
+<span class="sd">    &gt;&gt;&gt;     indices = {&#39;ACTspfract_per_bin&#39;: ACTspfract_per_bin, &#39;ACTspcount_per_bin&#39;:ACTspcount_per_bin , &#39;ACTspmean_per_bin&#39;:ACTspmean_per_bin}</span>
+<span class="sd">    &gt;&gt;&gt;     return indices</span>
+<span class="sd">    &gt;&gt;&gt; acoustic_indices_methods = [get_aci, get_spectral_activity, get_spectral_events]</span>
+<span class="sd">    &gt;&gt;&gt; result_df = acoustic_indices.calculate_acoustic_indices(</span>
+<span class="sd">        df, &#39;file_path&#39;, indices_methods, pre_calc, parallel=True)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">num_processes</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">chunk_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">chunk_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_init</span><span class="p">)</span> <span class="o">//</span> <span class="n">num_processes</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+
+    <span class="n">df_chunks</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">df_init</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_init</span><span class="p">),</span> <span class="n">chunk_size</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">df_chunks</span> <span class="o">=</span> <span class="p">[(</span><span class="n">df</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df_chunks</span><span class="p">)]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Calculating acoustic indices...&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">parallel</span><span class="p">:</span>
+
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">num_processes</span><span class="p">)</span>
+        <span class="n">worker</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+            <span class="n">_extract_indices_worker</span><span class="p">,</span>
+            <span class="n">file_path_col</span><span class="o">=</span><span class="n">file_path_col</span><span class="p">,</span>
+            <span class="n">acoustic_indices_methods</span><span class="o">=</span><span class="n">acoustic_indices_methods</span><span class="p">,</span>
+            <span class="n">pre_calculation_method</span><span class="o">=</span><span class="n">pre_calculation_method</span><span class="p">,</span>
+            <span class="n">temp_dir</span><span class="o">=</span><span class="n">temp_dir</span><span class="p">,</span>
+            <span class="n">parallel</span><span class="o">=</span><span class="n">parallel</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">temp_files</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">df_chunks</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Joinning threads...&quot;</span><span class="p">)</span>
+
+        <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">temp_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">it</span><span class="p">,</span> <span class="n">df_it</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df_chunks</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">_extract_indices_worker</span><span class="p">(</span>
+                <span class="n">df_it</span><span class="p">,</span>
+                <span class="n">file_path_col</span><span class="p">,</span>
+                <span class="n">acoustic_indices_methods</span><span class="p">,</span>
+                <span class="n">pre_calculation_method</span><span class="p">,</span>
+                <span class="n">temp_dir</span><span class="p">,</span>
+                <span class="n">parallel</span><span class="o">=</span><span class="n">parallel</span><span class="p">,</span>
+                <span class="n">fid</span><span class="o">=</span><span class="n">it</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">temp_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Preparing final dataframe and removing temporary files...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Combine results from temp files</span>
+    <span class="n">combined_df</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">temp_files</span><span class="p">:</span>
+        <span class="n">file</span><span class="p">,</span> <span class="n">dtypes</span> <span class="o">=</span> <span class="n">file</span>
+        <span class="n">df_temp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="n">df_temp</span> <span class="o">=</span> <span class="n">df_temp</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtypes</span><span class="p">)</span>
+        <span class="n">combined_df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_temp</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="n">combined_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">combined_df</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fixing data types...&quot;</span><span class="p">)</span>
+    <span class="n">combined_df</span> <span class="o">=</span> <span class="n">_convert_string_to_list</span><span class="p">(</span><span class="n">combined_df</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">combined_df</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Caio Ferreira Bernardo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>
