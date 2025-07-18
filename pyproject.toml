@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "maui-software"
-version = "0.2.6"
+version = "0.2.7"
 description = "Eco-acoustics data visualization and analysis"
 authors = ["Caio Ferreira Bernardo <caio.bernardo@usp.br>"]
 readme = "README.md"
