@@ -943,81 +943,232 @@ def test_figure_custom_dimensions():
 
 # ------------ Test visualizations.parallel_coordinates_plot -------------------------------------
 def test_returns_figure(sample_df_fixt):
+    """
+    Test that the parallel_coordinates_plot function returns a Figure.
+
+    Parameters
+    ----------
+    sample_df_fixt : pandas.DataFrame
+        A fixture providing a sample DataFrame to use as plot input.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    AssertionError
+        If the returned object is not an instance of Figure.
+
+    Notes
+    -----
+    Asserts that the figure returned by the plot function is of the correct type.
+    """
     fig = visualizations.parallel_coordinates_plot(
-        sample_df_fixt,
-        ['index1', 'index2'],
-        color_col='group',
-        show_plot=False
+        sample_df_fixt, ["index1", "index2"], color_col="group", show_plot=False
     )
     assert isinstance(fig, Figure)
+
 
 def test_axes_labels(sample_df_fixt):
+    """
+    Test that dimension labels in the parallel coordinates plot match input columns.
+
+    Parameters
+    ----------
+    sample_df_fixt : pandas.DataFrame
+        A fixture with data columns used for plotting.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    AssertionError
+        If the plot labels do not match the specified input indices.
+
+    Notes
+    -----
+    Ensures that the correct labels are displayed on the plot axes.
+    """
     fig = visualizations.parallel_coordinates_plot(
-        sample_df_fixt,
-        ['index1',
-        'index2'],
-        color_col='group',
-        show_plot=False
+        sample_df_fixt, ["index1", "index2"], color_col="group", show_plot=False
     )
-    labels = [dim['label'] for dim in fig.data[0]['dimensions']]
-    assert set(labels) == {'index1', 'index2'}
+    labels = [dim["label"] for dim in fig.data[0]["dimensions"]]
+    assert set(labels) == {"index1", "index2"}
+
 
 def test_color_array_length(sample_df_fixt):
+    """
+    Test that the color array length matches the number of DataFrame rows.
+
+    Parameters
+    ----------
+    sample_df_fixt : pandas.DataFrame
+        Input data for plotting.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    AssertionError
+        If the color array length is not equal to the number of rows in the DataFrame.
+
+    Notes
+    -----
+    Verifies correct mapping between data and coloring.
+    """
     fig = visualizations.parallel_coordinates_plot(
-        sample_df_fixt,
-        ['index1',
-        'index2'],
-        color_col='group',
-        show_plot=False
+        sample_df_fixt, ["index1", "index2"], color_col="group", show_plot=False
     )
-    color_arr = fig.data[0]['line']['color']
+    color_arr = fig.data[0]["line"]["color"]
     assert len(color_arr) == len(sample_df_fixt)
 
+
 def test_numeric_coloring(sample_df_fixt):
-    sample_df_fixt['numeric_group'] = [1, 2, 1, 2, 3]
+    """
+    Test support for numeric coloring in the parallel coordinates plot.
+
+    Parameters
+    ----------
+    sample_df_fixt : pandas.DataFrame
+        Input data, extended with a numeric coloring column.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    AssertionError
+        If the returned object is not a Figure or labels are incorrect.
+
+    Notes
+    -----
+    Confirms that numeric features can be used for plot coloring and that labels remain accurate.
+    """
+    sample_df_fixt["numeric_group"] = [1, 2, 1, 2, 3]
     fig = visualizations.parallel_coordinates_plot(
-        sample_df_fixt,
-        ['index1',
-        'index2'],
-        color_col='numeric_group',
-        show_plot=False
+        sample_df_fixt, ["index1", "index2"], color_col="numeric_group", show_plot=False
     )
     assert isinstance(fig, Figure)
-    labels = [dim['label'] for dim in fig.data[0]['dimensions']]
-    assert set(labels) == {'index1', 'index2'}
+    labels = [dim["label"] for dim in fig.data[0]["dimensions"]]
+    assert set(labels) == {"index1", "index2"}
+
 
 def test_empty_indices_raises(sample_df_fixt):
+    """
+    Test that providing an empty list of indices raises IndexError.
+
+    Parameters
+    ----------
+    sample_df_fixt : pandas.DataFrame
+        Input data for plotting.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    IndexError
+        If indices list is empty.
+
+    Notes
+    -----
+    Checks input validation for the expected minimum number of indices.
+    """
     with pytest.raises(IndexError):
         visualizations.parallel_coordinates_plot(
-            sample_df_fixt, 
-            [], 
-            color_col='group', 
-            show_plot=False
+            sample_df_fixt, [], color_col="group", show_plot=False
         )
+
 
 def test_one_index_raises(sample_df_fixt):
+    """
+    Test that providing a single index for parallel coordinates raises IndexError.
+
+    Parameters
+    ----------
+    sample_df_fixt : pandas.DataFrame
+        Input data for plotting.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    IndexError
+        If only one index is provided.
+
+    Notes
+    -----
+    Verifies enforcement of the minimum required number of plotting dimensions.
+    """
     with pytest.raises(IndexError):
         visualizations.parallel_coordinates_plot(
-            sample_df_fixt, 
-            ['index1'], 
-            color_col='group', 
-            show_plot=False
+            sample_df_fixt, ["index1"], color_col="group", show_plot=False
         )
+
 
 def test_index_not_in_df_raises(sample_df_fixt):
+    """
+    Test that referencing a non-existent index column raises AssertionError.
+
+    Parameters
+    ----------
+    sample_df_fixt : pandas.DataFrame
+        Input data for plotting.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    AssertionError
+        If an index is not present in the DataFrame columns.
+
+    Notes
+    -----
+    Ensures robust handling of invalid column references.
+    """
     with pytest.raises(AssertionError):
         visualizations.parallel_coordinates_plot(
-            sample_df_fixt, 
-            ['index2', 'not_found'], 
-            color_col='group', 
-            show_plot=False
+            sample_df_fixt, ["index2", "not_found"], color_col="group", show_plot=False
         )
 
+
 def test_color_col_missing_raises(sample_df_fixt):
+    """
+    Test that specifying a missing color column raises AssertionError.
+
+    Parameters
+    ----------
+    sample_df_fixt : pandas.DataFrame
+        Input DataFrame for plotting.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    AssertionError
+        If the specified color_col does not exist in the DataFrame.
+
+    Notes
+    -----
+    Ensures proper validation and error reporting for the coloring column argument.
+    """
     with pytest.raises(AssertionError):
         visualizations.parallel_coordinates_plot(
             sample_df_fixt,
-            ['index1', 'index2'],
-            color_col='missing_col',
-            show_plot=False
+            ["index1", "index2"],
+            color_col="missing_col",
+            show_plot=False,
         )
