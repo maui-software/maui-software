@@ -44,6 +44,7 @@ from maad import sound, util
 
 import maui.utils
 
+
 def indices_radar_plot(
     df,
     indices: list,
@@ -1582,7 +1583,7 @@ def parallel_coordinates_plot(
         assert index in df.columns, f"'{index}' is not in {df.columns}."
     assert color_col in df.columns, f"'{color_col}' is not in {df.columns}."
 
-    # Handle categorical coloring automatically
+    # Handle categorical coloring
     if (
         isinstance(df[color_col].dtype, CategoricalDtype)
         or df[color_col].dtype == object
@@ -1606,12 +1607,11 @@ def parallel_coordinates_plot(
         categories = []
         color_map = {}
 
-    # Build dimensions
     dimensions = [
         {
-            'range':[df[column].min(),df[column].max()],
-            'label':column,
-            'values':df[column]
+            "range": [df[column].min(), df[column].max()],
+            "label": column,
+            "values": df[column],
         }
         for column in indices
     ]
@@ -1619,37 +1619,65 @@ def parallel_coordinates_plot(
     fig = go.Figure(
         go.Parcoords(
             line={
-                'color':color_column,
-                'colorscale':colorscale,
-                'cmin':min(color_column),
-                'cmax':max(color_column),
-                'showscale':showscale,
+                "color": color_column,
+                "colorscale": colorscale,
+                "cmin": min(color_column),
+                "cmax": max(color_column),
+                "showscale": showscale,
             },
             dimensions=dimensions,
         )
     )
 
-    # Centralize LEGEND below the plot for categorical
+    # Improved Legend: colored Unicode squares, non-overlapping, far below the plot
     if categories:
         annotations = []
-        x_start = 0.14  # Moves legend blocks more to the center (adjust if needed)
-        x_spacing = 0.18 if len(categories) < 5 else 0.12
-        y = -0.22  # Lower this value if you want the legend further from the plot
+        max_per_row = 4  # You can adjust, e.g., 5 or 7 for your layout
+        total = len(categories)
+        num_rows = (total + max_per_row - 1) // max_per_row
+        x_padding = 0.09
+        x_between = (1 - 2 * x_padding) / min(max_per_row, total)
+        y_start = -0.36  # First row far below plot
+        y_delta = 0.15  # Space between rows
+
+        base_fig_height = 400  # Minimum figure height
+        legend_row_height = 40  # Adjust for font/icon size
+        fig_height = base_fig_height + (num_rows - 1) * legend_row_height
+
+        base_margin_b = 220  # Works well for a 1-row legend
+        extra_margin_per_row = 34  # Add for each additional legend row
+
+        dynamic_bottom_margin = base_margin_b + extra_margin_per_row * max(
+            0, num_rows - 1
+        )
+
         for i, cat in enumerate(categories):
+            row = i // max_per_row
+            col = i % max_per_row
+            x = x_padding + (col + 0.5) * x_between
+            y = y_start - row * y_delta
+            wrapped_label = (
+                f"<span style='font-size:22px; color:{color_map[cat]}; vertical-align:middle'>■</span> "
+                f"<span style='font-size:15px; display:inline-block; max-width:120px; "
+                f"white-space:normal; word-break:break-all; vertical-align:middle'>{cat}</span>"
+            )
             annotations.append(
                 {
-                    'x':x_start + i * x_spacing,
-                    'y':y,
-                    'xref':"paper",
-                    'yref':"paper",
-                    'showarrow':False,
-                    'align':"left",
-                    'text':f"<span 'style':'color:{color_map[cat]}; font-size:18px'>■</span> {cat}",
-                    'font':{"size": 15},
+                    "x": x,
+                    "y": y,
+                    "xanchor": "center",
+                    "yanchor": "top",
+                    "xref": "paper",
+                    "yref": "paper",
+                    "showarrow": False,
+                    "align": "center",
+                    "text": wrapped_label,
+                    "font": {"size": 15},
                 }
             )
         fig.update_layout(
-            margin={"b": 110, "r": 40, "t": 40, "l": 40},  # More bottom margin for legend
+            height=fig_height,
+            margin={"b": dynamic_bottom_margin, "r": 40, "t": 40, "l": 40},
             annotations=annotations,
         )
     else:
