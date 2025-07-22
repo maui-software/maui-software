@@ -1462,16 +1462,13 @@ def polar_bar_plot(
     else:
         r_value = "count"  # Use the 'count' column for the plot
 
-    cmap = maui.utils.get_blu_grn_palette()
-    cmap = [plt.colors.rgb2hex(cmap(i)) for i in range(cmap.N)]
-
     # 7. Create polar plot
     fig = px.bar_polar(
         df_full,
         r=r_value,
         theta="day_of_year",
         color=categories_col,
-        color_discrete_sequence=cmap,
+        color_discrete_sequence=px.colors.qualitative.Plotly,
         hover_data={"day_of_year": True, "day_of_month": True, "count": True},
     )
 
