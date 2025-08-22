@@ -16,8 +16,8 @@ test_card_summary(sample_df)
 test_heatmap_analysis(sample_df)
     Test the `heatmap_analysis` function with the sample DataFrame.
 
-test_histogram_analysis(sample_df)
-    Test the `histogram_analysis` function with the sample DataFrame.
+test_stacked_bar_analysis(sample_df)
+    Test the `stacked_bar_analysis` function with the sample DataFrame.
 
 test_duration_analysis(sample_df)
     Test the `duration_analysis` function with the sample DataFrame.
@@ -121,9 +121,9 @@ def test_heatmap_analysis(sample_df_fixt):
     assert "count" in df_group.columns
 
 
-def test_histogram_analysis(sample_df_fixt):
+def test_stacked_bar_analysis(sample_df_fixt):
     """
-    Test the `histogram_analysis` function with the sample DataFrame.
+    Test the `stacked_bar_analysis` function with the sample DataFrame.
 
     Parameters
     ----------
@@ -133,10 +133,10 @@ def test_histogram_analysis(sample_df_fixt):
     Assertions
     ----------
     AssertionError
-        If the `histogram_analysis` function does not return the expected
+        If the `stacked_bar_analysis` function does not return the expected
         figure.
     """
-    fig = eda.histogram_analysis(sample_df_fixt, "landscape", "environment", show_plot=False)
+    fig = eda.stacked_bar_analysis(sample_df_fixt, "landscape", "environment", show_plot=False)
 
     assert isinstance(fig, go.Figure)
     assert fig.layout.title.text == (
