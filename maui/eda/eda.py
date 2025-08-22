@@ -295,14 +295,14 @@ def heatmap_analysis(
 # ----------------------------------------------------------------------------
 
 
-def histogram_analysis(df, x_axis: str, category_column: str, show_plot: bool = True):
+def stacked_bar_analysis(df, x_axis: str, category_column: str, show_plot: bool = True):
     """
-    Generates a histogram plot for data distribution across a specified axis,
+    Generates a stacked bar plot for data distribution across a specified axis,
     optionally segmented by categories.
 
-    This function creates a histogram to visualize the distribution of data
+    This function creates a stacked bar to visualize the distribution of data
     in `df` along the `x_axis`, with data optionally segmented by
-    `category_column`. The histogram's appearance, such as opacity and
+    `category_column`. The stacked bar's appearance, such as opacity and
     bar gap, is customizable. The plot is generated using Plotly Express
     and can be displayed in the notebook or IDE if `show_plot` is set to True.
 
@@ -313,10 +313,10 @@ def histogram_analysis(df, x_axis: str, category_column: str, show_plot: bool = 
             Must include the columns specified by `x_axis`
             and `category_column`.
     x_axis : str
-            The name of the column in `df` to be used for the x-axis of the histogram.
+            The name of the column in `df` to be used for the x-axis of the stacked bar.
     category_column : str
             The name of the column in `df` that contains categorical data for
-            segmenting the histogram. Each category will be represented with
+            segmenting the stacked bar. Each category will be represented with
             a different color.
     show_plot : bool, optional
             If True (default), the generated plot will be immediately displayed.
@@ -326,7 +326,7 @@ def histogram_analysis(df, x_axis: str, category_column: str, show_plot: bool = 
     Returns
     -------
     plotly.graph_objs._figure.Figure
-            The Plotly figure object for the generated histogram.
+            The Plotly figure object for the generated stacked bar.
             This object can be further customized or saved after the function returns.
 
     Notes
@@ -340,7 +340,7 @@ def histogram_analysis(df, x_axis: str, category_column: str, show_plot: bool = 
     --------
     >>> from maui import samples, eda
     >>> df = samples.get_audio_sample(dataset="leec")
-    >>> fig = eda.histogram_analysis(df, 'landscape', 'environment')
+    >>> fig = eda.stacked_bar_analysis(df, 'landscape', 'environment')
     """
 
     totals = df.groupby(x_axis).size().sort_values(ascending=False)
