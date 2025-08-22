@@ -9,7 +9,7 @@ The module ``eda`` has a collection of functions to perform exploratory data ana
 
     card_summary
     heatmap_analysis
-    histogram_analysis
+    stacked_bar_analysis
     duration_analysis
     daily_distribution_analysis
     duration_distribution
@@ -20,7 +20,7 @@ The module ``eda`` has a collection of functions to perform exploratory data ana
 
 from .eda import (card_summary,
                      heatmap_analysis,
-                     histogram_analysis,
+                     stacked_bar_analysis,
                      duration_analysis,
                      daily_distribution_analysis,
                      duration_distribution,
@@ -30,7 +30,7 @@ from .eda import (card_summary,
 __all__ = [ # eda
            'card_summary',
            'heatmap_analysis',
-           'histogram_analysis',
+           'stacked_bar_analysis',
            'duration_analysis',
            'daily_distribution_analysis',
            'duration_distribution',
