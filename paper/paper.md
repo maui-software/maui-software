@@ -34,7 +34,7 @@ of user‑computed acoustic indices, and offers a suite of high‑level plotting
 It includes methods for creating false‑color spectrograms [@towsey2014visualization], customizable Diel plots, and 
 radar and violin plots for multivariate index comparison. These visualizations are useful 
 to reveal temporal, spatial, and taxonomic patterns at scale. With a modular architecture, 
-Maui leverages existing Python libraries for bioacoustic data processing, while focusing 
+Maui leverages existing Python libraries for bioacoustic data processing, while focusring 
 on interactive, publication‑quality graphics that facilitate hypothesis generation and 
 large‑scale soundscape synthesis. By filling a gap in ecoacoustic visual data analytics 
 and bringing together visualizations drawn from acoustic ecology literature 
@@ -55,7 +55,7 @@ As PAM pipelines are instantiated multiple times (see Figure \autoref{fig:propos
 Data visualization is a powerful tool for extracting insights in this inherently exploratory context. It enables the representation of metadata and acoustic features across time and locations, providing comprehensive overviews of the data repositories from multiple perspectives. Compelling visualizations can enhance data exploration and summarization beyond the standard processing pipeline. We consider an extended PAM pipeline that integrates visualization into a framework to promote exploratory analysis of the data accumulated in acoustic repositories resulting from multiple instantiations of the standard pipeline, as illustrated in Figure \autoref{fig:proposed_pam_pipeline}. 
 The dissemination of acoustic ecology practices has motivated many open-source tools and libraries to facilitate tasks such as computing acoustic features and applying machine learning algorithms. Following this trend, we introduce Maui, a Python package to support visual exploratory tasks on ecoacoustic data repositories. 
 
-# Modules architecture and Useflow
+# Modules architecture and useflow
 
 Maui implements methods focuses primarily on creating visualizations that require the computation of acoustic features. We assume users already have their preferred tools for this purpose. A brief description of each module follows.
 
