@@ -36,8 +36,10 @@ radar and violin plots for multivariate index comparison. These visualizations a
 to reveal temporal, spatial, and taxonomic patterns at scale. With a modular architecture, 
 Maui leverages existing Python libraries for bioacoustic data processing, while focusing 
 on interactive, publication‑quality graphics that facilitate hypothesis generation and 
-large‑scale soundscape synthesis. By filling a gap in ecoacoustic visual data analytics, 
-Maui helps researchers to study soundscape dynamics.
+large‑scale soundscape synthesis. By filling a gap in ecoacoustic visual data analytics 
+and bringing together visualizations drawn from acoustic ecology literature 
+[@towsey2014visualization; @phillips2018revealing; @towsey2015navigation],
+Maui helps researchers study soundscape dynamics.
 
 # Statement of need
 
@@ -81,6 +83,11 @@ Figure \autoref{fig:use_flow}shows the different modules, their relationships, a
 ![Flow of Maui software usage: each activity is represented within the respective module where it is performed.\label{fig:use_flow}](use_flow.png)
 
 [^1]: https://github.com/maui-software/maui-software-examples
+
+
+# Related Work
+
+There are several softwares that address acoustic ecology challenges, but, as far as we are concerned, Maui is the first visualization framework developed specifically to meet the needs of acoustic ecology. Considering open source Python packages, Scikit-maad [@ulloa2021scikit] and Open Soundscape [@lapp2023opensoundscape] are tools that complement Maui. Scikit-maad encompasses a complete workflow to load, preprocess, and transform data, find regions of interest, compute temporal and spectral acoustic indices, estimate sound pressure levels, and calculate the distance from an audio source to the recording device. Open Soundscape is focused on data classification and spatial localization of acoustic events. The package includes methods for training convolutional neural networks (CNNs), performing data augmentation, and other utility functions required to execute machine learning tasks.
 
 # Acknowledgements
 
